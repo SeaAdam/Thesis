@@ -1,6 +1,7 @@
 <?php
 session_start();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -217,6 +218,17 @@ session_start();
 
             <div class="right_col" role="main">
                 <?php
+                if (isset($_SESSION['successEditHolidays'])) {
+                    echo "
+                        <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success!</h4>
+                            <p>Holidays is edited!;</p>
+                        </div>
+                    ";
+
+                    unset($_SESSION['successEditHolidays']);
+                }
+
                 if (isset($_SESSION['saveHolidays'])) {
                     echo "
                         <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
@@ -238,6 +250,18 @@ session_start();
 
                     // Clear the alert message
                     unset($_SESSION['errorHolidays']);
+                }
+
+                if (isset($_SESSION['deleted'])) {
+                    echo "
+                        <div class='alert alert-dark alert-dismissable' id='alert' style='background: gray;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Deleted!</h4>
+                            <p>Record has been deleted!;</p>
+                        </div>
+                    ";
+
+                    // Clear the alert message
+                    unset($_SESSION['deleted']);
                 }
                 ?>
 
@@ -299,11 +323,14 @@ session_start();
                             <tr>
                                 <th scope="row"><?php echo $row['id']; ?></th>
                                 <td><?php echo $row['dateHolidays'] ?></td>
-                                <td><?php echo $row['holidays'] ?></td>
+                                <td><?php echo $row['holiday'] ?></td>
 
                                 <td>
-                                    <button class="btn btn-sm btn-warning">Edit</button>
-                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                    <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-success btn-sm edit"><i
+                                            class="fa fa-edit" aria-hidden="true"></i>
+                                        Edit</a>
+                                    <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-danger btn-sm delete"><i
+                                            class="fa fa-trash" aria-hidden="true"></i> Delete</a>
                                 </td>
                             </tr>
                             <?php
@@ -360,6 +387,8 @@ session_start();
         <!-- Custom Theme Scripts -->
         <script src="build/js/custom.min.js"></script>
 
+        <?php include "includes/booking_modal.php"; ?>
+
         <script>
             $(document).ready(function () {
                 window.setTimeout(function () {
@@ -368,6 +397,40 @@ session_start();
                     });
                 }, 5000);
             });
+
+            $(function () {
+                $('.edit').click(function (e) {
+                    e.preventDefault();
+                    $('#editHoliday').modal('show');
+                    var id = $(this).data('id');
+                    getRow(id);
+                });
+
+                $('.delete').click(function (e) {
+                    e.preventDefault();
+                    $('#deleteHolidays').modal('show');
+                    var id = $(this).data('id');
+                    getRow(id);
+                });
+
+            });
+
+
+            function getRow(id) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'booking_row_holidays.php',
+                    data: { id: id },
+                    dataType: 'json',
+                    success: function (response) {
+                        $('.id').val(response.id); 
+                        $('.holiday').html(response.holiday);
+                        $('.dateHolidays').html(response.dateHolidays);
+                        $('#editHolidays').val(response.holiday); 
+                        $('#editdateHolidays').val(response.dateHolidays); 
+                    }
+                });
+            }
         </script>
 
 </body>
