@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -63,7 +67,7 @@
                                         <li><a href="apPending.php">Pending</a></li>
                                         <li><a href="apApproved.php">Approved</a></li>
                                         <li><a href="apCompleted.php">Completed</a></li>
-                                        <li><a href="apRejected.php" >Rejected</a></li>
+                                        <li><a href="apRejected.php">Rejected</a></li>
                                     </ul>
                                 </li>
                                 <li><a><i class="fa fa-table"></i> Maintenance<span class="fa fa-chevron-down"></span>
@@ -211,36 +215,124 @@
             <!-- /top navigation -->
 
             <div class="right_col" role="main">
+                <?php
+                if (isset($_SESSION['successEditservices'])) {
+                    echo "
+                        <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success!</h4>
+                            <p>Services is edited!;</p>
+                        </div>
+                    ";
+
+                    unset($_SESSION['successEditservices']);
+                }
+
+                if (isset($_SESSION['saveServices'])) {
+                    echo "
+                        <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success!</h4>
+                            <p>New Services added successfully!;</p>
+                        </div>
+                    ";
+
+                    unset($_SESSION['saveServices']);
+                }
+
+                if (isset($_SESSION['errorServices'])) {
+                    echo "
+                        <div class='alert alert-danger alert-dismissable' id='alert' style='background: red;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                            <h4><i class='fa fa-exclamation-triangle'></i> Error!</h4>
+                            <p>The selected service is already in the record!;</p>
+                        </div>
+                    ";
+
+                    // Clear the alert message
+                    unset($_SESSION['errorServices']);
+                }
+
+                if (isset($_SESSION['deleted'])) {
+                    echo "
+                        <div class='alert alert-dark alert-dismissable' id='alert' style='background: gray;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Deleted!</h4>
+                            <p>Record has been deleted!;</p>
+                        </div>
+                    ";
+
+                    // Clear the alert message
+                    unset($_SESSION['deleted']);
+                }
+                ?>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                    New Services
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Add New Services;</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="add_services.php" method="POST">
+                                    <div class="mb-3">
+                                        <label for="Service" class="form-label">Service :</label>
+                                        <input type="text" class="form-control" id="Services" name="Services"
+                                            required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="Cost" class="form-label">Cost :</label>
+                                        <input type="number" class="form-control" id="Cost" name="Cost" step=0.01 required>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="reset" class="btn btn-secondary"
+                                            data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Services</th>
                             <th scope="col">Cost</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                    <?php
-                            include 'includes/dbconn.php';
+                        <?php
+                        include 'includes/dbconn.php';
 
-                            $sql = "SELECT * FROM services_table";
-                            $query = $conn->query($sql);   
-                            while ($row = $query->fetch_assoc()) {
+                        $sql = "SELECT * FROM services_table";
+                        $query = $conn->query($sql);
+                        while ($row = $query->fetch_assoc()) {
                             ?>
 
-                        <tr>
-                            <th scope="row"><?php echo $row['ID'];?></th>
-                            <td><?php echo $row ['Services'] ?></td>
-                            <td><?php echo $row ['Cost'] ?></td>
+                            <tr>
+                                <th scope="row"><?php echo $row['ID']; ?></th>
+                                <td><?php echo $row['Services'] ?></td>
+                                <td><?php echo $row['Cost'] ?></td>
 
-                            <td>
-                                <button class="btn btn-sm btn-warning">Edit</button>
-                                <button class="btn btn-sm btn-danger">Delete</button>
-                            </td>
-                        </tr>
-                        <?php
+                                <td>
+                                    <a href="#" data-id="<?php echo $row['ID']; ?>" class="btn btn-success btn-sm edit"><i
+                                            class="fa fa-edit" aria-hidden="true"></i>
+                                        Edit</a>
+                                    <a href="#" data-id="<?php echo $row['ID']; ?>" class="btn btn-danger btn-sm delete"><i
+                                            class="fa fa-trash" aria-hidden="true"></i> Delete</a>
+                                </td>
+                            </tr>
+                            <?php
                         }
-                        ?> 
+                        ?>
                     </tbody>
                 </table>
             </div>
@@ -290,6 +382,53 @@
 
         <!-- Custom Theme Scripts -->
         <script src="build/js/custom.min.js"></script>
+
+
+        <?php include "includes/booking_modal.php"; ?>
+
+        <script>
+            $(document).ready(function () {
+                window.setTimeout(function () {
+                    $("#alert").fadeTo(1000, 0).slideUp(1000, function () {
+                        $(this).remove();
+                    });
+                }, 5000);
+            });
+
+            $(function () {
+                $('.edit').click(function (e) {
+                    e.preventDefault();
+                    $('#editServices').modal('show');
+                    var id = $(this).data('id');
+                    getRow(id);
+                });
+
+                $('.delete').click(function (e) {
+                    e.preventDefault();
+                    $('#deleteServices').modal('show');
+                    var id = $(this).data('id');
+                    getRow(id);
+                });
+
+            });
+
+
+            function getRow(id) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'booking_row_services.php',
+                    data: { id: id },
+                    dataType: 'json',
+                    success: function (response) {
+                        $('.ID').val(response.ID);
+                        $('.Service').html(response.Services);
+                        $('.Cost').html(response.Cost);
+                        $('#editService').val(response.Services);
+                        $('#editCost').val(response.Cost);
+                    }
+                });
+            }
+        </script>
 
 </body>
 

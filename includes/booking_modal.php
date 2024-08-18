@@ -128,7 +128,7 @@
             </div>
             <form action="edit_holidays.php" method="POST">
                 <div class="modal-body">
-                    <input type="text" class="id" name="id">
+                    <input type="text" class="id" name="id" hidden>
                     <div class="mb-3">
                         <label for="holiday" class="form-label">Name of Holiday :</label>
                         <input type="text" class="form-control" id="editHolidays" name="holiday"
@@ -169,6 +169,70 @@
                         <p> Are you sure to delete this record?</p><br>
                         Name of Holiday : <span class="holiday"></span><br>
                         Date of Holiday : <span class="dateHolidays"></span>
+                    </center>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-window-close"></i>
+                    No</button>
+                <button type="submit" name="submit" class="btn btn-danger"><i class="fa fa-thrash"></i> Yes</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- FOR EDIT SERVICES -->
+<div class="modal fade" id="editServices">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Services:</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">&times;
+                </button>
+            </div>
+            <form action="edit_services.php" method="POST">
+                <div class="modal-body">
+                    <input type="text" class="ID" name="ID" hidden>
+                    <div class="mb-3">
+                        <label for="Services" class="form-label">Service :</label>
+                        <input type="text" class="form-control" id="editService" name="Services"
+                        required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Cost" class="form-label">Cost :</label>
+                        <input type="number" class="form-control" id="editCost" name="Cost" step="0.01"
+                        required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" name="submit">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- FOR DELETE SERVICES -->
+<div class="modal fade" id="deleteServices">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fa fa-info-circle" aria-hidden="true"></i> Please Confirm!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form action="delete_services.php" method="POST">
+                    <input type="hidden" class="ID" name="ID">
+                    <center>
+                        <p> Are you sure to delete this record?</p><br>
+                        Service : <span class="Service"></span><br>
+                        Cost : <span class="Cost"></span>
                     </center>
             </div>
             <div class="modal-footer">

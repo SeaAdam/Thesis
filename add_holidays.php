@@ -21,7 +21,7 @@ $check_stmt->store_result();
 if ($check_stmt->num_rows > 0) {
     $_SESSION['errorHolidays'] = "The selected date is already occupied by another event.";
 } else {
-    $query = "INSERT INTO holidays (dateHolidays, holidays) VALUES (?, ?)";
+    $query = "INSERT INTO holidays (dateHolidays, holiday) VALUES (?, ?)";
     $stmt = $mysqli->prepare($query);
     $stmt->bind_param("ss", $dateHoliday, $holiday);
 
