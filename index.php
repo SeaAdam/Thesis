@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brain Master</title>
+    <title>Brain Master Diagnostic Center</title>
     <link href="css/index.css" rel="stylesheet">
 
     <!-- font awesome cdn link -->
