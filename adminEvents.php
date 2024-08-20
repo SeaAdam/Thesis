@@ -412,7 +412,7 @@ session_start(); // Start the session at the very top
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Add New Event</h5>
-                                <form action="add_schedule.php" method="POST">
+                                <form action="add_event.php" method="POST">
                                     <div class="mb-3">
                                         <label for="eventTitle" class="form-label">Event Title</label>
                                         <input type="text" class="form-control" id="eventTitle" name="eventTitle"
