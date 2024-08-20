@@ -1,3 +1,9 @@
+<?php
+session_start();
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -46,6 +52,33 @@
     </header>
 
     <!-- header section ends -->
+    <?php
+    if (isset($_SESSION['Registered'])) {
+        echo "
+                        <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:80px 0px 10px 0px;'>
+                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success!</h4>
+                            <p>Registered Successfully!;</p>
+                        </div>
+                    ";
+
+        unset($_SESSION['Registered']);
+    }
+
+
+    if (isset($_SESSION['errorInformationAlreadyRegistered'])) {
+        echo "
+                        <div class='alert alert-dark alert-dismissable' id='alert' style='background: red;border-radius: 5px;padding:10px;color: #fff;margin:80px 0px 10px 0px;'>
+                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Error!</h4>
+                            <p>Information Already Registered!;</p>
+                        </div>
+                    ";
+
+        // Clear the alert message
+        unset($_SESSION['errorInformationAlreadyRegistered']);
+    }
+    ?>
+
+
 
 
 
@@ -78,11 +111,19 @@
                         <img src="assets/download1.jpg" alt="Logo" class="login-logo">
                         <form>
                             <div class="form-group">
-                                <input type="text" class="form-control" id="username" placeholder="Enter your username">
+                                <input type="text" class="form-control" id="usernamePatient"
+                                    placeholder="Enter your username" autocomplete="off">
                             </div>
                             <div class="form-group">
-                                <input type="password" class="form-control" id="password"
-                                    placeholder="Enter your password">
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="loginPassword"
+                                        placeholder="Enter your password">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="toggleLoginPassword">
+                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <a href="#">Forgot Password?</a>
@@ -126,31 +167,31 @@
                         <h2 class="modal-title">Register As Patient</h2>
                     </div>
                     <div class="modal-body">
-                        <form class="formPatient">
+                        <form class="formPatient" id="registrationForm" action="registration.php" method="POST">
                             <!-- First Row: First Name, Middle Initial, Last Name -->
                             <div class="form-row">
                                 <div class="form-group col-md-4">
-                                    <label for="firstName">First Name</label>
-                                    <input type="text" class="form-control" id="firstName" placeholder="First Name"
-                                        required>
+                                    <label for="FirstName">First Name</label>
+                                    <input type="text" class="form-control" id="FirstName" name="FirstName"
+                                        placeholder="First Name" required>
                                 </div>
                                 <div class="form-group col-md-2">
-                                    <label for="middleInitial">M.I.</label>
-                                    <input type="text" class="form-control" id="middleInitial" placeholder="M.I."
+                                    <label for="MI">M.I.</label>
+                                    <input type="text" class="form-control" id="MI" name="MI" placeholder="M.I."
                                         maxlength="1">
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="lastName">Last Name</label>
-                                    <input type="text" class="form-control" id="lastName" placeholder="Last Name"
-                                        required>
+                                    <label for="LastName">Last Name</label>
+                                    <input type="text" class="form-control" id="LastName" name="LastName"
+                                        --placeholder="Last Name" required>
                                 </div>
                             </div>
 
                             <!-- Second Row: Gender, Date of Birth, Age -->
                             <div class="form-row">
                                 <div class="form-group col-md-4">
-                                    <label for="gender">Gender</label>
-                                    <select id="gender" class="form-control" required>
+                                    <label for="Gender">Gender</label>
+                                    <select id="Gender" class="form-control" name="Gender" required>
                                         <option value="" disabled selected>Choose...</option>
                                         <option>Male</option>
                                         <option>Female</option>
@@ -158,45 +199,67 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <label for="dob">Date of Birth</label>
-                                    <input type="date" class="form-control" id="dob" required>
+                                    <label for="DOB">Date of Birth</label>
+                                    <input type="date" class="form-control" id="DOB" name="DOB" required>
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <label for="age">Age</label>
-                                    <input type="number" class="form-control" id="age" placeholder="Age" required>
+                                    <label for="Age">Age</label>
+                                    <input type="number" class="form-control" id="Age" placeholder="Age" name="Age"
+                                        required>
                                 </div>
                             </div>
 
                             <!-- Third Row: Contact, Address -->
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <label for="contact">Contact</label>
-                                    <input type="text" class="form-control" id="contact" placeholder="Contact" required>
+                                    <label for="Contact">Contact</label>
+                                    <input type="text" class="form-control" id="Contact" placeholder="Contact"
+                                        name="Contact" required>
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="address">Address</label>
-                                    <input type="text" class="form-control" id="address" placeholder="Address" required>
+                                    <label for="PresentAddress">Address</label>
+                                    <input type="text" class="form-control" id="PresentAddress"
+                                        placeholder="PresentAddress" name="PresentAddress" required>
                                 </div>
                             </div>
 
                             <!-- Fourth Row: Username -->
                             <div class="form-group" style="margin-left: 0; width: 100%;">
-                                <label for="username">Username</label>
-                                <input type="text" class="form-control" id="username" placeholder="Username" required>
+                                <label for="Username">Username</label>
+                                <input type="text" class="form-control" id="Username" placeholder="Username"
+                                    name="Username" autocomplete="off" required>
                             </div>
 
                             <!-- Fifth Row: Password, Confirm Password -->
                             <div class="form-row">
                                 <div class="form-group col-md-6">
-                                    <label for="password">Password</label>
-                                    <input type="password" class="form-control" id="password" placeholder="Password"
-                                        required>
+                                    <label for="Password">Password</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="Password" name="Password"
+                                            placeholder="Password" required pattern="(?=.*\d)(?=.*[a-zA-Z]).{8,}"
+                                            title="Password must be at least 8 characters long and contain both numbers and letters">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="togglePassword">
+                                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="confirmPassword">Confirm Password</label>
-                                    <input type="password" class="form-control" id="confirmPassword"
-                                        placeholder="Confirm Password" required>
+                                    <label for="ConfirmPassword">Confirm Password</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="ConfirmPassword"
+                                            name="ConfirmPassword" placeholder="Confirm Password" required
+                                            pattern="(?=.*\d)(?=.*[a-zA-Z]).{8,}"
+                                            title="Password must be at least 8 characters long and contain both numbers and letters">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="toggleConfirmPassword">
+                                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
+                                <div id="passwordError" class="text-danger"></div>
                             </div>
 
                             <!-- I agree to the terms checkbox -->
@@ -205,14 +268,13 @@
                                 <label class="form-check-label" for="terms">I agree to the terms and conditions</label>
                             </div>
 
-                            <!-- Register Button -->
-                            <button type="submit" class="btn btn-primary">Register</button>
+                            <div class="modal-footer">
+                                <!-- Register Button -->
+                                <button type="submit" class="btn-primary button">Register</button>
+                                <button type="button" id="closeModalBtnRegPatient" class="btn-dark button"
+                                    data-bs-dismiss="modal">Cancel</button>
+                            </div>
                         </form>
-
-                        <div class="modal-footer">
-                            <button type="button" id="closeModalBtnRegPatient" class="btn-dark button"
-                                data-bs-dismiss="modal">Cancel</button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -274,6 +336,60 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
         crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            window.setTimeout(function () {
+                $("#alert").fadeTo(1000, 0).slideUp(1000, function () {
+                    $(this).remove();
+                });
+            }, 5000);
+        });
+
+        $(document).ready(function () {
+            $('#togglePassword').click(function () {
+                const passwordField = $('#Password');
+                const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
+                passwordField.attr('type', type);
+                $(this).find('i').toggleClass('fa-eye fa-eye-slash');
+            });
+
+            $('#toggleConfirmPassword').click(function () {
+                const confirmPasswordField = $('#ConfirmPassword');
+                const type = confirmPasswordField.attr('type') === 'password' ? 'text' : 'password';
+                confirmPasswordField.attr('type', type);
+                $(this).find('i').toggleClass('fa-eye fa-eye-slash');
+            });
+
+            $('#toggleLoginPassword').click(function () {
+                const passwordField = $('#loginPassword');
+                const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
+                passwordField.attr('type', type);
+                $(this).find('i').toggleClass('fa-eye fa-eye-slash');
+            });
+        });
+
+
+
+        document.getElementById('registrationForm').addEventListener('submit', function (event) {
+            // Clear previous error messages
+            document.getElementById('passwordError').textContent = '';
+
+            // Get password and confirm password values
+            var password = document.getElementById('Password').value;
+            var confirmPassword = document.getElementById('ConfirmPassword').value;
+
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                document.getElementById('passwordError').textContent = 'Passwords do not match.';
+                event.preventDefault(); // Prevent form submission
+            }
+        });
+    </script>
+
+
 
 </body>
 
