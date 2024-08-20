@@ -1,3 +1,8 @@
+<?php
+session_start();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -211,6 +216,90 @@
             <!-- /top navigation -->
 
             <div class="right_col" role="main">
+                <?php
+                if (isset($_SESSION['successEditContacts'])) {
+                    echo "
+                        <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success!</h4>
+                            <p>Contacts is edited!;</p>
+                        </div>
+                    ";
+
+                    unset($_SESSION['successEditContacts']);
+                }
+
+                if (isset($_SESSION['saveContacts'])) {
+                    echo "
+                        <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success!</h4>
+                            <p>New Contacts added successfully!;</p>
+                        </div>
+                    ";
+
+                    unset($_SESSION['saveContacts']);
+                }
+
+                if (isset($_SESSION['errorContacts'])) {
+                    echo "
+                        <div class='alert alert-danger alert-dismissable' id='alert' style='background: red;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                            <h4><i class='fa fa-exclamation-triangle'></i> Error!</h4>
+                            <p>The selected contacts is already in the record!;</p>
+                        </div>
+                    ";
+
+                    // Clear the alert message
+                    unset($_SESSION['errorContacts']);
+                }
+
+                if (isset($_SESSION['deletedContacts'])) {
+                    echo "
+                        <div class='alert alert-dark alert-dismissable' id='alert' style='background: gray;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Deleted!</h4>
+                            <p>Record has been deleted!;</p>
+                        </div>
+                    ";
+
+                    // Clear the alert message
+                    unset($_SESSION['deletedContacts']);
+                }
+                ?>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                    New Contacts
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Add New Contacts;</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="add_contacts.php" method="POST">
+                                    <div class="mb-3">
+                                        <label for="ServiceProvider" class="form-label">Service Provider :</label>
+                                        <input type="text" class="form-control" id="ServiceProvider"
+                                            name="ServiceProvider" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="MobileNo" class="form-label">Mobile Number :</label>
+                                        <input type="texxt" class="form-control" id="MobileNo" name="MobileNo" required>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="reset" class="btn btn-secondary"
+                                            data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -234,8 +323,11 @@
                                 <td><?php echo $row['MobileNo'] ?></td>
 
                                 <td>
-                                    <button class="btn btn-sm btn-warning">Edit</button>
-                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                    <a href="#" data-id="<?php echo $row['ID']; ?>" class="btn btn-success btn-sm edit"><i
+                                            class="fa fa-edit" aria-hidden="true"></i>
+                                        Edit</a>
+                                    <a href="#" data-id="<?php echo $row['ID']; ?>" class="btn btn-danger btn-sm delete"><i
+                                            class="fa fa-trash" aria-hidden="true"></i> Delete</a>
                                 </td>
                             </tr>
                             <?php
@@ -290,6 +382,54 @@
 
         <!-- Custom Theme Scripts -->
         <script src="build/js/custom.min.js"></script>
+
+        <?php include "includes/booking_modal.php"; ?>
+
+        <script>
+            $(document).ready(function () {
+                window.setTimeout(function () {
+                    $("#alert").fadeTo(1000, 0).slideUp(1000, function () {
+                        $(this).remove();
+                    });
+                }, 5000);
+            });
+
+            $(function () {
+                $('.edit').click(function (e) {
+                    e.preventDefault();
+                    $('#editContacts').modal('show');
+                    var id = $(this).data('id');
+                    getRow(id);
+                });
+
+                $('.delete').click(function (e) {
+                    e.preventDefault();
+                    $('#deleteContacts').modal('show');
+                    var id = $(this).data('id');
+                    getRow(id);
+                });
+
+            });
+
+
+            function getRow(id) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'booking_row_contacts.php',
+                    data: { id: id },
+                    dataType: 'json',
+                    success: function (response) {
+                        $('.ID').val(response.ID);
+                        $('.ServiceProvider').html(response.ServiceProvider);
+                        $('.MobileNo').html(response.MobileNo);
+                        $('#editServiceProvider').val(response.ServiceProvider);
+                        $('#editMobileNo').val(response.MobileNo);
+                    }
+                });
+            }
+        </script>
+
+
 
 </body>
 

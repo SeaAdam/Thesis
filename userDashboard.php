@@ -132,6 +132,17 @@
                                 </li>
                                 <li><a href="userTransaction.php"><i class="fa fa-table"></i> Transaction </a>
                                 </li>
+                                <?php
+                                include './contactsFetch.php'; // Assuming this file sets up the $data array
+                                
+                                foreach ($data as $item): ?>
+                                    <li>
+                                        <a href="#">
+                                        <i class="fa fa-phone" aria-hidden="true"></i>
+                                            <?php echo htmlspecialchars($item['ServiceProvider']) . '| ' . htmlspecialchars($item['MobileNo']); ?>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
                             </ul>
                         </div>
 
