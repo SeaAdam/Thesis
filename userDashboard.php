@@ -287,12 +287,12 @@
                                     <?php
                                     include 'includes/dbconn.php';
 
-                                    $sql = "SELECT name, date FROM holidays";
+                                    $sql = "SELECT holiday, dateHolidays FROM holidays";
                                     $result = $conn->query($sql);
 
                                     if ($result->num_rows > 0) {
                                         while ($row = $result->fetch_assoc()) {
-                                            echo "<li>{$row['name']} - {$row['date']}</li>";
+                                            echo "<li>{$row['holiday']} - {$row['dateHolidays']}</li>";
                                         }
                                     } else {
                                         echo "No holidays found.";
