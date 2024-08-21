@@ -55,13 +55,11 @@
                     <input type="text" class="ID" name="ID" hidden>
                     <div class="mb-3">
                         <label for="Slots" class="form-label">Slots:</label>
-                        <input type="text" class="form-control" id="editSlots" name="Slots"
-                        required>
+                        <input type="text" class="form-control" id="editSlots" name="Slots" required>
                     </div>
                     <div class="mb-3">
                         <label for="Slots_Date" class="form-label">Slots Date:</label>
-                        <input type="date" class="form-control" id="Slots_Date" name="Slots_Date"
-                        required>
+                        <input type="date" class="form-control" id="Slots_Date" name="Slots_Date" required>
                     </div>
                     <div class="mb-3">
                         <label for="Start_Time" class="form-label">Start Time:</label>
@@ -131,13 +129,11 @@
                     <input type="text" class="id" name="id" hidden>
                     <div class="mb-3">
                         <label for="holiday" class="form-label">Name of Holiday :</label>
-                        <input type="text" class="form-control" id="editHolidays" name="holiday"
-                        required>
+                        <input type="text" class="form-control" id="editHolidays" name="holiday" required>
                     </div>
                     <div class="mb-3">
                         <label for="dateHolidays" class="form-label">Date of Holiday:</label>
-                        <input type="date" class="form-control" id="editdateHolidays" name="dateHolidays"
-                        required>
+                        <input type="date" class="form-control" id="editdateHolidays" name="dateHolidays" required>
                     </div>
                 </div>
 
@@ -195,13 +191,11 @@
                     <input type="text" class="ID" name="ID" hidden>
                     <div class="mb-3">
                         <label for="Services" class="form-label">Service :</label>
-                        <input type="text" class="form-control" id="editService" name="Services"
-                        required>
+                        <input type="text" class="form-control" id="editService" name="Services" required>
                     </div>
                     <div class="mb-3">
                         <label for="Cost" class="form-label">Cost :</label>
-                        <input type="number" class="form-control" id="editCost" name="Cost" step="0.01"
-                        required>
+                        <input type="number" class="form-control" id="editCost" name="Cost" step="0.01" required>
                     </div>
                 </div>
 
@@ -256,16 +250,15 @@
             </div>
             <form action="edit_contacts.php" method="POST">
                 <div class="modal-body">
-                    <input type="hidden" class="ID" name="ID" >
+                    <input type="hidden" class="ID" name="ID">
                     <div class="mb-3">
                         <label for="ServiceProvider" class="form-label">Service Provider :</label>
                         <input type="text" class="form-control" id="editServiceProvider" name="ServiceProvider"
-                        required>
+                            required>
                     </div>
                     <div class="mb-3">
                         <label for="MobileNo" class="form-label">Mobile Number :</label>
-                        <input type="text" class="form-control" id="editMobileNo" name="MobileNo"
-                        required>
+                        <input type="text" class="form-control" id="editMobileNo" name="MobileNo" required>
                     </div>
                 </div>
 
@@ -304,6 +297,76 @@
                     No</button>
                 <button type="submit" name="submit" class="btn btn-danger"><i class="fa fa-thrash"></i> Yes</button>
             </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- VIEW PATIENTS -->
+<div class="modal fade" id="viewPatients">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Patients View Record:</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">&times;
+                </button>
+            </div>
+            <form>
+                <div class="modal-body">
+                    <div>
+                        <div class="row">
+                            <!-- Profile Display Form (Left) -->
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <img src="profile.jpg" class="rounded-circle mb-3" alt="Profile Picture"
+                                            width="150" height="150">
+                                        <h4 class="FullName"></h4>
+                                        <p class="text-muted">adamero.s.bsinfotech@gmail.com</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Information Display and Update Form (Right) -->
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">Gender</th>
+                                                    <td><p type="text" class="Gender"></p></td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Age</th>
+                                                    <td><p type="text" class="Age"></p></td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Date of Birth</th>
+                                                    <td><p type="text" class="DOB"></p></td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Contact</th>
+                                                    <td><p type="text" class="Contact"></p></td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">PresentAddress</th>
+                                                    <td><p type="text" class="PresentAddress"></p></td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Username</th>
+                                                    <td><p type="text" class="Username"></p></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
