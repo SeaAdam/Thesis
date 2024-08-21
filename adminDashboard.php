@@ -633,7 +633,9 @@
                                 </button>
                             </div>
                             <div class="modal-body">
+                                <p id="modalDate"></p>
                                 <p id="modalDescription"></p>
+                                <div id="modalSlots">Slots will be displayed here</div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -737,12 +739,45 @@
                     eventDidMount: function (info) {
                         // Create and append a button to the event element
                         let button = document.createElement('button');
-                        button.textContent = info.event.extendedProps.buttonText || 'Button'; // Fetch button text
+                        button.textContent = info.event.extendedProps.buttonText || 'View Slots'; // Button text
                         button.className = 'btn btn-primary'; // Use Bootstrap button class
                         button.onclick = function () {
                             // Populate modal with event details
-                            document.getElementById('modalTitle').textContent = info.event.title;
-                            document.getElementById('modalDescription').textContent = info.event.extendedProps.description || 'No description available';
+                            document.getElementById('modalTitle').textContent = `BOOK FOR: ${info.event.start.toLocaleDateString()}`; // Event date
+                            document.getElementById('modalDescription').textContent = info.event.extendedProps.description || 'Select a time slot:';
+                            document.getElementById('modalDate').textContent = `SLOTS: ${info.event.title}`;
+
+                            // Fetch time slots based on the schedule_id
+                            let scheduleId = info.event.extendedProps.schedule_id;
+                            console.log('Extended Props:', info.event.extendedProps);// Debugging line
+
+                            fetch(`fetch_time_slots.php?schedule_id=${scheduleId}`)
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error(`HTTP error! Status: ${response.status}`);
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.error) {
+                                        console.error('Error fetching time slots:', data.error);
+                                        document.getElementById('modalSlots').textContent = data.error;
+                                        return;
+                                    }
+
+                                    if (Array.isArray(data) && data.length > 0) {
+                                        let slotsHtml = data.map(slot =>
+                                            `<li>${slot.start_time} - ${slot.end_time}</li>`
+                                        ).join('');
+                                        document.getElementById('modalSlots').innerHTML = `Available Time Slots:<ul>${slotsHtml}</ul>`;
+                                    } else {
+                                        document.getElementById('modalSlots').innerHTML = 'No available time slots.';
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching time slots:', error);
+                                    document.getElementById('modalSlots').textContent = 'Failed to load time slots.';
+                                });
 
                             // Show the modal
                             eventModal.show();
@@ -755,6 +790,10 @@
 
                 dashboardCalendar.render();
             });
+
+
+
+
 
         </script>
 </body>

@@ -22,7 +22,11 @@ if ($result->num_rows > 0) {
             'id' => $row['ID'],
             'title' => $row['Slots'],  // Customize the title if needed
             'start' => $row['Slots_Date'],  // Ensure this format is compatible with FullCalendar
-            'buttonText' => 'View'  // Example button text
+            'extendedProps' => [
+            'schedule_id' => $row['ID'],  // Include the schedule_id here
+            'buttonText' => 'View',  // Example button text
+        ],
+         // Example button text
         ];
     }
 }
