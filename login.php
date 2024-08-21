@@ -34,15 +34,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         } else {
             
-            $_SESSION['error'] = "Invalid password.";
-            header("Location: loginS.php");
+            $_SESSION['InvalidPass'] = "Invalid password.";
+            header("Location: index.php");
             exit();
         }
     } else {
-        $_SESSION['error'] = "Username not found.";
-        header("Location: logins.php");
+        $_SESSION['InvalidUser'] = "Username not found.";
+        header("Location: index.php");
         exit();
     }
+
 
     $stmt->close();
     $conn->close();

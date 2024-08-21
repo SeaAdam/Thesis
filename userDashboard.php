@@ -1,3 +1,9 @@
+<?php
+include 'login.php';
+$username = $_SESSION['username'];
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -112,7 +118,7 @@
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
-                            <h2>John Doe</h2>
+                            <h2><?php echo ($username); ?></h2>
                         </div>
                     </div>
                     <!-- /menu profile quick info -->
@@ -138,7 +144,7 @@
                                 foreach ($data as $item): ?>
                                     <li>
                                         <a href="#">
-                                        <i class="fa fa-phone" aria-hidden="true"></i>
+                                            <i class="fa fa-phone" aria-hidden="true"></i>
                                             <?php echo htmlspecialchars($item['ServiceProvider']) . '| ' . htmlspecialchars($item['MobileNo']); ?>
                                         </a>
                                     </li>
@@ -271,6 +277,16 @@
             <!-- /top navigation -->
 
             <div class="right_col" role="main">
+                <?php
+                if (isset($_SESSION['username'])) {
+                    echo "
+                        <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Login Success!</h4>
+                            <h6>Welcome to the User Dashboard!;</h6>
+                        </div>
+                    ";
+                }
+                ?>
                 <div class="head-title">
                     <div>
                         <h1>Dashboard</h1>
@@ -377,6 +393,14 @@
 
 
         <script>
+            $(document).ready(function () {
+                window.setTimeout(function () {
+                    $("#alert").fadeTo(1000, 0).slideUp(1000, function () {
+                        $(this).remove();
+                    });
+                }, 5000);
+            });
+            
             document.addEventListener('DOMContentLoaded', function () {
                 var dashboardCalendarEl = document.getElementById('calendar');
 

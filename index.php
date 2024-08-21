@@ -81,6 +81,29 @@ session_start();
         // Clear the alert message
         unset($_SESSION['errorInformationAlreadyRegistered']);
     }
+    if (isset($_SESSION['InvalidPass'])) {
+        echo "
+                        <div class='alert alert-success alert-dismissable' id='alert' style='background: red;border-radius: 5px;padding:10px;color: #fff;margin:80px 0px 10px 0px;'>
+                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Error!</h4>
+                            <p>Invalid Password!;</p>
+                        </div>
+                    ";
+
+        unset($_SESSION['InvalidPass']);
+    }
+
+
+    if (isset($_SESSION['InvalidUser'])) {
+        echo "
+                        <div class='alert alert-dark alert-dismissable' id='alert' style='background: red;border-radius: 5px;padding:10px;color: #fff;margin:80px 0px 10px 0px;'>
+                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Error!</h4>
+                            <p>No User Found!;</p>
+                        </div>
+                    ";
+
+        // Clear the alert message
+        unset($_SESSION['InvalidUser']);
+    }
     ?>
 
 
