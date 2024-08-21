@@ -20,6 +20,11 @@ session_start();
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
         integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 
+    <style>
+        input {
+            text-transform: none;
+        }
+    </style>
 
 
 
@@ -109,21 +114,28 @@ session_start();
                     </div>
                     <div class="modal-body">
                         <img src="assets/download1.jpg" alt="Logo" class="login-logo">
-                        <form>
+                        <form id="loginForm" action="login.php" method="POST">
                             <div class="form-group">
-                                <input type="text" class="form-control" id="usernamePatient"
-                                    placeholder="Enter your username" autocomplete="off">
+                                <input type="text" class="form-control" id="usernameLogin" name="usernameLogin"
+                                    placeholder="Enter your username" autocomplete="off" required>
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
-                                    <input type="password" class="form-control" id="loginPassword"
-                                        placeholder="Enter your password">
+                                    <input type="password" class="form-control" id="loginPassword" name="loginPassword"
+                                        placeholder="Enter your password" required>
                                     <div class="input-group-append">
                                         <span class="input-group-text" id="toggleLoginPassword">
                                             <i class="fa fa-eye" aria-hidden="true"></i>
                                         </span>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="loginType">Login as:</label>
+                                <select name="loginType" class="form-control" required>
+                                    <option value="user">User</option>
+                                    <option value="admin">Admin</option>
+                                </select>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <a href="#">Forgot Password?</a>
@@ -137,6 +149,7 @@ session_start();
                     </div>
                 </div>
             </div>
+
 
             <div id="myModalReg" class="modal">
                 <div class="modal-content">
@@ -369,6 +382,7 @@ session_start();
                 passwordField.attr('type', type);
                 $(this).find('i').toggleClass('fa-eye fa-eye-slash');
             });
+
         });
 
 
