@@ -238,6 +238,30 @@ session_start();
                     // Clear the alert message
                     unset($_SESSION['errorUserAlreadyAdded']);
                 }
+
+                if (isset($_SESSION['deletedPatients'])) {
+                    echo "
+                                    <div class='alert alert-dark alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                                        <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success</h4>
+                                        <p>Patients Record Deleted!;</p>
+                                    </div>
+                                ";
+
+                    // Clear the alert message
+                    unset($_SESSION['deletedPatients']);
+                }
+
+                if (isset($_SESSION['successEditPatients'])) {
+                    echo "
+                                    <div class='alert alert-dark alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                                        <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success</h4>
+                                        <p>Patients Record Edited Successfully!;</p>
+                                    </div>
+                                ";
+
+                    // Clear the alert message
+                    unset($_SESSION['successEditPatients']);
+                }
                 ?>
                 <!-- Button trigger modal -->
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
@@ -520,6 +544,18 @@ session_start();
                         $('.Contact').text(response.Contact);
                         $('.PresentAddress').text(response.PresentAddress);
                         $('.Username').text(response.Username);
+                        
+                        $('#EFirstName').val(response.FirstName);
+                        $('#EMI').val(response.MI);
+                        $('#ELastName').val(response.LastName);
+                        $('#EGender').val(response.Gender);
+                        $('#EAge').val(response.Age);
+                        $('#EDOB').val(response.DOB);
+                        $('#EContact').val(response.Contact);
+                        $('#EPresentAddress').val(response.PresentAddress);
+                        $('#EUsername').val(response.Username);
+                        $('#EPassword').val(response.Password);
+                        $('#EConfirmPassword').val(response.ConfirmPassword);
                     }
                 });
             }

@@ -621,6 +621,28 @@
                     </div>
                 </div>
 
+                <!-- Modal Structure -->
+                <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalTitle">Event Details</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p id="modalDescription"></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
                 <!-- footer content -->
                 <footer>
                     <div class="pull-right">
@@ -682,6 +704,7 @@
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 var dashboardCalendarEl = document.getElementById('calendar');
+                var eventModal = new bootstrap.Modal(document.getElementById('eventModal')); // Initialize Bootstrap modal
 
                 var dashboardCalendar = new FullCalendar.Calendar(dashboardCalendarEl, {
                     initialView: 'dayGridMonth',
@@ -715,9 +738,14 @@
                         // Create and append a button to the event element
                         let button = document.createElement('button');
                         button.textContent = info.event.extendedProps.buttonText || 'Button'; // Fetch button text
-                        button.className = 'custom-button';
+                        button.className = 'btn btn-primary'; // Use Bootstrap button class
                         button.onclick = function () {
-                            alert(`Button for event ${info.event.title} clicked`);
+                            // Populate modal with event details
+                            document.getElementById('modalTitle').textContent = info.event.title;
+                            document.getElementById('modalDescription').textContent = info.event.extendedProps.description || 'No description available';
+
+                            // Show the modal
+                            eventModal.show();
                         };
 
                         // Append button to the event's DOM element

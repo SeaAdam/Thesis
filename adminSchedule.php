@@ -283,7 +283,7 @@ session_start(); // Start the session at the very top
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form action="add_schedule.php" method="POST">
+                                <form action="add_sched_add_timeslots.php" method="POST">
                                     <div class="mb-3">
                                         <label for="Slots" class="form-label">Slots</label>
                                         <input type="text" class="form-control" id="Slots" name="Slots" required>
