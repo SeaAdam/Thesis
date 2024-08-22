@@ -11,11 +11,6 @@ if ($conn->connect_error) {
     die(json_encode(['error' => 'Connection failed: ' . $conn->connect_error]));
 }
 
-// Check connection
-if ($conn->connect_error) {
-    die(json_encode(['error' => 'Connection failed: ' . $conn->connect_error]));
-}
-
 if (!isset($_GET['schedule_id']) || empty($_GET['schedule_id'])) {
     echo json_encode(['error' => 'Invalid schedule_id']);
     exit;
@@ -24,8 +19,8 @@ if (!isset($_GET['schedule_id']) || empty($_GET['schedule_id'])) {
 $schedule_id = $_GET['schedule_id'];
 
 if ($schedule_id > 0) {
-    // Fetch time slots based on the schedule_id
-    $sql = "SELECT start_time, end_time FROM time_slots WHERE schedule_id = ?";
+    // Fetch time slots based on the schedule_id and include the ID
+    $sql = "SELECT ID, start_time, end_time FROM time_slots WHERE schedule_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $schedule_id);
     $stmt->execute();
@@ -33,7 +28,11 @@ if ($schedule_id > 0) {
 
     $time_slots = [];
     while ($row = $result->fetch_assoc()) {
-        $time_slots[] = $row;
+        $time_slots[] = [
+            'id' => $row['ID'],
+            'start_time' => $row['start_time'],
+            'end_time' => $row['end_time']
+        ];
     }
 
     // Output the time slots in JSON format

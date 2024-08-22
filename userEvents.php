@@ -1,3 +1,8 @@
+<?php
+include 'login.php';
+$username = $_SESSION['username'];
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -78,7 +83,7 @@
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
-                            <h2>John Doe</h2>
+                            <h2><?php echo ($username); ?></h2>
                         </div>
                     </div>
                     <!-- /menu profile quick info -->
@@ -126,7 +131,7 @@
                         <a data-toggle="tooltip" data-placement="top" title="Lock">
                             <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
                         </a>
-                        <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">
+                        <a data-toggle="tooltip" data-placement="top" title="Logout" href="index.php">
                             <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
                         </a>
                     </div>
@@ -155,7 +160,7 @@
                                         <span>Settings</span>
                                     </a>
                                     <a class="dropdown-item" href="javascript:;">Help</a>
-                                    <a class="dropdown-item" href="login.html"><i class="fa fa-sign-out pull-right"></i>
+                                    <a class="dropdown-item" href="index.php"><i class="fa fa-sign-out pull-right"></i>
                                         Log Out</a>
                                 </div>
                             </li>

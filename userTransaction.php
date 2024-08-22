@@ -1,3 +1,7 @@
+<?php
+include 'login.php';
+$username = $_SESSION['username'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,7 +43,7 @@
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
-                            <h2>John Doe</h2>
+                            <h2><?php echo ($username); ?></h2>
                         </div>
                     </div>
                     <!-- /menu profile quick info -->
@@ -87,13 +91,14 @@
                         <a data-toggle="tooltip" data-placement="top" title="Lock">
                             <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
                         </a>
-                        <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">
+                        <a data-toggle="tooltip" data-placement="top" title="Logout" href="index.php">
                             <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
                         </a>
                     </div>
                     <!-- /menu footer buttons -->
                 </div>
             </div>
+
 
             <!-- top navigation -->
             <div class="top_nav">
@@ -116,7 +121,7 @@
                                         <span>Settings</span>
                                     </a>
                                     <a class="dropdown-item" href="javascript:;">Help</a>
-                                    <a class="dropdown-item" href="login.html"><i class="fa fa-sign-out pull-right"></i>
+                                    <a class="dropdown-item" href="index.php"><i class="fa fa-sign-out pull-right"></i>
                                         Log Out</a>
                                 </div>
                             </li>
@@ -213,29 +218,64 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Example rows -->
-                            <tr>
-                                <td><span class="badge badge-success">Completed</span></td>
-                                <td>TRX123456</td>
-                                <td>Consultation</td>
-                                <td>2024-08-15</td>
-                                <td>10:00 AM - 10:30 AM</td>
-                                <td>2024-08-16</td>
-                                <td><button class="btn btn-primary btn-sm">View</button></td>
-                            </tr>
-                            <tr>
-                                <td><span class="badge badge-warning">Pending</span></td>
-                                <td>TRX654321</td>
-                                <td>Follow-up</td>
-                                <td>2024-08-20</td>
-                                <td>11:00 AM - 11:30 AM</td>
-                                <td>N/A</td>
-                                <td><button class="btn btn-primary btn-sm">View</button></td>
-                            </tr>
-                            <!-- Additional rows as needed -->
+                            <?php
+                            include 'includes/dbconn.php';
+
+                            $username = $_SESSION['username'];
+
+                            // Fetch user_id for username
+                            $sql = "SELECT ID FROM appointment_system.registration_table WHERE username = ?";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param('s', $username);
+                            $stmt->execute();
+                            $stmt->bind_result($user_id);
+                            $stmt->fetch();
+                            $stmt->close();
+
+                            if ($user_id !== null) {
+                                echo "<p>Debug: User ID retrieved for username '$username': $user_id</p>";
+
+                                // Fetch transactions directly without joins
+                                $sql = "SELECT *
+                                FROM appointment_system.transactions
+                                WHERE user_id = ?";
+
+                                $stmt = $conn->prepare($sql);
+                                $stmt->bind_param('i', $user_id);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+
+                                if ($result === false) {
+                                    die('Query failed: ' . htmlspecialchars($stmt->error));
+                                }
+
+                                if ($result->num_rows > 0) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo "<tr>
+                                <td>{$row['status']}</td>
+                                <td>{$row['transaction_no']}</td>
+                                <td>{$row['service_id']}</td>
+                                <td>{$row['schedule_id']}</td>
+                                <td>{$row['time_slot_id']}</td>
+                                <td>{$row['date_seen']}</td>
+                                <td><button class='btn btn-primary btn-sm'>View</button></td>
+                            </tr>";
+                                    }
+                                } else {
+                                    echo "<p>No transactions found for user ID $user_id.</p>";
+                                }
+
+                                $stmt->close();
+                            } else {
+                                echo "<p>No user ID found for username '$username'.</p>";
+                            }
+
+                            $conn->close();
+                            ?>
                         </tbody>
                     </table>
                 </div>
+
             </div>
 
 

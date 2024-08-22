@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
 
-        // Check if the password matches
+        //Check if the password matches
         if ($password === $user['Password']) { 
             if ($loginType === 'admin') {
                 $_SESSION['adminUsername'] = $user['Username'];
@@ -48,4 +48,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->close();
     $conn->close();
 }
+
 ?>
