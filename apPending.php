@@ -1,3 +1,7 @@
+<?php
+include 'login.php';
+$username = $_SESSION['username'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -63,7 +67,7 @@
                                         <li><a href="apPending.php">Pending</a></li>
                                         <li><a href="apApproved.php">Approved</a></li>
                                         <li><a href="apCompleted.php">Completed</a></li>
-                                        <li><a href="apRejected.php" >Rejected</a></li>
+                                        <li><a href="apRejected.php">Rejected</a></li>
                                     </ul>
                                 </li>
                                 <li><a><i class="fa fa-table"></i> Maintenance<span class="fa fa-chevron-down"></span>
@@ -224,25 +228,60 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Example Row -->
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>Confirmed</td>
-                            <td>12345</td>
-                            <td>General Checkup</td>
-                            <td>2024-08-15</td>
-                            <td>10:00 AM - 10:30 AM</td>
-                            <td>
-                                <button class="btn btn-sm btn-info">View</button>
-                                <button class="btn btn-sm btn-warning">Edit</button>
-                                <button class="btn btn-sm btn-danger">Delete</button>
-                            </td>
-                        </tr>
-                        <!-- More rows as needed -->
+                        <?php
+                        include 'includes/dbconn.php';
+
+                        // Fetch pending transactions only
+                        $sql = "SELECT 
+                    t.ID AS transaction_id,
+                    t.status,
+                    t.transaction_no,
+                    s.Services AS service_id,
+                    sr.Slots_Date AS schedule_id,
+                    CONCAT(ts.start_time, ' - ', ts.end_time) AS time_slot_id,
+                    t.date_seen
+                FROM 
+                    appointment_system.transactions t
+                    LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
+                    LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
+                    LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
+                WHERE 
+                    t.status = 'Pending'";
+
+                        $stmt = $conn->prepare($sql);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+
+                        if ($result === false) {
+                            die('Query failed: ' . htmlspecialchars($stmt->error));
+                        }
+                        
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<tr>
+                        <td>{$row['transaction_id']}</td>
+                        <td><span class='bg-dark text-white'>{$row['status']}</span></td>
+                        <td>{$row['transaction_no']}</td>
+                        <td>{$row['service_id']}</td>
+                        <td>{$row['schedule_id']}</td>
+                        <td>{$row['time_slot_id']}</td>
+                        <td>
+                            <button class='btn btn-primary btn-sm' onclick='updateTransactionStatus({$row['transaction_id']}, \"Approved\")'>Approve</button>
+                            <button class='btn btn-success btn-sm' onclick='updateTransactionStatus({$row['transaction_id']}, \"Completed\")'>Complete</button>
+                            <button class='btn btn-danger btn-sm' onclick='updateTransactionStatus({$row['transaction_id']}, \"Rejected\")'>Reject</button>
+                        </td>
+                    </tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='7'>No pending transactions found.</td></tr>";
+                        }
+
+                        $stmt->close();
+                        $conn->close();
+                        ?>
                     </tbody>
                 </table>
             </div>
-
 
 
 
@@ -289,6 +328,28 @@
 
         <!-- Custom Theme Scripts -->
         <script src="build/js/custom.min.js"></script>
+
+        <script>
+            function updateTransactionStatus(id, status) {
+                if (confirm('Are you sure you want to ' + status.toLowerCase() + ' this transaction?')) {
+                    // AJAX request to update the transaction status
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "update_status_approved.php", true);
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            if (xhr.responseText === 'Success') {
+                                // Reload the page to reflect the changes
+                                window.location.reload();
+                            } else {
+                                alert('Failed to update the transaction.');
+                            }
+                        }
+                    };
+                    xhr.send("id=" + id + "&status=" + status);
+                }
+            }
+        </script>
 
 </body>
 

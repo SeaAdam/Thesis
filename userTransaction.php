@@ -219,8 +219,10 @@ $username = $_SESSION['username'];
                         </thead>
                         <tbody>
                             <?php
+
                             include 'includes/dbconn.php';
 
+                            // Fetch username from session
                             $username = $_SESSION['username'];
 
                             // Fetch user_id for username
@@ -233,12 +235,21 @@ $username = $_SESSION['username'];
                             $stmt->close();
 
                             if ($user_id !== null) {
-                                echo "<p>Debug: User ID retrieved for username '$username': $user_id</p>";
-
-                                // Fetch transactions directly without joins
-                                $sql = "SELECT *
-                                FROM appointment_system.transactions
-                                WHERE user_id = ?";
+                                $sql = "SELECT 
+                                t.ID AS transaction_id,
+                                t.status,
+                                t.transaction_no,
+                                s.Services AS service_id,
+                                sr.Slots_Date AS schedule_id,
+                                CONCAT(ts.start_time, ' - ', ts.end_time) AS time_slot_id,
+                                t.date_seen
+                            FROM 
+                                appointment_system.transactions t
+                                LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
+                                LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
+                                LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
+                            WHERE 
+                                t.user_id = ?";
 
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bind_param('i', $user_id);
@@ -251,18 +262,32 @@ $username = $_SESSION['username'];
 
                                 if ($result->num_rows > 0) {
                                     while ($row = $result->fetch_assoc()) {
+                                        // Determine the class and content based on the status
+                                        $statusClass = '';
+                                        if ($row['status'] == 'Approved') {
+                                            $statusClass = 'bg-success text-white';
+                                        } elseif ($row['status'] == 'Completed') {
+                                            $statusClass = 'bg-info text-white';
+                                        } elseif ($row['status'] == 'Rejected') {
+                                            $statusClass = 'bg-danger text-white';
+                                        } else {
+                                            $statusClass = 'bg-dark text-white'; // Default case
+                                        }
+
+                                        // Generate the table row with the conditional status formatting
                                         echo "<tr>
-                                <td>{$row['status']}</td>
-                                <td>{$row['transaction_no']}</td>
-                                <td>{$row['service_id']}</td>
-                                <td>{$row['schedule_id']}</td>
-                                <td>{$row['time_slot_id']}</td>
-                                <td>{$row['date_seen']}</td>
-                                <td><button class='btn btn-primary btn-sm'>View</button></td>
-                            </tr>";
+                                                <td>{$row['transaction_id']}</td>
+                                                <td><span class='{$statusClass}'>{$row['status']}</span></td>
+                                                <td>{$row['transaction_no']}</td>
+                                                <td>{$row['service_id']}</td>
+                                                <td>{$row['schedule_id']}</td>
+                                                <td>{$row['time_slot_id']}</td>
+                                                <td>{$row['date_seen']}</td>
+                                                <td><button class='btn btn-primary btn-sm'>View</button></td>
+                                            </tr>";
                                     }
                                 } else {
-                                    echo "<p>No transactions found for user ID $user_id.</p>";
+                                    echo "<p>No transactions found for User $username.</p>";
                                 }
 
                                 $stmt->close();
@@ -272,6 +297,7 @@ $username = $_SESSION['username'];
 
                             $conn->close();
                             ?>
+
                         </tbody>
                     </table>
                 </div>

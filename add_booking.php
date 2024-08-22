@@ -1,33 +1,5 @@
 <?php
-// include 'includes/dbconn.php';
-
-// // Collect POST data
-// $selectedTimeSlot = $_POST['selectedTimeSlot'];
-// $patientName = $_POST['patientName'];
-// $serviceType = $_POST['serviceType'];
-// $scheduleId = $_POST['scheduleId'];
-// $timeSlotId = $_POST['timeSlotId'];
-
-// // Generate a unique transaction number in the format PTN-XXX
-// $transactionNo = 'PTN-' . str_pad(rand(0, 999), 3, '0', STR_PAD_LEFT);
-
-// // Insert into transactions table
-// $sql = "INSERT INTO transactions (status, transaction_no, service_id, schedule_id, time_slot_id, date_seen) 
-//         VALUES (?, ?, ?, ?, ?, NOW())";
-
-// $stmt = $conn->prepare($sql);
-// $stmt->bind_param('sssss', $status, $transactionNo, $serviceType, $scheduleId, $timeSlotId);
-
-// $status = 'Pending'; // or any default status you prefer
-
-// if ($stmt->execute()) {
-//     echo 'Booking successfully added!';
-// } else {
-//     echo 'Error: ' . $stmt->error;
-// }
-
-// $stmt->close();
-// $conn->close();
+session_start(); // Start the session
 
 include 'includes/dbconn.php';
 
@@ -37,15 +9,6 @@ $patientId = $_POST['patientName']; // Expecting patient ID
 $serviceType = $_POST['serviceType'];
 $scheduleId = $_POST['scheduleId'];
 $timeSlotId = $_POST['timeSlotId'];
-
-// Debug: Output all POST data
-echo "Received POST data:<br>";
-foreach ($_POST as $key => $value) {
-    echo htmlspecialchars($key) . ": " . htmlspecialchars($value) . "<br>";
-}
-
-// Debug: Output the received patient ID
-echo "Received Patient ID: " . htmlspecialchars($patientId) . "<br>";
 
 // Ensure patientId is not empty
 if (empty($patientId)) {
@@ -70,12 +33,6 @@ $mi = $userRow['MI'];
 $lastName = $userRow['LastName'];
 $username = $userRow['username'];
 
-// Debug: Output the fetched details
-echo "Fetched First Name: " . htmlspecialchars($firstName) . "<br>";
-echo "Fetched MI: " . htmlspecialchars($mi) . "<br>";
-echo "Fetched Last Name: " . htmlspecialchars($lastName) . "<br>";
-echo "Fetched Username: " . htmlspecialchars($username) . "<br>";
-
 // Fetch user_id based on the username
 $sql = "SELECT ID FROM registration_table WHERE username = ?";
 $stmt = $conn->prepare($sql);
@@ -91,9 +48,6 @@ if (!$userRow) {
 
 $user_id = $userRow['ID'];
 
-// Debug: Output the user_id
-echo "Fetched User ID: " . htmlspecialchars($user_id) . "<br>";
-
 // Generate a unique transaction number in the format PTN-XXX
 $transactionNo = 'PTN-' . str_pad(rand(0, 999), 3, '0', STR_PAD_LEFT);
 
@@ -107,16 +61,15 @@ $stmt->bind_param('sssssi', $status, $transactionNo, $serviceType, $scheduleId, 
 $status = 'Pending'; // or any default status you prefer
 
 if ($stmt->execute()) {
-    echo 'Booking successfully added!';
+    $_SESSION['success'] = 'Booking successfully added!';
 } else {
-    echo 'Error: ' . $stmt->error;
+    $_SESSION['error'] = 'Error: ' . $stmt->error;
 }
 
 $stmt->close();
 $conn->close();
 
-
-
-
-
+// Redirect back to the booking page
+header('Location: adminDashboard.php');
+exit;
 ?>
