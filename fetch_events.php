@@ -38,4 +38,5 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 header('Content-Type: application/json');
 echo json_encode($events);
+
 ?>
