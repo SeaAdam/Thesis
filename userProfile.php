@@ -1,6 +1,32 @@
 <?php
-include 'login.php';
+session_start();
+include 'includes/dbconn.php';
+
+// Check if the user is logged in
+if (!isset($_SESSION['username'])) {
+    header("Location: index.php");
+    exit();
+}
+
+// Get the username from the session
 $username = $_SESSION['username'];
+
+// Fetch user details based on username
+$sql = "SELECT * FROM registration_table WHERE Username = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('s', $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $user = $result->fetch_assoc();
+} else {
+    echo "User not found.";
+    exit();
+}
+
+$stmt->close();
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -212,41 +238,66 @@ $username = $_SESSION['username'];
                                 <div class="card-body text-center">
                                     <img src="profile.jpg" class="rounded-circle mb-3" alt="Profile Picture" width="150"
                                         height="150">
-                                    <h4>Shane Earl Anthony Adamero</h4>
-                                    <p class="text-muted">adamero.s.bsinfotech@gmail.com</p>
+                                    <h4 class="FullName">
+                                        <?php echo htmlspecialchars($user['FirstName'] . ' ' . $user['MI'] . ' ' . $user['LastName']); ?>
+                                    </h4>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Information Display and Update Form (Right) -->
+                        <!-- Information Display Form (Right) -->
                         <div class="col-md-8">
                             <div class="card">
                                 <div class="card-body">
                                     <table class="table">
                                         <tbody>
                                             <tr>
-                                                <th scope="row">Name</th>
-                                                <td>Shane Earl Anthony Adamero</td>
+                                                <th scope="row">Gender</th>
+                                                <td>
+                                                    <p class="Gender"><?php echo htmlspecialchars($user['Gender']); ?>
+                                                    </p>
+                                                </td>
                                             </tr>
                                             <tr>
-                                                <th scope="row">Email</th>
-                                                <td>adamero.s.bsinfotech@gmail.com</td>
+                                                <th scope="row">Age</th>
+                                                <td>
+                                                    <p class="Age"><?php echo htmlspecialchars($user['Age']); ?></p>
+                                                </td>
                                             </tr>
                                             <tr>
-                                                <th scope="row">Address</th>
-                                                <td>39 Bagong Silang Hagonoy, Taguig City, Metro Manila</td>
+                                                <th scope="row">Date of Birth</th>
+                                                <td>
+                                                    <p class="DOB"><?php echo htmlspecialchars($user['DOB']); ?></p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Contact</th>
+                                                <td>
+                                                    <p class="Contact"><?php echo htmlspecialchars($user['Contact']); ?>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Present Address</th>
+                                                <td>
+                                                    <p class="PresentAddress">
+                                                        <?php echo htmlspecialchars($user['PresentAddress']); ?></p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Username</th>
+                                                <td>
+                                                    <p class="Username">
+                                                        <?php echo htmlspecialchars($user['Username']); ?></p>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <div class="d-grid">
-                                        <button type="button" class="btn btn-primary">Update</button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
 
 
@@ -294,6 +345,46 @@ $username = $_SESSION['username'];
 
         <!-- Custom Theme Scripts -->
         <script src="build/js/custom.min.js"></script>
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Fetch user information based on session username
+                function fetchUserInfo() {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'login.php', // Update this to the correct PHP file
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.error) {
+                                console.error(response.error);
+                                return;
+                            }
+
+                            var fullName = response.FirstName + " " + response.MI + " " + response.LastName;
+                            $('.FullName').text(fullName);
+                            $('.ID').val(response.ID);
+                            $('.FirstName').text(response.FirstName);
+                            $('.MI').text(response.MI);
+                            $('.LastName').text(response.LastName);
+                            $('.Gender').text(response.Gender);
+                            $('.Age').text(response.Age);
+                            $('.DOB').text(response.DOB);
+                            $('.Contact').text(response.Contact);
+                            $('.PresentAddress').text(response.PresentAddress);
+                            $('.Username').text(response.Username);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error fetching user info:', error);
+                        }
+                    });
+                }
+
+                // Call the function to fetch and display user info
+                fetchUserInfo();
+            });
+        </script>
+
 
 </body>
 
