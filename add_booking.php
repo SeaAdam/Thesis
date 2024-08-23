@@ -77,7 +77,7 @@ try {
 
     // Commit transaction
     $conn->commit();
-    $_SESSION['success'] = 'Booking successfully added!';
+    $_SESSION['successBooking'] = 'Booking successfully added!';
 } catch (Exception $e) {
     // Rollback transaction in case of error
     $conn->rollback();

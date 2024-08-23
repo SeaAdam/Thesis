@@ -67,7 +67,7 @@ $conn->close();
                     <!-- menu profile quick info -->
                     <div class="profile clearfix">
                         <div class="profile_pic">
-                            <img src="images/img.jpg" alt="..." class="img-circle profile_img">
+                            <img src="images\icon-profile-user.png" alt="..." class="img-circle profile_img">
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
@@ -90,6 +90,7 @@ $conn->close();
                                 <li><a href="userProfile.php"><i class="fa fa-desktop"></i> Profile </a>
                                 </li>
                                 <li><a href="userTransaction.php"><i class="fa fa-table"></i> Transaction </a>
+                                <li><a href="#"><i></i> HELP DESK </a>
                                 </li>
                                 <?php
                                 include './contactsFetch.php'; // Assuming this file sets up the $data array
@@ -138,7 +139,7 @@ $conn->close();
                             <li class="nav-item dropdown open" style="padding-left: 15px;">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true"
                                     id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
-                                    <img src="images/img.jpg" alt="">John Doe
+                                    <img src="images\icon-profile-user.png" alt="">John Doe
                                 </a>
                                 <div class="dropdown-menu dropdown-usermenu pull-right"
                                     aria-labelledby="navbarDropdown">
@@ -236,7 +237,7 @@ $conn->close();
                         <div class="col-md-4">
                             <div class="card">
                                 <div class="card-body text-center">
-                                    <img src="profile.jpg" class="rounded-circle mb-3" alt="Profile Picture" width="150"
+                                    <img src="images\profile-pic.jpg" class="mb-3" alt="Profile Picture" width="150"
                                         height="150">
                                     <h4 class="FullName">
                                         <?php echo htmlspecialchars($user['FirstName'] . ' ' . $user['MI'] . ' ' . $user['LastName']); ?>

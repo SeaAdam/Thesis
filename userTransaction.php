@@ -39,7 +39,7 @@ $username = $_SESSION['username'];
                     <!-- menu profile quick info -->
                     <div class="profile clearfix">
                         <div class="profile_pic">
-                            <img src="images/img.jpg" alt="..." class="img-circle profile_img">
+                            <img src="images\icon-profile-user.png" alt="..." class="img-circle profile_img">
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
@@ -62,6 +62,7 @@ $username = $_SESSION['username'];
                                 <li><a href="userProfile.php"><i class="fa fa-desktop"></i> Profile </a>
                                 </li>
                                 <li><a href="userTransaction.php"><i class="fa fa-table"></i> Transaction </a>
+                                <li><a href="#"><i></i> HELP DESK </a>
                                 </li>
                                 <?php
                                 include './contactsFetch.php'; // Assuming this file sets up the $data array
@@ -111,7 +112,7 @@ $username = $_SESSION['username'];
                             <li class="nav-item dropdown open" style="padding-left: 15px;">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true"
                                     id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
-                                    <img src="images/img.jpg" alt="">John Doe
+                                    <img src="images\icon-profile-user.png" alt="">John Doe
                                 </a>
                                 <div class="dropdown-menu dropdown-usermenu pull-right"
                                     aria-labelledby="navbarDropdown">
@@ -220,13 +221,10 @@ $username = $_SESSION['username'];
                         </thead>
                         <tbody>
                             <?php
-
                             include 'includes/dbconn.php';
 
-                            // Fetch username from session
                             $username = $_SESSION['username'];
 
-                            // Fetch user_id for username
                             $sql = "SELECT ID FROM appointment_system.registration_table WHERE username = ?";
                             $stmt = $conn->prepare($sql);
                             $stmt->bind_param('s', $username);
@@ -237,20 +235,20 @@ $username = $_SESSION['username'];
 
                             if ($user_id !== null) {
                                 $sql = "SELECT 
-                                t.ID AS transaction_id,
-                                t.status,
-                                t.transaction_no,
-                                s.Services AS service_id,
-                                sr.Slots_Date AS schedule_id,
-                                CONCAT(ts.start_time, ' - ', ts.end_time) AS time_slot_id,
-                                t.date_seen
-                            FROM 
-                                appointment_system.transactions t
-                                LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
-                                LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
-                                LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
-                            WHERE 
-                                t.user_id = ?";
+                            t.ID AS transaction_id,
+                            t.status,
+                            t.transaction_no,
+                            s.Services AS service_id,
+                            sr.Slots_Date AS schedule_id,
+                            CONCAT(ts.start_time, ' - ', ts.end_time) AS time_slot_id,
+                            t.date_seen
+                        FROM 
+                            appointment_system.transactions t
+                            LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
+                            LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
+                            LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
+                        WHERE 
+                            t.user_id = ?";
 
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bind_param('i', $user_id);
@@ -263,7 +261,6 @@ $username = $_SESSION['username'];
 
                                 if ($result->num_rows > 0) {
                                     while ($row = $result->fetch_assoc()) {
-                                        // Determine the class and content based on the status
                                         $statusClass = '';
                                         if ($row['status'] == 'Approved') {
                                             $statusClass = 'bg-success text-white';
@@ -275,17 +272,16 @@ $username = $_SESSION['username'];
                                             $statusClass = 'bg-dark text-white'; // Default case
                                         }
 
-                                        // Generate the table row with the conditional status formatting
                                         echo "<tr>
-                                                <td>{$row['transaction_id']}</td>
-                                                <td><span class='{$statusClass}'>{$row['status']}</span></td>
-                                                <td>{$row['transaction_no']}</td>
-                                                <td>{$row['service_id']}</td>
-                                                <td>{$row['schedule_id']}</td>
-                                                <td>{$row['time_slot_id']}</td>
-                                                <td>{$row['date_seen']}</td>
-                                                <td><button class='btn btn-primary btn-sm'>View Receipt</button></td>
-                                            </tr>";
+                                        <td>{$row['transaction_id']}</td>
+                                        <td><span class='{$statusClass}'>{$row['status']}</span></td>
+                                        <td>{$row['transaction_no']}</td>
+                                        <td>{$row['service_id']}</td>
+                                        <td>{$row['schedule_id']}</td>
+                                        <td>{$row['time_slot_id']}</td>
+                                        <td>{$row['date_seen']}</td>
+                                        <td><a href='receipt.php?transaction_id={$row['transaction_id']}' class='btn btn-primary btn-sm'>View Receipt</a></td>
+                                    </tr>";
                                     }
                                 } else {
                                     echo "<p>No transactions found for User $username.</p>";
@@ -298,9 +294,9 @@ $username = $_SESSION['username'];
 
                             $conn->close();
                             ?>
-
                         </tbody>
                     </table>
+
                 </div>
 
             </div>

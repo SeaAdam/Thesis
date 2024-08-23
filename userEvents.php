@@ -33,8 +33,7 @@ $username = $_SESSION['username'];
 
     <style>
         #calendar {
-            width: 100%;
-            float: left;
+            width: 80%;
         }
 
         #legend,
@@ -61,6 +60,17 @@ $username = $_SESSION['username'];
             height: 20px;
             margin-right: 10px;
         }
+
+        .fc .fc-button:not(:disabled) {
+            background-color: lemonchiffon;
+            color: black;
+
+        }
+
+        .fc .fc-button-primary:disabled {
+            background-color: lemonchiffon;
+            color: black;
+        }
     </style>
 </head>
 
@@ -79,7 +89,7 @@ $username = $_SESSION['username'];
                     <!-- menu profile quick info -->
                     <div class="profile clearfix">
                         <div class="profile_pic">
-                            <img src="images/img.jpg" alt="..." class="img-circle profile_img">
+                            <img src="images\icon-profile-user.png" alt="..." class="img-circle profile_img">
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
@@ -102,6 +112,7 @@ $username = $_SESSION['username'];
                                 <li><a href="userProfile.php"><i class="fa fa-desktop"></i> Profile </a>
                                 </li>
                                 <li><a href="userTransaction.php"><i class="fa fa-table"></i> Transaction </a>
+                                <li><a href="#"><i></i> HELP DESK </a>
                                 </li>
                                 <?php
                                 include './contactsFetch.php'; // Assuming this file sets up the $data array
@@ -150,7 +161,7 @@ $username = $_SESSION['username'];
                             <li class="nav-item dropdown open" style="padding-left: 15px;">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true"
                                     id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
-                                    <img src="images/img.jpg" alt="">John Doe
+                                    <img src="images\icon-profile-user.png" alt="">John Doe
                                 </a>
                                 <div class="dropdown-menu dropdown-usermenu pull-right"
                                     aria-labelledby="navbarDropdown">
@@ -253,18 +264,7 @@ $username = $_SESSION['username'];
 
                     </div>
                 </div>
-
-                <!-- footer content -->
-                <footer>
-                    <div class="pull-right">
-                        Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
-                    </div>
-                    <div class="clearfix"></div>
-                </footer>
-                <!-- /footer content -->
-
             </div>
-
         </div>
 
 

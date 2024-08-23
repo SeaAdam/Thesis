@@ -289,141 +289,9 @@ session_start();
 
             <div class="right_col" role="main">
                 <div class="row">
-
-
-                    <div class="col-md-3 col-sm-3 ">
-                        <div class="x_panel tile fixed_height_320">
-                            <div class="x_title">
-                                <h2>App Versions</h2>
-                                <ul class="nav navbar-right panel_toolbox">
-                                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                                    </li>
-                                    <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                            aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="#">Settings 1</a>
-                                            <a class="dropdown-item" href="#">Settings 2</a>
-                                        </div>
-                                    </li>
-                                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                                    </li>
-                                </ul>
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="x_content">
-                                <h4>App Usage across versions</h4>
-                                <div class="widget_summary">
-                                    <div class="w_left w_25">
-                                        <span>0.1.5.2</span>
-                                    </div>
-                                    <div class="w_center w_55">
-                                        <div class="progress">
-                                            <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60"
-                                                aria-valuemin="0" aria-valuemax="100" style="width: 66%;">
-                                                <span class="sr-only">60% Complete</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="w_right w_20">
-                                        <span>123k</span>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </div>
-
-                                <div class="widget_summary">
-                                    <div class="w_left w_25">
-                                        <span>0.1.5.3</span>
-                                    </div>
-                                    <div class="w_center w_55">
-                                        <div class="progress">
-                                            <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60"
-                                                aria-valuemin="0" aria-valuemax="100" style="width: 45%;">
-                                                <span class="sr-only">60% Complete</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="w_right w_20">
-                                        <span>53k</span>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <div class="widget_summary">
-                                    <div class="w_left w_25">
-                                        <span>0.1.5.4</span>
-                                    </div>
-                                    <div class="w_center w_55">
-                                        <div class="progress">
-                                            <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60"
-                                                aria-valuemin="0" aria-valuemax="100" style="width: 25%;">
-                                                <span class="sr-only">60% Complete</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="w_right w_20">
-                                        <span>23k</span>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <div class="widget_summary">
-                                    <div class="w_left w_25">
-                                        <span>0.1.5.5</span>
-                                    </div>
-                                    <div class="w_center w_55">
-                                        <div class="progress">
-                                            <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60"
-                                                aria-valuemin="0" aria-valuemax="100" style="width: 5%;">
-                                                <span class="sr-only">60% Complete</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="w_right w_20">
-                                        <span>3k</span>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <div class="widget_summary">
-                                    <div class="w_left w_25">
-                                        <span>0.1.5.6</span>
-                                    </div>
-                                    <div class="w_center w_55">
-                                        <div class="progress">
-                                            <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60"
-                                                aria-valuemin="0" aria-valuemax="100" style="width: 2%;">
-                                                <span class="sr-only">60% Complete</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="w_right w_20">
-                                        <span>1k</span>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3 col-sm-3 ">
-                        <div class="x_panel tile fixed_height_320 overflow_hidden">
-                            <div class="x_title">
-                                <h2>Device Usage</h2>
-                                <ul class="nav navbar-right panel_toolbox">
-                                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                                    </li>
-                                    <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                            aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="#">Settings 1</a>
-                                            <a class="dropdown-item" href="#">Settings 2</a>
-                                        </div>
-                                    </li>
-                                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                                    </li>
-                                </ul>
-                                <div class="clearfix"></div>
-                            </div>
+                    <div class="col-sm-3 py-2">
+                        <div class="card h-100 border-primary">
+                            <h2>Device Usage</h2>
                             <div class="x_content">
                                 <table class="" style="width:100%">
                                     <tr>
@@ -483,113 +351,38 @@ session_start();
                             </div>
                         </div>
                     </div>
-
-
-                    <div class="col-md-3 col-sm-3 ">
-                        <div class="x_panel tile fixed_height_320">
-                            <div class="x_title">
-                                <h2>Quick Settings</h2>
-                                <ul class="nav navbar-right panel_toolbox">
-                                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                                    </li>
-                                    <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                            aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="#">Settings 1</a>
-                                            <a class="dropdown-item" href="#">Settings 2</a>
-                                        </div>
-                                    </li>
-                                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                                    </li>
-                                </ul>
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="x_content">
-                                <div class="dashboard-widget-content">
-                                    <ul class="quick-list">
-                                        <li><i class="fa fa-calendar-o"></i><a href="#">Settings</a>
-                                        </li>
-                                        <li><i class="fa fa-bars"></i><a href="#">Subscription</a>
-                                        </li>
-                                        <li><i class="fa fa-bar-chart"></i><a href="#">Auto Renewal</a> </li>
-                                        <li><i class="fa fa-line-chart"></i><a href="#">Achievements</a>
-                                        </li>
-                                        <li><i class="fa fa-bar-chart"></i><a href="#">Auto Renewal</a> </li>
-                                        <li><i class="fa fa-line-chart"></i><a href="#">Achievements</a>
-                                        </li>
-                                        <li><i class="fa fa-area-chart"></i><a href="#">Logout</a>
-                                        </li>
-                                    </ul>
-
-                                    <div class="sidebar-widget">
-                                        <h4>Profile Completion</h4>
-                                        <canvas width="150" height="80" id="chart_gauge_01" class=""
-                                            style="width: 160px; height: 100px;"></canvas>
-                                        <div class="goal-wrapper">
-                                            <span id="gauge-text" class="gauge-value pull-left">0</span>
-                                            <span class="gauge-value pull-left">%</span>
-                                            <span id="goal-text" class="goal-value pull-right">100%</span>
-                                        </div>
-                                    </div>
-                                </div>
+                    <div class="col-sm-3 py-2">
+                        <div class="card h-100 text-white bg-danger">
+                            <div class="card-body">
+                                <h3 class="card-title">Danger</h3>
+                                <p class="card-text">With supporting text below as a natural lead-in to additional
+                                    content.</p>
+                                <a href="#" class="btn btn-outline-light">Outline</a>
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-md-3 col-sm-3 ">
-                        <div class="x_panel tile fixed_height_320">
-                            <div class="x_title">
-                                <h2>Quick Settings</h2>
-                                <ul class="nav navbar-right panel_toolbox">
-                                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                                    </li>
-                                    <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                            aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="#">Settings 1</a>
-                                            <a class="dropdown-item" href="#">Settings 2</a>
-                                        </div>
-                                    </li>
-                                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                                    </li>
-                                </ul>
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="x_content">
-                                <div class="dashboard-widget-content">
-                                    <ul class="quick-list">
-                                        <li><i class="fa fa-calendar-o"></i><a href="#">Settings</a>
-                                        </li>
-                                        <li><i class="fa fa-bars"></i><a href="#">Subscription</a>
-                                        </li>
-                                        <li><i class="fa fa-bar-chart"></i><a href="#">Auto Renewal</a> </li>
-                                        <li><i class="fa fa-line-chart"></i><a href="#">Achievements</a>
-                                        </li>
-                                        <li><i class="fa fa-bar-chart"></i><a href="#">Auto Renewal</a> </li>
-                                        <li><i class="fa fa-line-chart"></i><a href="#">Achievements</a>
-                                        </li>
-                                        <li><i class="fa fa-area-chart"></i><a href="#">Logout</a>
-                                        </li>
-                                    </ul>
-
-                                    <div class="sidebar-widget">
-                                        <h4>Profile Completion</h4>
-                                        <canvas width="150" height="80" id="chart_gauge_01" class=""
-                                            style="width: 160px; height: 100px;"></canvas>
-                                        <div class="goal-wrapper">
-                                            <span id="gauge-text" class="gauge-value pull-left">0</span>
-                                            <span class="gauge-value pull-left">%</span>
-                                            <span id="goal-text" class="goal-value pull-right">100%</span>
-                                        </div>
-                                    </div>
-                                </div>
+                    <div class="col-sm-3 py-2">
+                        <div class="card h-100 text-white bg-danger">
+                            <div class="card-body">
+                                <h3 class="card-title">Danger</h3>
+                                <p class="card-text">With supporting text below as a natural lead-in to additional
+                                    content.</p>
+                                <a href="#" class="btn btn-outline-light">Outline</a>
                             </div>
                         </div>
                     </div>
-
+                    <div class="col-sm-3 py-2">
+                        <div class="card h-100 text-white bg-primary">
+                            <div class="card-body">
+                                <h3 class="card-title">Hello</h3>
+                                <p class="card-text">With supporting text below as a natural lead-in to additional
+                                    content.</p>
+                                <a href="#" class="btn btn-outline-light">Outline</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
 
                 <div class="card">
                     <div class="card-header">
@@ -811,9 +604,25 @@ session_start();
                     eventDidMount: function (info) {
                         // Check if the event is from 'schedule.php'
                         if (info.event.extendedProps && info.event.extendedProps.source === 'schedule.php') {
+                            const slotsRemaining = parseInt(info.el.querySelector('.fc-event-title').textContent, 10);
+
+                            // Apply background color based on slot availability
+                            if (slotsRemaining === undefined) {
+                                console.error('slots_remaining is undefined for event:', info.event);
+                            } else if (slotsRemaining === 0) {
+                                // Change background color of the event to red
+                                info.el.style.backgroundColor = 'red';
+                                info.el.classList.add('event-unavailable');
+                            } else {
+                                // Change background color of the event to green
+                                info.el.style.backgroundColor = 'green';
+                                info.el.classList.add('event-available');
+                            }
+
+                            // Add the button for slot viewing
                             let button = document.createElement('button');
                             button.textContent = info.event.extendedProps.buttonText || 'View Slots';
-                            button.className = 'btn btn-primary';
+                            button.className = 'btn btn-warning btn-sm';
                             button.onclick = function () {
                                 modalTitle.textContent = `BOOK FOR: ${info.event.start.toLocaleDateString()}`;
                                 modalDate.textContent = `SLOTS: ${info.event.title}`;
@@ -865,6 +674,9 @@ session_start();
                             };
 
                             info.el.appendChild(button);
+                        } else {
+                            // Reset background color for events not from 'schedule.php' (e.g., holidays)
+                            info.el.style.backgroundColor = 'gray'; // Reset to default background color
                         }
                     }
                 });

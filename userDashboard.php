@@ -159,7 +159,7 @@ $conn->close();
                     <!-- menu profile quick info -->
                     <div class="profile clearfix">
                         <div class="profile_pic">
-                            <img src="images/img.jpg" alt="..." class="img-circle profile_img">
+                            <img src="images\icon-profile-user.png" alt="..." class="img-circle profile_img">
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
@@ -182,6 +182,8 @@ $conn->close();
                                 <li><a href="userProfile.php"><i class="fa fa-desktop"></i> Profile </a>
                                 </li>
                                 <li><a href="userTransaction.php"><i class="fa fa-table"></i> Transaction </a>
+
+                                <li><a href="#"><i></i> HELP DESK </a>
                                 </li>
                                 <?php
                                 include './contactsFetch.php'; // Assuming this file sets up the $data array
@@ -230,7 +232,7 @@ $conn->close();
                             <li class="nav-item dropdown open" style="padding-left: 15px;">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true"
                                     id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
-                                    <img src="images/img.jpg" alt="">John Doe
+                                    <img src="images\icon-profile-user.png" alt="">John Doe
                                 </a>
                                 <div class="dropdown-menu dropdown-usermenu pull-right"
                                     aria-labelledby="navbarDropdown">
@@ -322,16 +324,6 @@ $conn->close();
             <!-- /top navigation -->
 
             <div class="right_col" role="main">
-                <?php
-                if (isset($_SESSION['username'])) {
-                    echo "
-                        <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
-                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Login Success!</h4>
-                            <h6>Welcome to the User Dashboard!;</h6>
-                        </div>
-                    ";
-                }
-                ?>
                 <div class="head-title">
                     <div>
                         <h1>Dashboard</h1>
@@ -441,18 +433,6 @@ $conn->close();
                         </div>
                     </div>
                 </div>
-
-
-
-                <!-- footer content -->
-                <footer>
-                    <div class="pull-right">
-                        Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
-                    </div>
-                    <div class="clearfix"></div>
-                </footer>
-                <!-- /footer content -->
-
             </div>
 
 
@@ -503,6 +483,14 @@ $conn->close();
 
 
         <script>
+            $(document).ready(function () {
+                window.setTimeout(function () {
+                    $("#alert").fadeTo(1000, 0).slideUp(1000, function () {
+                        $(this).remove();
+                    });
+                }, 5000);
+            });
+
             document.addEventListener('DOMContentLoaded', function () {
                 var dashboardCalendarEl = document.getElementById('calendar');
                 var eventModal = document.getElementById('eventModal');
