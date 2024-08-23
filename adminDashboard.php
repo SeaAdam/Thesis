@@ -762,127 +762,7 @@ session_start();
         <script src="build/js/custom.min.js"></script>
 
 
-        <script>
-            // document.addEventListener('DOMContentLoaded', function () {
-            //     var dashboardCalendarEl = document.getElementById('calendar');
-            //     var eventModal = document.getElementById('eventModal');
-            //     var toggleButton = document.getElementById('toggleSlotsButton');
-            //     var modalSlots = document.getElementById('modalSlots');
-            //     var bookingForm = document.getElementById('bookingForm');
-            //     var modalTitle = document.getElementById('modalTitle');
-            //     var modalDate = document.getElementById('modalDate');
-            //     var selectedTimeSlot = document.getElementById('selectedTimeSlot');
-
-            //     // Initialize FullCalendar
-            //     var dashboardCalendar = new FullCalendar.Calendar(dashboardCalendarEl, {
-            //         initialView: 'dayGridMonth',
-            //         selectable: true,
-            //         events: function (info, successCallback, failureCallback) {
-            //             var sources = ['schedule.php', 'fetch_events.php'];
-            //             var combinedEvents = [];
-
-            //             var fetchNext = function (index) {
-            //                 if (index >= sources.length) {
-            //                     successCallback(combinedEvents);
-            //                     return;
-            //                 }
-
-            //                 fetch(sources[index])
-            //                     .then(response => response.json())
-            //                     .then(data => {
-            //                         combinedEvents = combinedEvents.concat(data);
-            //                         fetchNext(index + 1);
-            //                     })
-            //                     .catch(error => {
-            //                         console.error('Error fetching events:', error);
-            //                         fetchNext(index + 1);
-            //                     });
-            //             };
-
-            //             fetchNext(0);
-            //         },
-            //         eventDidMount: function (info) {
-            //             let button = document.createElement('button');
-            //             button.textContent = info.event.extendedProps.buttonText || 'View Slots';
-            //             button.className = 'btn btn-primary';
-            //             button.onclick = function () {
-            //                 modalTitle.textContent = `BOOK FOR: ${info.event.start.toLocaleDateString()}`;
-            //                 modalDate.textContent = `SLOTS: ${info.event.title}`;
-
-            //                 let scheduleId = info.event.extendedProps.schedule_id;
-            //                 console.log('Fetching time slots for schedule_id:', scheduleId);
-
-            //                 fetch(`fetch_time_slots.php?schedule_id=${scheduleId}`)
-            //                     .then(response => response.json())
-            //                     .then(data => {
-            //                         if (data.error) {
-            //                             console.error('Error fetching time slots:', data.error);
-            //                             modalSlots.textContent = data.error;
-            //                             return;
-            //                         }
-
-            //                         if (Array.isArray(data) && data.length > 0) {
-            //                             let slotsHtml = data.map(slot =>
-            //                                 `<li><button class="btn btn-outline-primary slot-button" data-start="${slot.start_time}" data-end="${slot.end_time}">${slot.start_time} - ${slot.end_time}</button></li>`
-            //                             ).join('');
-            //                             modalSlots.innerHTML = `Available Time Slots:<ul>${slotsHtml}</ul>`;
-
-            //                             document.querySelectorAll('.slot-button').forEach(button => {
-            //                                 button.addEventListener('click', function () {
-            //                                     selectedTimeSlot.value = `${this.dataset.start} - ${this.dataset.end}`;
-            //                                     bookingForm.style.display = 'block';
-            //                                     modalSlots.style.display = 'none';
-            //                                     toggleButton.style.display = 'inline-block';
-            //                                 });
-            //                             });
-            //                         } else {
-            //                             modalSlots.innerHTML = 'No available time slots.';
-            //                         }
-            //                     })
-            //                     .catch(error => {
-            //                         console.error('Error fetching time slots:', error);
-            //                         modalSlots.textContent = 'Failed to load time slots.';
-            //                     });
-
-            //                 // Show the modal
-            //                 $(eventModal).modal('show');
-            //             };
-
-            //             info.el.appendChild(button);
-            //         }
-            //     });
-
-            //     dashboardCalendar.render();
-
-            //     // Initially hide the toggle button and the booking form
-            //     toggleButton.style.display = 'none';
-            //     bookingForm.style.display = 'none';
-
-            //     // Event listener for the toggle button
-            //     toggleButton.addEventListener('click', function () {
-            //         if (modalSlots.style.display === 'none') {
-            //             // Show the time slots
-            //             modalSlots.style.display = 'block';
-            //             // Hide the booking form
-            //             bookingForm.style.display = 'none';
-            //             // Hide the toggle button again
-            //             toggleButton.style.display = 'none';
-            //         } else {
-            //             // Hide the time slots
-            //             modalSlots.style.display = 'none';
-            //             // Show the booking form
-            //             bookingForm.style.display = 'block';
-            //             // Show the toggle button
-            //             toggleButton.style.display = 'inline-block';
-            //         }
-            //     });
-
-            //     // Refresh page when the modal is closed
-            //     $(eventModal).on('hidden.bs.modal', function () {
-            //         location.reload();
-            //     });
-            // });
-
+        <!-- <script>
             document.addEventListener('DOMContentLoaded', function () {
                 var dashboardCalendarEl = document.getElementById('calendar');
                 var eventModal = document.getElementById('eventModal');
@@ -913,6 +793,11 @@ session_start();
                             fetch(sources[index])
                                 .then(response => response.json())
                                 .then(data => {
+                                    // Add a source identifier to each event
+                                    data.forEach(event => {
+                                        event.source = sources[index]; // Assign the source filename
+                                    });
+
                                     combinedEvents = combinedEvents.concat(data);
                                     fetchNext(index + 1);
                                 })
@@ -925,48 +810,201 @@ session_start();
                         fetchNext(0);
                     },
                     eventDidMount: function (info) {
-                        let button = document.createElement('button');
-                        button.textContent = info.event.extendedProps.buttonText || 'View Slots';
-                        button.className = 'btn btn-primary';
-                        button.onclick = function () {
-                            modalTitle.textContent = `BOOK FOR: ${info.event.start.toLocaleDateString()}`;
-                            modalDate.textContent = `SLOTS: ${info.event.title}`;
+                        // Check if the event is from 'schedule.php'
+                        if (info.event.extendedProps && info.event.extendedProps.source === 'schedule.php') {
+                            let button = document.createElement('button');
+                            button.textContent = info.event.extendedProps.buttonText || 'View Slots';
+                            button.className = 'btn btn-primary';
+                            button.onclick = function () {
+                                modalTitle.textContent = `BOOK FOR: ${info.event.start.toLocaleDateString()}`;
+                                modalDate.textContent = `SLOTS: ${info.event.title}`;
 
-                            let scheduleId = info.event.extendedProps.schedule_id;
-                            scheduleIdField.value = scheduleId; // Set the scheduleId field
+                                let scheduleId = info.event.extendedProps.schedule_id;
+                                scheduleIdField.value = scheduleId; // Set the scheduleId field
 
-                            fetch(`fetch_time_slots.php?schedule_id=${scheduleId}`)
+                                fetch(`fetch_time_slots.php?schedule_id=${scheduleId}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (Array.isArray(data) && data.length > 0) {
+                                            let slotsHtml = data.map(slot =>
+                                                `<li>
+                                        <button class="btn btn-outline-primary slot-button" 
+                                                data-id="${slot.id}" 
+                                                data-start="${slot.start_time}" 
+                                                data-end="${slot.end_time}"
+                                                data-slots="${slot.slots_remaining}">
+                                            ${slot.start_time} - ${slot.end_time} 
+                                        </button>
+                                    </li>`
+                                            ).join('');
+                                            modalSlots.innerHTML = `Available Time Slots:<ul>${slotsHtml}</ul>`;
+
+                                            document.querySelectorAll('.slot-button').forEach(button => {
+                                                button.addEventListener('click', function () {
+                                                    selectedTimeSlot.value = `${this.dataset.start} - ${this.dataset.end}`;
+                                                    timeSlotIdField.value = this.dataset.id; // Set the timeSlotId field
+                                                    bookingForm.style.display = 'block';
+                                                    modalSlots.style.display = 'none';
+                                                    toggleButton.style.display = 'inline-block';
+                                                });
+                                            });
+                                        } else {
+                                            modalSlots.innerHTML = 'No available time slots.';
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error fetching time slots:', error);
+                                        modalSlots.textContent = 'Failed to load time slots.';
+                                    });
+
+                                // Show the modal
+                                $(eventModal).modal('show');
+                            };
+
+                            info.el.appendChild(button);
+                        }
+                    }
+                });
+
+                dashboardCalendar.render();
+
+                // Initially hide the toggle button and the booking form
+                toggleButton.style.display = 'none';
+                bookingForm.style.display = 'none';
+
+                // Event listener for the toggle button
+                toggleButton.addEventListener('click', function () {
+                    if (modalSlots.style.display === 'none') {
+                        // Show the time slots
+                        modalSlots.style.display = 'block';
+                        // Hide the booking form
+                        bookingForm.style.display = 'none';
+                        // Hide the toggle button again
+                        toggleButton.style.display = 'none';
+                    } else {
+                        // Hide the time slots
+                        modalSlots.style.display = 'none';
+                        // Show the booking form
+                        bookingForm.style.display = 'block';
+                        // Show the toggle button
+                        toggleButton.style.display = 'inline-block';
+                    }
+                });
+
+                // Refresh page when the modal is closed
+                $(eventModal).on('hidden.bs.modal', function () {
+                    location.reload();
+                });
+            });
+        </script> -->
+
+        <!-- GOODS  -->
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var dashboardCalendarEl = document.getElementById('calendar');
+                var eventModal = document.getElementById('eventModal');
+                var toggleButton = document.getElementById('toggleSlotsButton');
+                var modalSlots = document.getElementById('modalSlots');
+                var bookingForm = document.getElementById('bookingForm');
+                var modalTitle = document.getElementById('modalTitle');
+                var modalDate = document.getElementById('modalDate');
+                var selectedTimeSlot = document.getElementById('selectedTimeSlot');
+                var scheduleIdField = document.getElementById('scheduleId');
+                var timeSlotIdField = document.getElementById('timeSlotId');
+                var serviceTypeSelect = document.getElementById('serviceType');
+
+                // Initialize FullCalendar
+                var dashboardCalendar = new FullCalendar.Calendar(dashboardCalendarEl, {
+                    initialView: 'dayGridMonth',
+                    selectable: true,
+                    events: function (info, successCallback, failureCallback) {
+                        var sources = ['schedule.php', 'fetch_events.php'];
+                        var combinedEvents = [];
+
+                        var fetchNext = function (index) {
+                            if (index >= sources.length) {
+                                successCallback(combinedEvents);
+                                return;
+                            }
+
+                            fetch(sources[index])
                                 .then(response => response.json())
                                 .then(data => {
-                                    if (Array.isArray(data) && data.length > 0) {
-                                        let slotsHtml = data.map(slot =>
-                                            `<li><button class="btn btn-outline-primary slot-button" data-id="${slot.id}" data-start="${slot.start_time}" data-end="${slot.end_time}">${slot.start_time} - ${slot.end_time}</button></li>`
-                                        ).join('');
-                                        modalSlots.innerHTML = `Available Time Slots:<ul>${slotsHtml}</ul>`;
+                                    // Add a source identifier to each event
+                                    data.forEach(event => {
+                                        event.source = sources[index]; // Assign the source filename
+                                    });
 
-                                        document.querySelectorAll('.slot-button').forEach(button => {
-                                            button.addEventListener('click', function () {
-                                                selectedTimeSlot.value = `${this.dataset.start} - ${this.dataset.end}`;
-                                                timeSlotIdField.value = this.dataset.id; // Set the timeSlotId field
-                                                bookingForm.style.display = 'block';
-                                                modalSlots.style.display = 'none';
-                                                toggleButton.style.display = 'inline-block';
-                                            });
-                                        });
-                                    } else {
-                                        modalSlots.innerHTML = 'No available time slots.';
-                                    }
+                                    combinedEvents = combinedEvents.concat(data);
+                                    fetchNext(index + 1);
                                 })
                                 .catch(error => {
-                                    console.error('Error fetching time slots:', error);
-                                    modalSlots.textContent = 'Failed to load time slots.';
+                                    console.error('Error fetching events:', error);
+                                    fetchNext(index + 1);
                                 });
-
-                            // Show the modal
-                            $(eventModal).modal('show');
                         };
 
-                        info.el.appendChild(button);
+                        fetchNext(0);
+                    },
+                    eventDidMount: function (info) {
+                        // Check if the event is from 'schedule.php'
+                        if (info.event.extendedProps && info.event.extendedProps.source === 'schedule.php') {
+                            let button = document.createElement('button');
+                            button.textContent = info.event.extendedProps.buttonText || 'View Slots';
+                            button.className = 'btn btn-primary';
+                            button.onclick = function () {
+                                modalTitle.textContent = `BOOK FOR: ${info.event.start.toLocaleDateString()}`;
+                                modalDate.textContent = `SLOTS: ${info.event.title}`;
+
+                                let scheduleId = info.event.extendedProps.schedule_id;
+                                scheduleIdField.value = scheduleId; // Set the scheduleId field
+
+                                fetch(`fetch_time_slots.php?schedule_id=${scheduleId}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (Array.isArray(data) && data.length > 0) {
+                                            let slotsHtml = data.map(slot => {
+                                                let buttonClass = slot.is_booked ? 'btn btn-outline-secondary disabled' : 'btn btn-outline-primary slot-button';
+                                                let buttonText = slot.is_booked ? 'Unavailable' : `${slot.start_time} - ${slot.end_time}`;
+
+                                                return `
+                                        <li>
+                                            <button class="${buttonClass}" 
+                                                    data-id="${slot.id}" 
+                                                    data-start="${slot.start_time}" 
+                                                    data-end="${slot.end_time}"
+                                                    data-slots="${slot.slots_remaining}">
+                                                ${buttonText}
+                                            </button>
+                                        </li>`;
+                                            }).join('');
+                                            modalSlots.innerHTML = `Available Time Slots:<ul>${slotsHtml}</ul>`;
+
+                                            document.querySelectorAll('.slot-button:not(.disabled)').forEach(button => {
+                                                button.addEventListener('click', function () {
+                                                    selectedTimeSlot.value = `${this.dataset.start} - ${this.dataset.end}`;
+                                                    timeSlotIdField.value = this.dataset.id; // Set the timeSlotId field
+                                                    bookingForm.style.display = 'block';
+                                                    modalSlots.style.display = 'none';
+                                                    toggleButton.style.display = 'inline-block';
+                                                });
+                                            });
+                                        } else {
+                                            modalSlots.innerHTML = 'No available time slots.';
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error fetching time slots:', error);
+                                        modalSlots.textContent = 'Failed to load time slots.';
+                                    });
+
+                                // Show the modal
+                                $(eventModal).modal('show');
+                            };
+
+                            info.el.appendChild(button);
+                        }
                     }
                 });
 
@@ -1002,6 +1040,7 @@ session_start();
             });
 
         </script>
+
 </body>
 
 </html>

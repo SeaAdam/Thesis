@@ -423,6 +423,60 @@ $username = $_SESSION['username'];
                 }, 5000);
             });
 
+            // document.addEventListener('DOMContentLoaded', function () {
+            //     var dashboardCalendarEl = document.getElementById('calendar');
+            //     var eventModal = new bootstrap.Modal(document.getElementById('eventModal')); // Initialize Bootstrap modal
+
+            //     var dashboardCalendar = new FullCalendar.Calendar(dashboardCalendarEl, {
+            //         initialView: 'dayGridMonth',
+            //         selectable: true,
+            //         events: function (info, successCallback, failureCallback) {
+            //             // Use multiple sources by combining the results
+            //             var sources = ['schedule.php', 'fetch_events.php'];
+            //             var combinedEvents = [];
+
+            //             var fetchNext = function (index) {
+            //                 if (index >= sources.length) {
+            //                     successCallback(combinedEvents); // Provide combined events to FullCalendar
+            //                     return;
+            //                 }
+
+            //                 fetch(sources[index])
+            //                     .then(response => response.json())
+            //                     .then(data => {
+            //                         combinedEvents = combinedEvents.concat(data);
+            //                         fetchNext(index + 1);
+            //                     })
+            //                     .catch(error => {
+            //                         console.error('Error fetching events:', error);
+            //                         fetchNext(index + 1); // Proceed to next source even if one fails
+            //                     });
+            //             };
+
+            //             fetchNext(0); // Start fetching events
+            //         },
+            //         eventDidMount: function (info) {
+            //             // Create and append a button to the event element
+            //             let button = document.createElement('button');
+            //             button.textContent = info.event.extendedProps.buttonText || 'Button'; // Fetch button text
+            //             button.className = 'btn btn-primary'; // Use Bootstrap button class
+            //             button.onclick = function () {
+            //                 // Populate modal with event details
+            //                 document.getElementById('modalTitle').textContent = info.event.title;
+            //                 document.getElementById('modalDescription').textContent = info.event.extendedProps.description || 'No description available';
+
+            //                 // Show the modal
+            //                 eventModal.show();
+            //             };
+
+            //             // Append button to the event's DOM element
+            //             info.el.appendChild(button);
+            //         }
+            //     });
+
+            //     dashboardCalendar.render();
+            // });
+
             document.addEventListener('DOMContentLoaded', function () {
                 var dashboardCalendarEl = document.getElementById('calendar');
                 var eventModal = new bootstrap.Modal(document.getElementById('eventModal')); // Initialize Bootstrap modal
@@ -444,38 +498,48 @@ $username = $_SESSION['username'];
                             fetch(sources[index])
                                 .then(response => response.json())
                                 .then(data => {
+                                    // Add a source identifier to each event
+                                    data.forEach(event => {
+                                        event.source = sources[index]; // Assign the source filename
+                                    });
+
                                     combinedEvents = combinedEvents.concat(data);
                                     fetchNext(index + 1);
                                 })
                                 .catch(error => {
                                     console.error('Error fetching events:', error);
-                                    fetchNext(index + 1); // Proceed to next source even if one fails
+                                    fetchNext(index + 1); // Proceed to the next source even if one fails
                                 });
                         };
 
                         fetchNext(0); // Start fetching events
                     },
                     eventDidMount: function (info) {
-                        // Create and append a button to the event element
-                        let button = document.createElement('button');
-                        button.textContent = info.event.extendedProps.buttonText || 'Button'; // Fetch button text
-                        button.className = 'btn btn-primary'; // Use Bootstrap button class
-                        button.onclick = function () {
-                            // Populate modal with event details
-                            document.getElementById('modalTitle').textContent = info.event.title;
-                            document.getElementById('modalDescription').textContent = info.event.extendedProps.description || 'No description available';
+                        // Check if the event is from 'schedule.php'
+                        if (info.event.extendedProps && info.event.extendedProps.source === 'schedule.php') {
+                            // Create and append a button to the event element only for schedule events
+                            let button = document.createElement('button');
+                            button.textContent = info.event.extendedProps.buttonText || 'View Details'; // Fetch button text
+                            button.className = 'btn btn-primary'; // Use Bootstrap button class
+                            button.onclick = function () {
+                                // Populate modal with event details
+                                document.getElementById('modalTitle').textContent = info.event.title;
+                                document.getElementById('modalDescription').textContent = info.event.extendedProps.description || 'No description available';
 
-                            // Show the modal
-                            eventModal.show();
-                        };
+                                // Show the modal
+                                eventModal.show();
+                            };
 
-                        // Append button to the event's DOM element
-                        info.el.appendChild(button);
+                            // Append button to the event's DOM element
+                            info.el.appendChild(button);
+                        }
                     }
                 });
 
                 dashboardCalendar.render();
             });
+
+
 
 
         </script>

@@ -211,6 +211,7 @@
             <!-- /top navigation -->
 
             <div class="right_col" role="main">
+                <h2>Approved Transactions</h2>
                 <table class="table table-striped">
                     <thead>
                         <tr>

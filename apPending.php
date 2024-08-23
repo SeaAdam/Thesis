@@ -215,6 +215,7 @@ $username = $_SESSION['username'];
             <!-- /top navigation -->
 
             <div class="right_col" role="main">
+                <h2>Pending Transactions</h2>
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -255,7 +256,7 @@ $username = $_SESSION['username'];
                         if ($result === false) {
                             die('Query failed: ' . htmlspecialchars($stmt->error));
                         }
-                        
+
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
                                 echo "<tr>
@@ -331,14 +332,18 @@ $username = $_SESSION['username'];
 
         <script>
             function updateTransactionStatus(id, status) {
+                // Confirm with the user before proceeding
                 if (confirm('Are you sure you want to ' + status.toLowerCase() + ' this transaction?')) {
                     // AJAX request to update the transaction status
                     var xhr = new XMLHttpRequest();
-                    xhr.open("POST", "update_status_approved.php", true);
+
+                    // Use a single PHP file or handle status directly in the PHP script
+                    xhr.open("POST", "update_status_approved.php", true); // Ensure this matches the PHP file
                     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState == 4 && xhr.status == 200) {
-                            if (xhr.responseText === 'Success') {
+                            if (xhr.responseText.trim() === 'Success') {
                                 // Reload the page to reflect the changes
                                 window.location.reload();
                             } else {
@@ -346,7 +351,9 @@ $username = $_SESSION['username'];
                             }
                         }
                     };
-                    xhr.send("id=" + id + "&status=" + status);
+
+                    // Send the data to the server
+                    xhr.send("id=" + encodeURIComponent(id) + "&status=" + encodeURIComponent(status));
                 }
             }
         </script>
