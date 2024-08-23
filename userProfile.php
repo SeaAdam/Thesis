@@ -282,14 +282,25 @@ $conn->close();
                                                 <th scope="row">Present Address</th>
                                                 <td>
                                                     <p class="PresentAddress">
-                                                        <?php echo htmlspecialchars($user['PresentAddress']); ?></p>
+                                                        <?php echo htmlspecialchars($user['PresentAddress']); ?>
+                                                    </p>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Username</th>
                                                 <td>
                                                     <p class="Username">
-                                                        <?php echo htmlspecialchars($user['Username']); ?></p>
+                                                        <?php echo htmlspecialchars($user['Username']); ?>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Action</th>
+                                                <td>
+                                                    <a href="#" data-id="<?php echo $user['ID']; ?>"
+                                                        class="btn btn-success btn-sm edit"><i class="fa fa-edit"
+                                                            aria-hidden="true"></i>
+                                                        Edit</a>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -347,8 +358,71 @@ $conn->close();
         <!-- Custom Theme Scripts -->
         <script src="build/js/custom.min.js"></script>
 
+        <?php include "includes/booking_modal.php"; ?>
 
         <script>
+            $(function () {
+                $('.edit').click(function (e) {
+                    e.preventDefault();
+                    $('#editUserProfile').modal('show');
+                    var id = $(this).data('id');
+                    getRow(id);
+                });
+            });
+
+            function getRow(id) {
+                $.ajax({
+                    type: 'GET',
+                    url: 'fetch_user_editProfile.php',
+                    data: { id: id },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.error) {
+                            console.error('Error:', response.error);
+                        } else {
+                            $('.ID').val(response.ID);
+                            $('#EUFirstName').val(response.FirstName);
+                            $('#EUMI').val(response.MI);
+                            $('#EULastName').val(response.LastName);
+                            $('#EUGender').val(response.Gender);
+                            $('#EUAge').val(response.Age);
+                            $('#EUDOB').val(response.DOB);
+                            $('#EUContact').val(response.Contact);
+                            $('#EUPresentAddress').val(response.PresentAddress);
+                            $('#EPUsername').val(response.Username);
+                            $('#EPPassword').val(response.Password);
+                            $('#EPConfirmPassword').val(response.ConfirmPassword);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX Error:', status, error);
+                    }
+                });
+            }
+
+            $('#editUserProfile form').submit(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: 'update_user_editProfile.php',
+                    data: $(this).serialize(),
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.error) {
+                            console.error('Error:', response.error);
+                        } else {
+                            alert('Profile updated successfully!');
+                            $('#editUserProfile').modal('hide');
+                            location.reload();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX Error:', status, error);
+                    }
+                });
+            });
+
+
             document.addEventListener('DOMContentLoaded', function () {
                 // Fetch user information based on session username
                 function fetchUserInfo() {
@@ -374,6 +448,7 @@ $conn->close();
                             $('.Contact').text(response.Contact);
                             $('.PresentAddress').text(response.PresentAddress);
                             $('.Username').text(response.Username);
+
                         },
                         error: function (xhr, status, error) {
                             console.error('Error fetching user info:', error);

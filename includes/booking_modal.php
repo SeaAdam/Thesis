@@ -502,3 +502,84 @@
         </div>
     </div>
 </div>
+
+
+<!-- EDIT USER PROFILE PATIENTS -->
+<div class="modal fade" id="editUserProfile">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit User Profile:</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">&times;</button>
+            </div>
+            <form action="edit_patients.php" method="POST">
+                <div class="modal-body">
+                    <input type="text" class="ID" name="ID">
+                    <!-- Form fields for editing user data -->
+                    <div class="row" style="margin-bottom: 10px;">
+                        <div class="col-md-4">
+                            <label for="FirstName" class="form-label">First Name :</label>
+                            <input type="text" class="form-control" id="EUFirstName" name="FirstName" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="MI" class="form-label">M.I :</label>
+                            <input type="text" class="form-control" id="EUMI" name="MI" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="LastName" class="form-label">Last Name :</label>
+                            <input type="text" class="form-control" id="EULastName" name="LastName" required>
+                        </div>
+                    </div>
+                    <div class="row " style="margin-bottom: 10px;">
+                        <div class="col-md-4">
+                            <label for="Gender">Gender</label>
+                            <select id="EUGender" class="form-control" name="Gender" required>
+                                <option value="" disabled selected>Choose...</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="DOB" class="form-label">Date of Birth :</label>
+                            <input type="date" class="form-control" id="EUDOB" name="DOB" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="Age" class="form-label">Age :</label>
+                            <input type="number" class="form-control" id="EUAge" name="Age" required>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-bottom: 10px;">
+                        <div class="col-md-6">
+                            <label for="Contact" class="form-label">Contact :</label>
+                            <input type="text" class="form-control" id="EUContact" name="Contact" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="PresentAddress" class="form-label">Address :</label>
+                            <input type="text" class="form-control" id="EUPresentAddress" name="PresentAddress" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Username" class="form-label">Username :</label>
+                        <input type="text" class="form-control" id="EPUsername" name="Username" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="Password" class="form-label">Password :</label>
+                            <input type="password" class="form-control" id="EPPassword" name="Password" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="ConfirmPassword" class="form-label">Confirm Password :</label>
+                            <input type="password" class="form-control" id="EPConfirmPassword" name="ConfirmPassword"
+                                required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" name="submit">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
