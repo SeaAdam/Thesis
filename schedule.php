@@ -1,5 +1,4 @@
 <?php
-
 include 'includes/dbconn.php';
 
 // Create a new MySQLi instance
@@ -23,10 +22,10 @@ if ($result->num_rows > 0) {
             'title' => $row['Slots'],  // Customize the title if needed
             'start' => $row['Slots_Date'],  // Ensure this format is compatible with FullCalendar
             'extendedProps' => [
-            'schedule_id' => $row['ID'],  // Include the schedule_id here
-            'buttonText' => 'View',  // Example button text
-        ],
-         // Example button text
+                'schedule_id' => $row['ID'],  // Include the schedule_id here
+                'slots_remaining' => $row['Slots'],  // Assuming 'Slots' represents available slots
+                'buttonText' => 'Book Here'  // Example button text
+            ],
         ];
     }
 }
@@ -37,4 +36,5 @@ $mysqli->close();
 // Output JSON
 header('Content-Type: application/json');
 echo json_encode($events);
+
 ?>
