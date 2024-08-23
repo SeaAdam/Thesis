@@ -208,6 +208,7 @@ $username = $_SESSION['username'];
                     <table id="transactionTable" class="table table-striped table-bordered" style="width:100%">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th>Status</th>
                                 <th>Transaction No.</th>
                                 <th>Services</th>
@@ -283,7 +284,7 @@ $username = $_SESSION['username'];
                                                 <td>{$row['schedule_id']}</td>
                                                 <td>{$row['time_slot_id']}</td>
                                                 <td>{$row['date_seen']}</td>
-                                                <td><button class='btn btn-primary btn-sm'>View</button></td>
+                                                <td><button class='btn btn-primary btn-sm'>View Receipt</button></td>
                                             </tr>";
                                     }
                                 } else {

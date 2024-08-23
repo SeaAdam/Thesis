@@ -266,10 +266,11 @@
                 <td>{$row['date_seen']}</td>
                 <td>
                 <button class='btn btn-success btn-sm' onclick='updateTransactionStatus({$row['transaction_id']}, \"Completed\")'>Complete</button>
+                </td>
             </tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='7'>No approved transactions found.</td></tr>";
+                            echo "<tr><td colspan='8'>No approved transactions found.</td></tr>";
                         }
 
                         $stmt->close();
