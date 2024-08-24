@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $mail->send();
 
         // Redirect to 2FA verification page
-        header("Location: verify2fa.php");
+        header("Location: enter_email.php");
         exit();
     } catch (Exception $e) {
         echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";

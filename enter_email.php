@@ -7,15 +7,140 @@ if (!isset($_SESSION['username'])) {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enter Email for 2FA</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+        }
+
+        .spinner-container {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .error-message {
+            color: red;
+            display: none;
+        }
+    </style>
 </head>
+
 <body>
-    <form method="POST" action="send_2fa.php">
-        <label for="userEmail">Enter your email address to receive the 2FA code:</label>
-        <input type="email" id="userEmail" name="userEmail" required>
-        <button type="submit">Send 2FA Code</button>
-    </form>
+    <div class="container">
+        <div id="emailForm">
+            <h2 class="text-center">Enter Email for 2FA</h2>
+            <form id="send2faForm" method="POST" action="send_2fa.php">
+                <div class="form-group">
+                    <label for="userEmail">Enter your email address to receive the 2FA code:</label>
+                    <input type="email" class="form-control" id="userEmail" name="userEmail" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Send 2FA Code</button>
+            </form>
+        </div>
+        <div id="verifyForm" style="display: none;">
+            <h2 class="text-center">Verify 2FA Code</h2>
+            <form id="verify2faForm" method="POST" action="validate_2fa.php">
+                <div class="form-group">
+                    <label for="twofaCode">Enter the 2FA code sent to your email:</label>
+                    <input type="text" class="form-control" id="twofaCode" name="twofaCode" required>
+                </div>
+                <button type="submit" class="btn btn-success btn-block">Verify Code</button>
+            </form>
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+        <div class="spinner-container" id="loadingSpinner">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <p id="loadingMessage">Please wait...</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Handle form submission for sending 2FA code
+        document.getElementById('send2faForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Show the loading spinner and update the message
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('loadingMessage').innerText = 'Please wait, sending the code to your email...';
+
+            // Send an AJAX request to submit the form
+            var formData = new FormData(this);
+            fetch('send_2fa.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.text())
+                .then(result => {
+                    // Hide the loading spinner
+                    document.getElementById('loadingSpinner').style.display = 'none';
+
+                    // Show the verify form if the email was sent successfully
+                    document.getElementById('emailForm').style.display = 'none';
+                    document.getElementById('verifyForm').style.display = 'block';
+                })
+                .catch(error => {
+                    // Hide the loading spinner in case of error
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    console.error('Error:', error);
+                });
+        });
+
+        // Handle form submission for verifying 2FA code
+        document.getElementById('verify2faForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Show the loading spinner and update the message
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('loadingMessage').innerText = 'Logging in...';
+
+            // Send an AJAX request to validate the 2FA code
+            var formData = new FormData(this);
+            fetch('validate_2fa.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(result => {
+                    // Hide the loading spinner
+                    document.getElementById('loadingSpinner').style.display = 'none';
+
+                    if (result.success) {
+                        // Redirect to the next page or login page
+                        window.location.href = result.redirect || 'userDashboard.php'; // Use redirect from response if available
+                    } else {
+                        if (result.redirect) {
+                            // Redirect to another page if specified
+                            window.location.href = result.redirect;
+                        } else {
+                            // Show the error message
+                            document.getElementById('errorMessage').innerText = result.message;
+                            document.getElementById('errorMessage').style.display = 'block';
+                        }
+                    }
+                })
+                .catch(error => {
+                    // Hide the loading spinner in case of error
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    console.error('Error:', error);
+                });
+        });
+
+    </script>
 </body>
+
 </html>
