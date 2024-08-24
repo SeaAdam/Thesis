@@ -122,7 +122,7 @@ if ($transaction_id > 0) {
         <body>
             <div class="back-button">
                 <a href="userTransaction.php">
-                    <i class="fa fa-chevron-circle-left" aria-hidden="true"></i> Back
+                    <i class="fa fa-chevron-circle-left" aria-hidden="true"></i>
                 </a>
             </div>
             <div class="container mt-5">
