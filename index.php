@@ -20,6 +20,8 @@ session_start();
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
         integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         input {
             text-transform: none;
@@ -423,6 +425,41 @@ session_start();
                 document.getElementById('passwordError').textContent = 'Passwords do not match.';
                 event.preventDefault(); // Prevent form submission
             }
+        });
+
+        document.getElementById("loginForm").addEventListener("submit", function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Gather form data
+            var formData = new FormData(this);
+
+            // Send an AJAX request
+            fetch('login.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: data.message,
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = data.redirect; // Redirect after the alert
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonText: 'Try Again'
+                        });
+                    }
+                })
+                .catch(error => console.error('Error:', error));
         });
     </script>
 
