@@ -15,6 +15,9 @@ if (!isset($_SESSION['username'])) {
     <title>Enter Email for 2FA</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         .container {
             max-width: 600px;
@@ -120,16 +123,29 @@ if (!isset($_SESSION['username'])) {
                     document.getElementById('loadingSpinner').style.display = 'none';
 
                     if (result.success) {
-                        // Redirect to the next page or login page
-                        window.location.href = result.redirect || 'userDashboard.php'; // Use redirect from response if available
+                        // Show success SweetAlert
+                        Swal.fire({
+                            title: 'Success!',
+                            text: '2FA verification successful. Redirecting...',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            // Redirect to the next page or login page
+                            window.location.href = result.redirect || 'userDashboard.php';
+                        });
                     } else {
                         if (result.redirect) {
                             // Redirect to another page if specified
                             window.location.href = result.redirect;
                         } else {
-                            // Show the error message
-                            document.getElementById('errorMessage').innerText = result.message;
-                            document.getElementById('errorMessage').style.display = 'block';
+                            // Show error SweetAlert
+                            Swal.fire({
+                                title: 'Error!',
+                                text: result.message || 'Invalid 2FA code. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'Try Again'
+                            });
                         }
                     }
                 })
@@ -137,8 +153,17 @@ if (!isset($_SESSION['username'])) {
                     // Hide the loading spinner in case of error
                     document.getElementById('loadingSpinner').style.display = 'none';
                     console.error('Error:', error);
+
+                    // Show error SweetAlert for unexpected errors
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Something went wrong. Please try again later.',
+                        icon: 'error',
+                        confirmButtonText: 'Try Again'
+                    });
                 });
         });
+
 
     </script>
 </body>

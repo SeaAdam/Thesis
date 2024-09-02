@@ -427,40 +427,43 @@ session_start();
             }
         });
 
-        document.getElementById("loginForm").addEventListener("submit", function (e) {
-            e.preventDefault(); // Prevent the default form submission
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
 
-            // Gather form data
             var formData = new FormData(this);
-
-            // Send an AJAX request
-            fetch('login.php', {
+            fetch('login.php', { // Replace with your actual PHP script
                 method: 'POST',
                 body: formData
             })
                 .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
+                .then(result => {
+                    if (result.status === 'success') {
                         Swal.fire({
-                            title: 'Success!',
-                            text: data.message,
                             icon: 'success',
+                            title: 'Success',
+                            text: result.message,
                             showConfirmButton: false,
                             timer: 2000
                         }).then(() => {
-                            window.location.href = data.redirect; // Redirect after the alert
+                            window.location.href = result.redirect;
                         });
                     } else {
                         Swal.fire({
-                            title: 'Error!',
-                            text: data.message,
                             icon: 'error',
-                            confirmButtonText: 'Try Again'
+                            title: 'Error',
+                            text: result.message,
                         });
                     }
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred. Please try again later.',
+                    });
+                });
         });
+
     </script>
 
 
