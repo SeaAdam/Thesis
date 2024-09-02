@@ -31,6 +31,8 @@ $adminUsername = $_SESSION['username'];
     <!-- Custom Theme Style -->
     <link href="build/css/custom.min.css" rel="stylesheet">
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body class="nav-md">
@@ -39,7 +41,8 @@ $adminUsername = $_SESSION['username'];
             <div class="col-md-3 left_col">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-                    <a href="adminDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain Master DC</span></a>
+                        <a href="adminDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain
+                                Master DC</span></a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -237,20 +240,20 @@ $adminUsername = $_SESSION['username'];
 
                         // Fetch all approved transactions
                         $sql = "SELECT 
-                    t.ID AS transaction_id,
-                    t.status,
-                    t.transaction_no,
-                    s.Services AS service_id,
-                    sr.Slots_Date AS schedule_id,
-                    CONCAT(ts.start_time, ' - ', ts.end_time) AS time_slot_id,
-                    t.date_seen
-                FROM 
-                    appointment_system.transactions t
-                    LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
-                    LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
-                    LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
-                WHERE 
-                    t.status = 'Approved'";
+                t.ID AS transaction_id,
+                t.status,
+                t.transaction_no,
+                s.Services AS service_id,
+                sr.Slots_Date AS schedule_id,
+                CONCAT(ts.start_time, ' - ', ts.end_time) AS time_slot_id,
+                t.date_seen
+            FROM 
+                appointment_system.transactions t
+                LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
+                LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
+                LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
+            WHERE 
+                t.status = 'Approved'";
 
                         $stmt = $conn->prepare($sql);
                         $stmt->execute();
@@ -263,17 +266,17 @@ $adminUsername = $_SESSION['username'];
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
                                 echo "<tr>
-                <td>{$row['transaction_id']}</td>
-                <td><span class='bg-primary text-white'>{$row['status']}</span></td>
-                <td>{$row['transaction_no']}</td>
-                <td>{$row['service_id']}</td>
-                <td>{$row['schedule_id']}</td>
-                <td>{$row['time_slot_id']}</td>
-                <td>{$row['date_seen']}</td>
-                <td>
-                <button class='btn btn-success btn-sm' onclick='updateTransactionStatus({$row['transaction_id']}, \"Completed\")'>Complete</button>
-                </td>
-            </tr>";
+                        <td>{$row['transaction_id']}</td>
+                        <td><span class='bg-primary text-white'>{$row['status']}</span></td>
+                        <td>{$row['transaction_no']}</td>
+                        <td>{$row['service_id']}</td>
+                        <td>{$row['schedule_id']}</td>
+                        <td>{$row['time_slot_id']}</td>
+                        <td>{$row['date_seen']}</td>
+                        <td>
+                            <button class='btn btn-success btn-sm' onclick='confirmCompleteTransaction({$row['transaction_id']})'>Complete</button>
+                        </td>
+                    </tr>";
                             }
                         } else {
                             echo "<tr><td colspan='8'>No approved transactions found.</td></tr>";
@@ -285,6 +288,7 @@ $adminUsername = $_SESSION['username'];
                     </tbody>
                 </table>
             </div>
+
 
 
 
@@ -333,25 +337,53 @@ $adminUsername = $_SESSION['username'];
         <script src="build/js/custom.min.js"></script>
 
         <script>
+            function confirmCompleteTransaction(transactionId) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You want to mark this transaction as completed.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, complete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Proceed with updating the transaction status
+                        updateTransactionStatus(transactionId, 'Completed');
+                    }
+                });
+            }
+
             function updateTransactionStatus(id, status) {
-                if (confirm('Are you sure you want to ' + status.toLowerCase() + ' this transaction?')) {
-                    // AJAX request to update the transaction status
-                    var xhr = new XMLHttpRequest();
-                    xhr.open("POST", "update_status_approved.php", true);
-                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState == 4 && xhr.status == 200) {
-                            if (xhr.responseText === 'Success') {
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "update_status_approved.php", true); // Ensure this matches your PHP file
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        if (xhr.responseText.trim() === 'Success') {
+                            Swal.fire(
+                                'Completed!',
+                                'The transaction has been marked as completed.',
+                                'success'
+                            ).then(() => {
                                 // Reload the page to reflect the changes
                                 window.location.reload();
-                            } else {
-                                alert('Failed to update the transaction.');
-                            }
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'Failed to update the transaction.',
+                                'error'
+                            );
                         }
-                    };
-                    xhr.send("id=" + id + "&status=" + status);
-                }
+                    }
+                };
+
+                // Send the data to the server
+                xhr.send("id=" + encodeURIComponent(id) + "&status=" + encodeURIComponent(status));
             }
+
         </script>
 
 </body>

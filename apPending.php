@@ -31,6 +31,8 @@ $adminUsername = $_SESSION['username'];
     <!-- Custom Theme Style -->
     <link href="build/css/custom.min.css" rel="stylesheet">
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body class="nav-md">
@@ -237,20 +239,20 @@ $adminUsername = $_SESSION['username'];
 
                         // Fetch pending transactions only
                         $sql = "SELECT 
-                    t.ID AS transaction_id,
-                    t.status,
-                    t.transaction_no,
-                    s.Services AS service_id,
-                    sr.Slots_Date AS schedule_id,
-                    CONCAT(ts.start_time, ' - ', ts.end_time) AS time_slot_id,
-                    t.date_seen
-                FROM 
-                    appointment_system.transactions t
-                    LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
-                    LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
-                    LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
-                WHERE 
-                    t.status = 'Pending'";
+                        t.ID AS transaction_id,
+                        t.status,
+                        t.transaction_no,
+                        s.Services AS service_id,
+                        sr.Slots_Date AS schedule_id,
+                        CONCAT(ts.start_time, ' - ', ts.end_time) AS time_slot_id,
+                        t.date_seen
+                    FROM 
+                        appointment_system.transactions t
+                        LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
+                        LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
+                        LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
+                    WHERE 
+                        t.status = 'Pending'";
 
                         $stmt = $conn->prepare($sql);
                         $stmt->execute();
@@ -263,18 +265,18 @@ $adminUsername = $_SESSION['username'];
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
                                 echo "<tr>
-                        <td>{$row['transaction_id']}</td>
-                        <td><span class='bg-dark text-white'>{$row['status']}</span></td>
-                        <td>{$row['transaction_no']}</td>
-                        <td>{$row['service_id']}</td>
-                        <td>{$row['schedule_id']}</td>
-                        <td>{$row['time_slot_id']}</td>
-                        <td>
-                            <button class='btn btn-primary btn-sm' onclick='updateTransactionStatus({$row['transaction_id']}, \"Approved\")'>Approve</button>
-                            <button class='btn btn-success btn-sm' onclick='updateTransactionStatus({$row['transaction_id']}, \"Completed\")'>Complete</button>
-                            <button class='btn btn-danger btn-sm' onclick='updateTransactionStatus({$row['transaction_id']}, \"Rejected\")'>Reject</button>
-                        </td>
-                    </tr>";
+                            <td>{$row['transaction_id']}</td>
+                            <td><span class='bg-dark text-white'>{$row['status']}</span></td>
+                            <td>{$row['transaction_no']}</td>
+                            <td>{$row['service_id']}</td>
+                            <td>{$row['schedule_id']}</td>
+                            <td>{$row['time_slot_id']}</td>
+                            <td>
+                                <button class='btn btn-primary btn-sm' onclick='confirmAction({$row['transaction_id']}, \"Approved\")'>Approve</button>
+                                <button class='btn btn-success btn-sm' onclick='confirmAction({$row['transaction_id']}, \"Completed\")'>Complete</button>
+                                <button class='btn btn-danger btn-sm' onclick='confirmAction({$row['transaction_id']}, \"Rejected\")'>Reject</button>
+                            </td>
+                        </tr>";
                             }
                         } else {
                             echo "<tr><td colspan='7'>No pending transactions found.</td></tr>";
@@ -335,30 +337,56 @@ $adminUsername = $_SESSION['username'];
 
         <script>
             function updateTransactionStatus(id, status) {
-                // Confirm with the user before proceeding
-                if (confirm('Are you sure you want to ' + status.toLowerCase() + ' this transaction?')) {
-                    // AJAX request to update the transaction status
-                    var xhr = new XMLHttpRequest();
+                // Use SweetAlert for the confirmation and status update
+                Swal.fire({
+                    title: `Are you sure you want to ${status.toLowerCase()} this transaction?`,
+                    text: "This action cannot be undone!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: `Yes, ${status.toLowerCase()} it!`
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // AJAX request to update the transaction status
+                        var xhr = new XMLHttpRequest();
 
-                    // Use a single PHP file or handle status directly in the PHP script
-                    xhr.open("POST", "update_status_approved.php", true); // Ensure this matches the PHP file
-                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                        // Ensure this matches the PHP file or endpoint you're using
+                        xhr.open("POST", "update_status_approved.php", true);
+                        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState == 4 && xhr.status == 200) {
-                            if (xhr.responseText.trim() === 'Success') {
-                                // Reload the page to reflect the changes
-                                window.location.reload();
-                            } else {
-                                alert('Failed to update the transaction.');
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState == 4 && xhr.status == 200) {
+                                if (xhr.responseText.trim() === 'Success') {
+                                    Swal.fire(
+                                        `${status}!`,
+                                        `The transaction has been ${status.toLowerCase()}d successfully.`,
+                                        'success'
+                                    ).then(() => {
+                                        // Reload the page to reflect the changes
+                                        window.location.reload();
+                                    });
+                                } else {
+                                    Swal.fire(
+                                        'Error!',
+                                        'Failed to update the transaction.',
+                                        'error'
+                                    );
+                                }
                             }
-                        }
-                    };
+                        };
 
-                    // Send the data to the server
-                    xhr.send("id=" + encodeURIComponent(id) + "&status=" + encodeURIComponent(status));
-                }
+                        // Send the data to the server
+                        xhr.send("id=" + encodeURIComponent(id) + "&status=" + encodeURIComponent(status));
+                    }
+                });
             }
+
+            function confirmAction(transactionId, action) {
+                // This function now just triggers the update with SweetAlert
+                updateTransactionStatus(transactionId, action);
+            }
+
         </script>
 
 </body>

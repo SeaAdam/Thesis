@@ -69,6 +69,9 @@ $conn->close();
     <!-- FullCalendar JS -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.2/main.min.js'></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
     <style>
         #calendar {
             width: 70%;
@@ -154,7 +157,8 @@ $conn->close();
             <div class="col-md-3 left_col">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-                        <a href="userDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain Master DC</span></a>
+                        <a href="userDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain
+                                Master DC</span></a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -252,7 +256,7 @@ $conn->close();
                                 <ul class="dropdown-menu list-unstyled msg_list" role="menu"
                                     aria-labelledby="navbarDropdown1">
                                     <li class="nav-item">
-                                        
+
                                     </li>
                                 </ul>
                             </li>
@@ -322,9 +326,8 @@ $conn->close();
                                 <p id="modalDate">Select a time slot:</p>
                                 <div id="modalSlots"></div>
 
-
                                 <button id="toggleSlotsButton" class="btn btn-secondary" style="margin-top: 15px;">Show
-                                    Time Slots:</button>
+                                    Time Slots</button>
 
                                 <form id="bookingForm" method="POST" action="add_booking_user.php"
                                     style="display: none; margin-top: 15px;">
@@ -367,11 +370,11 @@ $conn->close();
 
                                     <button type="submit" class="btn btn-primary">Submit Booking</button>
                                 </form>
-
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
 
@@ -584,6 +587,24 @@ $conn->close();
                 // Refresh page when the modal is closed
                 $(eventModal).on('hidden.bs.modal', function () {
                     location.reload();
+                });
+            });
+
+            // Intercept form submission
+            document.getElementById('bookingForm').addEventListener('submit', function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                // Display the SweetAlert confirmation
+                Swal.fire({
+                    title: 'Appointment Booked!',
+                    text: 'Your appointment has been successfully booked.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If the user clicks 'OK', submit the form
+                        this.submit();
+                    }
                 });
             });
 

@@ -46,6 +46,8 @@ include 'count_Dashboard.php';
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         #calendar {
             width: 70%;
@@ -123,7 +125,6 @@ include 'count_Dashboard.php';
             width: 100% !important;
             height: 100% !important;
         }
-        
     </style>
 </head>
 
@@ -133,7 +134,8 @@ include 'count_Dashboard.php';
             <div class="col-md-3 left_col">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-                    <a href="adminDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain Master DC</span></a>
+                        <a href="adminDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain
+                                Master DC</span></a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -322,7 +324,9 @@ include 'count_Dashboard.php';
                                 <p class="card-text">Total Patients</p>
                                 <h1><i class="fa fa-user-md" aria-hidden="true"></i></h1>
                             </div>
-                            <div class="card-footer bg-transparent border-light"><a href="adminPatients.php" class="btn btn-outline-light" style="float: right;">More Info <span><i class="fa fa-arrow-circle-right" aria-hidden="true"></i></span></a></div>
+                            <div class="card-footer bg-transparent border-light"><a href="adminPatients.php"
+                                    class="btn btn-outline-light" style="float: right;">More Info <span><i
+                                            class="fa fa-arrow-circle-right" aria-hidden="true"></i></span></a></div>
                         </div>
                     </div>
 
@@ -334,7 +338,9 @@ include 'count_Dashboard.php';
                                 <p class="card-text">Services</p>
                                 <h1><i class="fa fa-line-chart" aria-hidden="true"></i></h1>
                             </div>
-                            <div class="card-footer bg-transparent border-light"><a href="adminServices.php" class="btn btn-outline-light" style="float: right;">More Info <span><i class="fa fa-arrow-circle-right" aria-hidden="true"> </i></a></div>
+                            <div class="card-footer bg-transparent border-light"><a href="adminServices.php"
+                                    class="btn btn-outline-light" style="float: right;">More Info <span><i
+                                            class="fa fa-arrow-circle-right" aria-hidden="true"> </i></a></div>
 
                         </div>
                     </div>
@@ -345,7 +351,9 @@ include 'count_Dashboard.php';
                                 <p class="card-text">Schedules</p>
                                 <h1><i class="fa fa-calendar" aria-hidden="true"></i></h1>
                             </div>
-                            <div class="card-footer bg-transparent border-light"><a href="adminSchedule.php" class="btn btn-outline-light" style="float: right;">More Info <span><i class="fa fa-arrow-circle-right" aria-hidden="true"> </i></a></div>
+                            <div class="card-footer bg-transparent border-light"><a href="adminSchedule.php"
+                                    class="btn btn-outline-light" style="float: right;">More Info <span><i
+                                            class="fa fa-arrow-circle-right" aria-hidden="true"> </i></a></div>
                         </div>
                     </div>
                 </div>
@@ -401,9 +409,8 @@ include 'count_Dashboard.php';
                                 <p id="modalDate">Select a time slot:</p>
                                 <div id="modalSlots"></div>
 
-
                                 <button id="toggleSlotsButton" class="btn btn-secondary" style="margin-top: 15px;">Show
-                                    Time Slots:</button>
+                                    Time Slots</button>
 
                                 <form id="bookingForm" method="POST" action="add_booking.php"
                                     style="display: none; margin-top: 15px;">
@@ -456,7 +463,6 @@ include 'count_Dashboard.php';
 
                                     <button type="submit" class="btn btn-primary">Submit Booking</button>
                                 </form>
-
                             </div>
                         </div>
                     </div>
@@ -676,6 +682,24 @@ include 'count_Dashboard.php';
                 // Refresh page when the modal is closed
                 $(eventModal).on('hidden.bs.modal', function () {
                     location.reload();
+                });
+            });
+
+            // Intercept form submission
+            document.getElementById('bookingForm').addEventListener('submit', function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                // Display the SweetAlert confirmation
+                Swal.fire({
+                    title: 'Appointment Booked!',
+                    text: 'Your appointment has been successfully booked.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If the user clicks 'OK', submit the form
+                        this.submit();
+                    }
                 });
             });
         </script>
