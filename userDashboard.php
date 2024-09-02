@@ -3,6 +3,7 @@ include 'includes/dbconn.php';
 include 'notification_functions.php'; // Create this file for the functions
 
 $notifications = fetchNotifications();
+$unread_count = countUnreadNotifications();
 
 include 'login.php';
 
@@ -150,6 +151,16 @@ $conn->close();
             background-color: red !important;
             /* Ensure red background for unavailable slots */
         }
+
+        .dropdown-item.unread {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .dropdown-item.read {
+            background-color: #ffffff;
+            font-weight: normal;
+        }
     </style>
 
 
@@ -256,20 +267,21 @@ $conn->close();
                                     data-toggle="dropdown" aria-expanded="false">
                                     <i class="fa fa-envelope-o"></i>
                                     <span class="badge bg-green"><?php echo count($notifications); ?></span>
+                                    <span class="badge bg-green"><?php echo $unread_count; ?></span>
                                 </a>
                                 <ul class="dropdown-menu list-unstyled msg_list" role="menu"
                                     aria-labelledby="navbarDropdown1">
-                                    <li class="nav-item">
-                                        <?php
-                                        foreach ($notifications as $notification) {
-                                            echo "<a class='dropdown-item' href='#'>
-                                    <i class='fa fa-info-circle'></i>
-                                    Booking ID: {$notification['transaction_id']} - Status: {$notification['status']}
-                                </a>";
-                                        }
-                                        ?>
-
-                                    </li>
+                                    <?php foreach ($notifications as $notification): ?>
+                                        <li class="nav-item">
+                                            <a class="dropdown-item <?php echo $notification['read_status'] == 0 ? 'unread' : 'read'; ?>"
+                                                href="#"
+                                                onclick="markAsRead(<?php echo $notification['transaction_id']; ?>)">
+                                                <i class="fa fa-info-circle"></i>
+                                                Booking ID: <?php echo $notification['transaction_id']; ?> - Status:
+                                                <?php echo $notification['status']; ?>
+                                            </a>
+                                        </li>
+                                    <?php endforeach; ?>
                                     <li class="nav-item">
                                         <a class="dropdown-item" href="javascript:;" onclick="markAllAsRead()">
                                             <i class="fa fa-check"></i> Mark All as Read
@@ -624,6 +636,38 @@ $conn->close();
                     }
                 });
             });
+
+            function markAsRead(transaction_id) {
+                fetch(`mark_notification_read.php?transaction_id=${transaction_id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update the notification's class to 'read'
+                            document.querySelector(`a[onclick='markAsRead(${transaction_id})']`).classList.remove('unread');
+                            document.querySelector(`a[onclick='markAsRead(${transaction_id})']`).classList.add('read');
+
+                            // Update the count (reload can be omitted if updating count manually)
+                            location.reload();
+                        }
+                    });
+            }
+
+            function markAllAsRead() {
+                fetch('mark_all_notifications_read.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update all notifications' classes to 'read'
+                            document.querySelectorAll('.dropdown-item.unread').forEach(item => {
+                                item.classList.remove('unread');
+                                item.classList.add('read');
+                            });
+
+                            // Update the count
+                            location.reload();
+                        }
+                    });
+            }
         </script>
 
 
