@@ -336,6 +336,57 @@ $adminUsername = $_SESSION['username'];
         <script src="build/js/custom.min.js"></script>
 
         <script>
+            // function updateTransactionStatus(id, status) {
+            //     // Use SweetAlert for the confirmation and status update
+            //     Swal.fire({
+            //         title: `Are you sure you want to ${status.toLowerCase()} this transaction?`,
+            //         text: "This action cannot be undone!",
+            //         icon: 'warning',
+            //         showCancelButton: true,
+            //         confirmButtonColor: '#3085d6',
+            //         cancelButtonColor: '#d33',
+            //         confirmButtonText: `Yes, ${status.toLowerCase()} it!`
+            //     }).then((result) => {
+            //         if (result.isConfirmed) {
+            //             // AJAX request to update the transaction status
+            //             var xhr = new XMLHttpRequest();
+
+            //             // Ensure this matches the PHP file or endpoint you're using
+            //             xhr.open("POST", "update_status_approved.php", true);
+            //             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            //             xhr.onreadystatechange = function () {
+            //                 if (xhr.readyState == 4 && xhr.status == 200) {
+            //                     if (xhr.responseText.trim() === 'Success') {
+            //                         Swal.fire(
+            //                             `${status}!`,
+            //                             `The transaction has been ${status.toLowerCase()}d successfully.`,
+            //                             'success'
+            //                         ).then(() => {
+            //                             // Reload the page to reflect the changes
+            //                             window.location.reload();
+            //                         });
+            //                     } else {
+            //                         Swal.fire(
+            //                             'Error!',
+            //                             'Failed to update the transaction.',
+            //                             'error'
+            //                         );
+            //                     }
+            //                 }
+            //             };
+
+            //             // Send the data to the server
+            //             xhr.send("id=" + encodeURIComponent(id) + "&status=" + encodeURIComponent(status));
+            //         }
+            //     });
+            // }
+
+            // function confirmAction(transactionId, action) {
+            //     // This function now just triggers the update with SweetAlert
+            //     updateTransactionStatus(transactionId, action);
+            // }
+
             function updateTransactionStatus(id, status) {
                 // Use SweetAlert for the confirmation and status update
                 Swal.fire({
@@ -348,10 +399,8 @@ $adminUsername = $_SESSION['username'];
                     confirmButtonText: `Yes, ${status.toLowerCase()} it!`
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // AJAX request to update the transaction status
+                        // AJAX request to update the transaction status and send notification
                         var xhr = new XMLHttpRequest();
-
-                        // Ensure this matches the PHP file or endpoint you're using
                         xhr.open("POST", "update_status_approved.php", true);
                         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
@@ -386,6 +435,9 @@ $adminUsername = $_SESSION['username'];
                 // This function now just triggers the update with SweetAlert
                 updateTransactionStatus(transactionId, action);
             }
+
+
+
 
         </script>
 

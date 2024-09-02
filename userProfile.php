@@ -27,6 +27,11 @@ if ($result->num_rows > 0) {
 
 $stmt->close();
 $conn->close();
+
+// Retrieve the email from the session
+$userEmail = isset($_SESSION['email']) ? $_SESSION['email'] : 'Not provided';
+
+
 ?>
 
 <!DOCTYPE html>
@@ -49,6 +54,13 @@ $conn->close();
     <!-- Custom Theme Style -->
     <link href="build/css/custom.min.css" rel="stylesheet">
 
+    <!-- Include SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- Include SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+
 
 </head>
 
@@ -58,7 +70,8 @@ $conn->close();
             <div class="col-md-3 left_col">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-                    <a href="userDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain Master DC</span></a>
+                        <a href="userDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain
+                                Master DC</span></a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -150,69 +163,12 @@ $conn->close();
                                 <a href="javascript:;" class="dropdown-toggle info-number" id="navbarDropdown1"
                                     data-toggle="dropdown" aria-expanded="false">
                                     <i class="fa fa-envelope-o"></i>
-                                    <span class="badge bg-green">6</span>
+                                    <span class="badge bg-green"></span>
                                 </a>
                                 <ul class="dropdown-menu list-unstyled msg_list" role="menu"
                                     aria-labelledby="navbarDropdown1">
                                     <li class="nav-item">
-                                        <a class="dropdown-item">
-                                            <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
-                                            <span>
-                                                <span>John Smith</span>
-                                                <span class="time">3 mins ago</span>
-                                            </span>
-                                            <span class="message">
-                                                Film festivals used to be do-or-die moments for movie makers. They were
-                                                where...
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="dropdown-item">
-                                            <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
-                                            <span>
-                                                <span>John Smith</span>
-                                                <span class="time">3 mins ago</span>
-                                            </span>
-                                            <span class="message">
-                                                Film festivals used to be do-or-die moments for movie makers. They were
-                                                where...
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="dropdown-item">
-                                            <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
-                                            <span>
-                                                <span>John Smith</span>
-                                                <span class="time">3 mins ago</span>
-                                            </span>
-                                            <span class="message">
-                                                Film festivals used to be do-or-die moments for movie makers. They were
-                                                where...
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="dropdown-item">
-                                            <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
-                                            <span>
-                                                <span>John Smith</span>
-                                                <span class="time">3 mins ago</span>
-                                            </span>
-                                            <span class="message">
-                                                Film festivals used to be do-or-die moments for movie makers. They were
-                                                where...
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <div class="text-center">
-                                            <a class="dropdown-item">
-                                                <strong>See All Alerts</strong>
-                                                <i class="fa fa-angle-right"></i>
-                                            </a>
-                                        </div>
+
                                     </li>
                                 </ul>
                             </li>
@@ -283,6 +239,14 @@ $conn->close();
                                                 <td>
                                                     <p class="Username">
                                                         <?php echo htmlspecialchars($user['Username']); ?>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Email Address (use in 2FA)</th>
+                                                <td>
+                                                    <p class="Email">
+                                                        <?php echo htmlspecialchars($userEmail); ?>
                                                     </p>
                                                 </td>
                                             </tr>
@@ -394,6 +358,7 @@ $conn->close();
 
             $('#editUserProfile form').submit(function (e) {
                 e.preventDefault();
+
                 $.ajax({
                     type: 'POST',
                     url: 'update_user_editProfile.php',
@@ -401,15 +366,36 @@ $conn->close();
                     dataType: 'json',
                     success: function (response) {
                         if (response.error) {
-                            console.error('Error:', response.error);
+                            // Display SweetAlert for error
+                            Swal.fire({
+                                title: 'Error!',
+                                text: response.error,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
                         } else {
-                            alert('Profile updated successfully!');
-                            $('#editUserProfile').modal('hide');
-                            location.reload();
+                            // Display SweetAlert for success
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'Profile updated successfully!',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('#editUserProfile').modal('hide');
+                                    location.reload();
+                                }
+                            });
                         }
                     },
                     error: function (xhr, status, error) {
-                        console.error('AJAX Error:', status, error);
+                        // Display SweetAlert for AJAX error
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Failed to update the profile. Please try again later.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
                     }
                 });
             });
