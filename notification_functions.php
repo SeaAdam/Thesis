@@ -19,29 +19,10 @@ function updateBookingStatus($transaction_id, $status)
     $conn->close();
 }
 
-// function fetchNotifications() {
-//     include 'includes/dbconn.php';
-
-//     $sql = "SELECT transaction_id, status, created_at FROM notifications ORDER BY created_at DESC LIMIT 10";
-//     $result = $conn->query($sql);
-
-//     $notifications = [];
-//     while ($row = $result->fetch_assoc()) {
-//         $notifications[] = $row;
-//     }
-
-//     $conn->close();
-//     return $notifications;
-// }
-function fetchNotifications()
-{
+function fetchNotifications() {
     include 'includes/dbconn.php';
 
-    // Fetch unread notifications
-    $sql = "SELECT id, transaction_id, status, created_at FROM notifications 
-            WHERE read_status = 0 
-            ORDER BY created_at DESC 
-            LIMIT 10";
+    $sql = "SELECT transaction_id, status, created_at FROM notifications ORDER BY created_at DESC LIMIT 10";
     $result = $conn->query($sql);
 
     $notifications = [];
@@ -49,15 +30,8 @@ function fetchNotifications()
         $notifications[] = $row;
     }
 
-    // Fetch count of unread notifications
-    $countSql = "SELECT COUNT(*) as unread_count FROM notifications WHERE read_status = 0";
-    $countResult = $conn->query($countSql);
-    $countRow = $countResult->fetch_assoc();
-    $unreadCount = $countRow['unread_count'];
-
     $conn->close();
-    return ['notifications' => $notifications, 'unread_count' => $unreadCount];
+    return $notifications;
 }
-
 
 ?>

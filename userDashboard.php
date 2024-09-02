@@ -1,10 +1,8 @@
 <?php
 include 'includes/dbconn.php';
 include 'notification_functions.php'; // Create this file for the functions
-$notificationsData = fetchNotifications();
-$notifications = $notificationsData['notifications'];
-$unread_count = $notificationsData['unread_count'];
 
+$notifications = fetchNotifications();
 
 include 'login.php';
 
@@ -241,11 +239,10 @@ $conn->close();
                         <a id="menu_toggle"><i class="fa fa-bars"></i></a>
                     </div>
                     <nav class="nav navbar-nav">
-                        <ul class="navbar-right">
+                        <ul class=" navbar-right">
                             <li class="nav-item dropdown open" style="padding-left: 15px;">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true"
                                     id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
-                                    <!-- Optionally add user profile image or name here -->
                                 </a>
                                 <div class="dropdown-menu dropdown-usermenu pull-right"
                                     aria-labelledby="navbarDropdown">
@@ -258,27 +255,24 @@ $conn->close();
                                 <a href="javascript:;" class="dropdown-toggle info-number" id="navbarDropdown1"
                                     data-toggle="dropdown" aria-expanded="false">
                                     <i class="fa fa-envelope-o"></i>
-                                    <span class="badge bg-green"
-                                        id="notificationCount"><?php echo $unread_count; ?></span>
+                                    <span class="badge bg-green"><?php echo count($notifications); ?></span>
                                 </a>
                                 <ul class="dropdown-menu list-unstyled msg_list" role="menu"
                                     aria-labelledby="navbarDropdown1">
                                     <li class="nav-item">
                                         <?php
                                         foreach ($notifications as $notification) {
-                                            echo "<a class='dropdown-item' href='#' data-id='{$notification['id']}' onclick='markAsRead(this)'>
+                                            echo "<a class='dropdown-item' href='#'>
                                     <i class='fa fa-info-circle'></i>
                                     Booking ID: {$notification['transaction_id']} - Status: {$notification['status']}
                                 </a>";
                                         }
                                         ?>
+
                                     </li>
                                     <li class="nav-item">
                                         <a class="dropdown-item" href="javascript:;" onclick="markAllAsRead()">
                                             <i class="fa fa-check"></i> Mark All as Read
-                                        </a>
-                                        <a class="dropdown-item" href="javascript:;" onclick="deleteAllNotifications()">
-                                            <i class="fa fa-trash"></i> Delete All
                                         </a>
                                     </li>
                                 </ul>
@@ -630,63 +624,6 @@ $conn->close();
                     }
                 });
             });
-
-            function markAsRead(element) {
-                const notificationId = element.getAttribute('data-id');
-
-                fetch('markAsRead.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
-                        'notification_id': notificationId
-                    })
-                })
-                    .then(response => response.text())
-                    .then(data => {
-                        if (data === 'Success') {
-                            updateNotificationCount();
-                        } else {
-                            console.error('Error:', data);
-                        }
-                    });
-            }
-
-            function markAllAsRead() {
-                fetch('markAllAsRead.php')
-                    .then(response => response.text())
-                    .then(data => {
-                        if (data === 'Success') {
-                            updateNotificationCount();
-                        } else {
-                            console.error('Error:', data);
-                        }
-                    });
-            }
-
-            function deleteAllNotifications() {
-                fetch('deleteAllNotifications.php')
-                    .then(response => response.text())
-                    .then(data => {
-                        if (data === 'Success') {
-                            document.querySelector('.msg_list').innerHTML = ''; // Clear notifications
-                            document.getElementById('notificationCount').textContent = '0'; // Set count to 0
-                        } else {
-                            console.error('Error:', data);
-                        }
-                    });
-            }
-
-            function updateNotificationCount() {
-                fetch('fetchNotifications.php')
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('notificationCount').textContent = data.unread_count;
-                    });
-            }
-
-
         </script>
 
 
