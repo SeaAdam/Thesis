@@ -1,5 +1,12 @@
 <?php
 include 'login.php';
+
+// Check if the user is logged in and is an admin
+if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'user') {
+    header('Location: index.php'); // Redirect to login page if not logged in as admin
+    exit();
+}
+
 $username = $_SESSION['username'];
 ?>
 <!DOCTYPE html>

@@ -1,6 +1,17 @@
 <?php
-session_start();
+include 'login.php';
+
+// Check if the user is logged in and is an admin
+if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'admin') {
+    header('Location: index.php'); // Redirect to login page if not logged in as admin
+    exit();
+}
+
+// Retrieve the admin username from the session
+$adminUsername = $_SESSION['username'];
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -42,7 +53,7 @@ session_start();
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
-                            <h2>John Doe</h2>
+                            <h2><?php echo htmlspecialchars($adminUsername); ?></h2>
                         </div>
                     </div>
                     <!-- /menu profile quick info -->

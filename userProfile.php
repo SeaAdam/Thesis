@@ -1,14 +1,14 @@
 <?php
-session_start();
 include 'includes/dbconn.php';
 
-// Check if the user is logged in
-if (!isset($_SESSION['username'])) {
-    header("Location: index.php");
+include 'login.php';
+
+// Check if the user is logged in and is an admin
+if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'user') {
+    header('Location: index.php'); // Redirect to login page if not logged in as admin
     exit();
 }
 
-// Get the username from the session
 $username = $_SESSION['username'];
 
 // Fetch user details based on username
