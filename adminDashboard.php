@@ -1,5 +1,9 @@
-<?
+<?php
 session_start();
+
+include 'count_Dashboard.php';
+
+
 
 ?>
 
@@ -29,6 +33,8 @@ session_start();
 
     <!-- FullCalendar JS -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.2/main.min.js'></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         #calendar {
@@ -94,6 +100,20 @@ session_start();
         .fc-h-event .fc-event-title {
             font-size: .8rem;
         }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            /* Adjust width as needed */
+            height: 200px;
+            /* Adjust height as needed */
+        }
+
+        #statusDoughnutChart {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
     </style>
 </head>
 
@@ -289,96 +309,40 @@ session_start();
 
             <div class="right_col" role="main">
                 <div class="row">
-                    <div class="col-sm-3 py-2">
-                        <div class="card h-100 border-primary">
-                            <h2>Device Usage</h2>
-                            <div class="x_content">
-                                <table class="" style="width:100%">
-                                    <tr>
-                                        <th style="width:37%;">
-                                            <p>Top 5</p>
-                                        </th>
-                                        <th>
-                                            <div class="col-lg-7 col-md-7 col-sm-7 ">
-                                                <p class="">Device</p>
-                                            </div>
-                                            <div class="col-lg-5 col-md-5 col-sm-5 ">
-                                                <p class="">Progress</p>
-                                            </div>
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <canvas class="canvasDoughnut" height="140" width="140"
-                                                style="margin: 15px 10px 10px 0"></canvas>
-                                        </td>
-                                        <td>
-                                            <table class="tile_info">
-                                                <tr>
-                                                    <td>
-                                                        <p><i class="fa fa-square blue"></i>IOS </p>
-                                                    </td>
-                                                    <td>30%</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <p><i class="fa fa-square green"></i>Android </p>
-                                                    </td>
-                                                    <td>10%</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <p><i class="fa fa-square purple"></i>Blackberry </p>
-                                                    </td>
-                                                    <td>20%</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <p><i class="fa fa-square aero"></i>Symbian </p>
-                                                    </td>
-                                                    <td>15%</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <p><i class="fa fa-square red"></i>Others </p>
-                                                    </td>
-                                                    <td>30%</td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-3 py-2">
-                        <div class="card h-100 text-white bg-danger">
-                            <div class="card-body">
-                                <h3 class="card-title">Danger</h3>
-                                <p class="card-text">With supporting text below as a natural lead-in to additional
-                                    content.</p>
-                                <a href="#" class="btn btn-outline-light">Outline</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-3 py-2">
-                        <div class="card h-100 text-white bg-danger">
-                            <div class="card-body">
-                                <h3 class="card-title">Danger</h3>
-                                <p class="card-text">With supporting text below as a natural lead-in to additional
-                                    content.</p>
-                                <a href="#" class="btn btn-outline-light">Outline</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-3 py-2">
+
+                    <?php include 'status.php'; ?>
+
+                    <div class="col-sm-3 py-3">
                         <div class="card h-100 text-white bg-primary">
                             <div class="card-body">
-                                <h3 class="card-title">Hello</h3>
-                                <p class="card-text">With supporting text below as a natural lead-in to additional
-                                    content.</p>
-                                <a href="#" class="btn btn-outline-light">Outline</a>
+                                <h3 class="card-title"><?php echo $countPatient; ?></h3>
+                                <p class="card-text">Total Patients</p>
+                                <h1><i class="fa fa-user-md" aria-hidden="true"></i></h1>
                             </div>
+                            <div class="card-footer bg-transparent border-light"><a href="adminPatients.php" class="btn btn-outline-light" style="float: right;">More Info <span><i class="fa fa-arrow-circle-right" aria-hidden="true"></i></span></a></div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-sm-3 py-3">
+                        <div class="card h-100 text-white bg-success">
+                            <div class="card-body">
+                                <h3 class="card-title"><?php echo $countServices; ?></h3>
+                                <p class="card-text">Services</p>
+                                <h1><i class="fa fa-line-chart" aria-hidden="true"></i></h1>
+                            </div>
+                            <div class="card-footer bg-transparent border-light"><a href="adminServices.php" class="btn btn-outline-light" style="float: right;">More Info <span><i class="fa fa-arrow-circle-right" aria-hidden="true"> </i></a></div>
+
+                        </div>
+                    </div>
+                    <div class="col-sm-3 py-3">
+                        <div class="card h-100 text-white bg-dark">
+                            <div class="card-body">
+                                <h3 class="card-title"><?php echo $countSchedules; ?></h3>
+                                <p class="card-text">Schedules</p>
+                                <h1><i class="fa fa-calendar" aria-hidden="true"></i></h1>
+                            </div>
+                            <div class="card-footer bg-transparent border-light"><a href="adminSchedule.php" class="btn btn-outline-light" style="float: right;">More Info <span><i class="fa fa-arrow-circle-right" aria-hidden="true"> </i></a></div>
                         </div>
                     </div>
                 </div>
@@ -711,7 +675,6 @@ session_start();
                     location.reload();
                 });
             });
-
         </script>
 
 </body>
