@@ -75,5 +75,4 @@ if (isset($_POST['id']) && isset($_POST['status'])) {
 
 $conn->close();
 
-
 ?>

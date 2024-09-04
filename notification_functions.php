@@ -1,5 +1,4 @@
 <?php
-
 function updateBookingStatus($transaction_id, $status)
 {
     include 'includes/dbconn.php';
@@ -19,8 +18,8 @@ function updateBookingStatus($transaction_id, $status)
     $conn->close();
 }
 
-
-function fetchNotifications() {
+function fetchNotifications()
+{
     include 'includes/dbconn.php';
 
     // Fetch all notifications, unread first

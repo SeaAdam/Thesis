@@ -85,6 +85,16 @@ $Dusername = $_SESSION['username'];
             background-color: lemonchiffon;
             color: black;
         }
+
+        .dropdown-item.unread {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .dropdown-item.read {
+            background-color: #ffffff;
+            font-weight: normal;
+        }
     </style>
 </head>
 

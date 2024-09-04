@@ -35,7 +35,6 @@ $conn->close();
 // Retrieve the email from the session
 $userEmail = isset($_SESSION['email']) ? $_SESSION['email'] : 'Not provided';
 
-
 ?>
 
 <!DOCTYPE html>
@@ -64,7 +63,17 @@ $userEmail = isset($_SESSION['email']) ? $_SESSION['email'] : 'Not provided';
     <!-- Include SweetAlert JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
+    <style>
+        .dropdown-item.unread {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
 
+        .dropdown-item.read {
+            background-color: #ffffff;
+            font-weight: normal;
+        }
+    </style>
 
 </head>
 

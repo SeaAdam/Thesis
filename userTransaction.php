@@ -35,6 +35,18 @@ $Dusername = $_SESSION['username'];
     <!-- Custom Theme Style -->
     <link href="build/css/custom.min.css" rel="stylesheet">
 
+    <style>
+        .dropdown-item.unread {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .dropdown-item.read {
+            background-color: #ffffff;
+            font-weight: normal;
+        }
+    </style>
+
 </head>
 
 <body class="nav-md">
