@@ -1,4 +1,40 @@
 <?php
+require 'autoloader.php'; // Ensure the path to autoload.php is correct
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception as PHPMailerException;
+
+// Function to send an email notification
+function sendEmailNotification($to, $subject, $message)
+{
+    $mail = new PHPMailer(true);
+    try {
+        // Server settings
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com'; // Set the SMTP server to send through
+        $mail->SMTPAuth = true; // Enable SMTP authentication
+        $mail->Username = 'adamerodagat@gmail.com'; // SMTP username
+        $mail->Password = 'gnxh erjw yxfo jtdr'; // SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Enable TLS encryption
+        $mail->Port = 587; // TCP port to connect to
+
+        // Recipients
+        $mail->setFrom('adamerodagat@gmail.com', 'adameroemailer');
+        $mail->addAddress($to); // Add a recipient
+
+        // Content
+        $mail->isHTML(true); // Set email format to HTML
+        $mail->Subject = $subject;
+        $mail->Body = $message;
+
+        $mail->send();
+        return true;
+    } catch (PHPMailerException $e) {
+        error_log("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+        return false;
+    }
+}
+
 function updateBookingStatus($transaction_id, $status)
 {
     include 'includes/dbconn.php';
