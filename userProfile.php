@@ -1,9 +1,5 @@
 <?php
 include 'includes/dbconn.php';
-include 'notification_functions.php'; // Create this file for the functions
-
-$notifications = fetchNotifications();
-$unread_count = countUnreadNotifications();
 
 include 'login.php';
 
@@ -14,7 +10,7 @@ if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'user') {
 }
 
 $username = $_SESSION['username'];
-
+$user_id = $_SESSION['user_id'];
 // Fetch user details based on username
 $sql = "SELECT * FROM registration_table WHERE Username = ?";
 $stmt = $conn->prepare($sql);
@@ -34,6 +30,11 @@ $conn->close();
 
 // Retrieve the email from the session
 $userEmail = isset($_SESSION['email']) ? $_SESSION['email'] : 'Not provided';
+
+include 'notification_functions.php'; // Create this file for the functions
+
+$notifications = fetchNotifications($user_id);
+$unread_count = countUnreadNotifications($user_id);
 
 ?>
 

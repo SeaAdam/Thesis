@@ -4,6 +4,7 @@ require 'autoloader.php'; // Ensure the path to autoload.php is correct
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 
+
 // Function to send an email notification
 function sendEmailNotification($to, $subject, $message)
 {
@@ -35,7 +36,43 @@ function sendEmailNotification($to, $subject, $message)
     }
 }
 
-function updateBookingStatus($transaction_id, $status)
+// function updateBookingStatus($transaction_id, $status)
+// {
+//     include 'includes/dbconn.php';
+
+//     $update_sql = "UPDATE transactions SET status = ? WHERE ID = ?";
+//     $update_stmt = $conn->prepare($update_sql);
+//     $update_stmt->bind_param('si', $status, $transaction_id);
+//     $update_stmt->execute();
+
+//     $notification_sql = "INSERT INTO notifications (transaction_id, status) VALUES (?, ?)";
+//     $notification_stmt = $conn->prepare($notification_sql);
+//     $notification_stmt->bind_param('is', $transaction_id, $status);
+//     $notification_stmt->execute();
+
+//     $update_stmt->close();
+//     $notification_stmt->close();
+//     $conn->close();
+// }
+
+// function fetchNotifications()
+// {
+//     include 'includes/dbconn.php';
+
+//     // Fetch all notifications, unread first
+//     $sql = "SELECT transaction_id, status, created_at, read_status FROM notifications ORDER BY read_status ASC, created_at DESC LIMIT 10";
+//     $result = $conn->query($sql);
+
+//     $notifications = [];
+//     while ($row = $result->fetch_assoc()) {
+//         $notifications[] = $row;
+//     }
+
+//     $conn->close();
+//     return $notifications;
+// }
+
+function updateBookingStatus($transaction_id, $status, $user_id)
 {
     include 'includes/dbconn.php';
 
@@ -44,9 +81,9 @@ function updateBookingStatus($transaction_id, $status)
     $update_stmt->bind_param('si', $status, $transaction_id);
     $update_stmt->execute();
 
-    $notification_sql = "INSERT INTO notifications (transaction_id, status) VALUES (?, ?)";
+    $notification_sql = "INSERT INTO notifications (transaction_id, status, user_id) VALUES (?, ?, ?)";
     $notification_stmt = $conn->prepare($notification_sql);
-    $notification_stmt->bind_param('is', $transaction_id, $status);
+    $notification_stmt->bind_param('isi', $transaction_id, $status, $user_id);
     $notification_stmt->execute();
 
     $update_stmt->close();
@@ -54,36 +91,59 @@ function updateBookingStatus($transaction_id, $status)
     $conn->close();
 }
 
-function fetchNotifications()
+function fetchNotifications($user_id)
 {
     include 'includes/dbconn.php';
 
-    // Fetch all notifications, unread first
-    $sql = "SELECT transaction_id, status, created_at, read_status FROM notifications ORDER BY read_status ASC, created_at DESC LIMIT 10";
-    $result = $conn->query($sql);
+    // Fetch notifications for the specific user, unread first
+    $sql = "SELECT transaction_id, status, created_at, read_status FROM notifications WHERE user_id = ? ORDER BY read_status ASC, created_at DESC LIMIT 10";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     $notifications = [];
     while ($row = $result->fetch_assoc()) {
         $notifications[] = $row;
     }
 
+    $stmt->close();
     $conn->close();
     return $notifications;
 }
 
 
-function countUnreadNotifications()
+
+// function countUnreadNotifications()
+// {
+//     include 'includes/dbconn.php';
+
+//     $sql = "SELECT COUNT(*) AS unread_count FROM notifications WHERE read_status = 0";
+//     $result = $conn->query($sql);
+//     $row = $result->fetch_assoc();
+//     $unread_count = $row['unread_count'];
+
+//     $conn->close();
+//     return $unread_count;
+// }
+
+function countUnreadNotifications($user_id)
 {
     include 'includes/dbconn.php';
 
-    $sql = "SELECT COUNT(*) AS unread_count FROM notifications WHERE read_status = 0";
-    $result = $conn->query($sql);
+    $sql = "SELECT COUNT(*) AS unread_count FROM notifications WHERE user_id = ? AND read_status = 0";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
     $row = $result->fetch_assoc();
     $unread_count = $row['unread_count'];
 
+    $stmt->close();
     $conn->close();
     return $unread_count;
 }
+
 function markNotificationAsRead($transaction_id)
 {
     include 'includes/dbconn.php';

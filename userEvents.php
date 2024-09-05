@@ -1,9 +1,5 @@
 <?php
 include 'includes/dbconn.php';
-include 'notification_functions.php'; // Create this file for the functions
-
-$notifications = fetchNotifications();
-$unread_count = countUnreadNotifications();
 
 include 'login.php';
 
@@ -15,6 +11,12 @@ if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'user') {
 }
 
 $Dusername = $_SESSION['username'];
+$user_id = $_SESSION['user_id'];
+
+include 'notification_functions.php'; // Create this file for the functions
+
+$notifications = fetchNotifications($user_id);
+$unread_count = countUnreadNotifications($user_id);
 ?>
 
 <!DOCTYPE html>
