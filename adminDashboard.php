@@ -12,8 +12,9 @@ if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'admin') {
 $adminUsername = $_SESSION['username'];
 
 include 'count_Dashboard.php';
-
-
+// Fetch notifications
+include 'notification_functions.php'; // Include the file with fetchNotificationsAdmin function
+$notificationsAdmin = fetchNotificationsAdmin();
 
 ?>
 
@@ -223,11 +224,11 @@ include 'count_Dashboard.php';
                         <a id="menu_toggle"><i class="fa fa-bars"></i></a>
                     </div>
                     <nav class="nav navbar-nav">
-                        <ul class=" navbar-right">
+                        <ul class="navbar-right">
                             <li class="nav-item dropdown open" style="padding-left: 15px;">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true"
                                     id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
-                                    <?php echo ($adminUsername) ?>
+                                    <!-- Profile icon or user name can go here -->
                                 </a>
                                 <div class="dropdown-menu dropdown-usermenu pull-right"
                                     aria-labelledby="navbarDropdown">
@@ -240,69 +241,24 @@ include 'count_Dashboard.php';
                                 <a href="javascript:;" class="dropdown-toggle info-number" id="navbarDropdown1"
                                     data-toggle="dropdown" aria-expanded="false">
                                     <i class="fa fa-envelope-o"></i>
-                                    <span class="badge bg-green">6</span>
+                                    <!-- You might want to show a count of unread notifications here -->
                                 </a>
                                 <ul class="dropdown-menu list-unstyled msg_list" role="menu"
                                     aria-labelledby="navbarDropdown1">
+                                    <?php
+                                    foreach ($notificationsAdmin as $notification) {
+                                        echo '<li class="nav-item">';
+                                        echo '<a class="dropdown-item" href="javascript:;">';
+                                        echo '<span class="message">' . htmlspecialchars($notification['message']) . '</span>';
+                                        echo '<span class="time">' . htmlspecialchars($notification['created_at']) . '</span>';
+                                        echo '</a>';
+                                        echo '</li>';
+                                    }
+                                    ?>
                                     <li class="nav-item">
-                                        <a class="dropdown-item">
-                                            <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
-                                            <span>
-                                                <span>John Smith</span>
-                                                <span class="time">3 mins ago</span>
-                                            </span>
-                                            <span class="message">
-                                                Film festivals used to be do-or-die moments for movie makers. They were
-                                                where...
-                                            </span>
+                                        <a class="dropdown-item" href="javascript:;" onclick="markAllAsRead()">
+                                            <i class="fa fa-check"></i> Mark All as Read
                                         </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="dropdown-item">
-                                            <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
-                                            <span>
-                                                <span>John Smith</span>
-                                                <span class="time">3 mins ago</span>
-                                            </span>
-                                            <span class="message">
-                                                Film festivals used to be do-or-die moments for movie makers. They were
-                                                where...
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="dropdown-item">
-                                            <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
-                                            <span>
-                                                <span>John Smith</span>
-                                                <span class="time">3 mins ago</span>
-                                            </span>
-                                            <span class="message">
-                                                Film festivals used to be do-or-die moments for movie makers. They were
-                                                where...
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="dropdown-item">
-                                            <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
-                                            <span>
-                                                <span>John Smith</span>
-                                                <span class="time">3 mins ago</span>
-                                            </span>
-                                            <span class="message">
-                                                Film festivals used to be do-or-die moments for movie makers. They were
-                                                where...
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <div class="text-center">
-                                            <a class="dropdown-item">
-                                                <strong>See All Alerts</strong>
-                                                <i class="fa fa-angle-right"></i>
-                                            </a>
-                                        </div>
                                     </li>
                                 </ul>
                             </li>
@@ -311,6 +267,7 @@ include 'count_Dashboard.php';
                 </div>
             </div>
             <!-- /top navigation -->
+
 
             <div class="right_col" role="main">
                 <div class="row">

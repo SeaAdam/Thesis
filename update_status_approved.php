@@ -144,7 +144,7 @@ if (isset($_POST['id']) && isset($_POST['status'])) {
             }
 
             // Insert a notification into the notifications table
-            $notificationSql = "INSERT INTO notifications (user_id, transaction_id, status, message, created_at) 
+            $notificationSql = "INSERT INTO admin_notifications (user_id, transaction_id, status, message, created_at) 
                                 VALUES (?, ?, ?, ?, NOW())";
             $notificationStmt = $conn->prepare($notificationSql);
             $message = "Your appointment with ID $transactionId has been $status.";

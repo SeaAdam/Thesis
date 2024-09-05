@@ -56,12 +56,12 @@ try {
     // Insert into transactions table
     $sql = "INSERT INTO transactions (status, transaction_no, service_id, schedule_id, time_slot_id, date_seen, user_id) 
             VALUES (?, ?, ?, ?, ?, NOW(), ?)";
-    
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('sssssi', $status, $transactionNo, $serviceType, $scheduleId, $timeSlotId, $user_id);
-    
+
     $status = 'Pending'; // or any default status you prefer
-    
+
     if (!$stmt->execute()) {
         throw new Exception('Error: ' . $stmt->error);
     }
@@ -70,10 +70,27 @@ try {
     $sql = "UPDATE schedule_record_table SET Slots = Slots - 1 WHERE ID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $scheduleId);
-    
+
     if (!$stmt->execute()) {
         throw new Exception('Error updating slots: ' . $stmt->error);
     }
+
+    // Insert a notification into the notifications table
+    $notificationSql = "INSERT INTO admin_notification (user_id, transaction_no, message, created_at) VALUES (?, ?, ?, NOW())";
+    $notificationStmt = $conn->prepare($notificationSql);
+
+    if (!$notificationStmt) {
+        die('Prepare failed: ' . $conn->error);
+    }
+
+    $message = "New Appointment Booking Transaction: $transactionNo with user id $user_id.";
+    $notificationStmt->bind_param('iss', $user_id, $transactionNo, $message);
+
+    if (!$notificationStmt->execute()) {
+        die('Execute failed: ' . $notificationStmt->error);
+    }
+
+    $notificationStmt->close();
 
     // Commit transaction
     $conn->commit();
