@@ -1,13 +1,11 @@
 <?php
+// session_start();
 // include 'includes/dbconn.php';
 // include 'notification_functions.php';
-
 
 // if (isset($_POST['id']) && isset($_POST['status'])) {
 //     $transactionId = $_POST['id'];
 //     $status = $_POST['status'];
-
-//     $testEmail = 'adameroearl@gmail.com';
 
 //     // Start a transaction
 //     $conn->begin_transaction();
@@ -31,6 +29,19 @@
 //             $transaction = $result->fetch_assoc();
 //             $userId = $transaction['user_id'];
 
+//             // Fetch the email from user_2fa table
+//             $sql = "SELECT email FROM user_2fa WHERE userID = ?";
+//             $stmt = $conn->prepare($sql);
+//             $stmt->bind_param('i', $userId);
+//             $stmt->execute();
+//             $result = $stmt->get_result();
+//             $user = $result->fetch_assoc();
+//             $userEmail = $user['email'];
+
+//             if (!$userEmail || !filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
+//                 throw new Exception("Invalid email address.");
+//             }
+
 //             // Insert a notification into the notifications table
 //             $notificationSql = "INSERT INTO notifications (user_id, transaction_id, status, message, created_at) 
 //                                 VALUES (?, ?, ?, ?, NOW())";
@@ -39,21 +50,19 @@
 //             $notificationStmt->bind_param('iiss', $userId, $transactionId, $status, $message);
 //             $notificationStmt->execute();
 
-//              // Send email notification
-//              $emailSubject = "Appointment Status Updated";
-//              $emailMessage = "Your appointment with ID $transactionId has been $status.";
-//              if (sendEmailNotification($testEmail, $emailSubject, $emailMessage)) {
-//                  echo 'Success';
-//              } else {
-//                  // Handle email sending failure if necessary
-//                  error_log("Failed to send email notification to $testEmail");
-//                  echo 'Error sending email';
-//              }
-
+//             // Send email notification
+//             $emailSubject = "Appointment Status Updated";
+//             $emailMessage = "Your appointment with ID $transactionId has been $status.";
+//             if (sendEmailNotification($userEmail, $emailSubject, $emailMessage)) {
+//                 echo 'Success';
+//             } else {
+//                 error_log("Failed to send email notification to $userEmail");
+//                 echo 'Error sending email';
+//             }
 
 //             if ($status === 'Completed' || $status === 'Rejected') {
-//                 // Fetch the schedule_id and time_slot_id related to this transaction
-//                 $sql = "SELECT schedule_id, time_slot_id FROM appointment_system.transactions WHERE ID = ?";
+//                 // Fetch the schedule_id related to this transaction
+//                 $sql = "SELECT schedule_id FROM appointment_system.transactions WHERE ID = ?";
 //                 $stmt = $conn->prepare($sql);
 //                 $stmt->bind_param('i', $transactionId);
 //                 $stmt->execute();
@@ -85,11 +94,10 @@
 //         $conn->rollback();
 //         echo 'Error: ' . $e->getMessage();
 //     }
-// } 
-// else {
-//     echo 'No ID or status provided ';
+// } else {
+//     echo 'No ID or status provided';
 // }
-// echo $testEmail;
+
 // $conn->close();
 
 session_start();
@@ -147,10 +155,10 @@ if (isset($_POST['id']) && isset($_POST['status'])) {
             $emailSubject = "Appointment Status Updated";
             $emailMessage = "Your appointment with ID $transactionId has been $status.";
             if (sendEmailNotification($userEmail, $emailSubject, $emailMessage)) {
-                echo 'Success';
+                error_log("Email sent successfully to $userEmail");
             } else {
                 error_log("Failed to send email notification to $userEmail");
-                echo 'Error sending email';
+                throw new Exception("Error sending email notification.");
             }
 
             if ($status === 'Completed' || $status === 'Rejected') {
@@ -185,6 +193,7 @@ if (isset($_POST['id']) && isset($_POST['status'])) {
         $notificationStmt->close();
     } catch (Exception $e) {
         $conn->rollback();
+        error_log("Exception: " . $e->getMessage());
         echo 'Error: ' . $e->getMessage();
     }
 } else {

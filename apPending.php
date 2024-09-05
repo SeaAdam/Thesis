@@ -348,6 +348,17 @@ $adminUsername = $_SESSION['username'];
                     confirmButtonText: `Yes, ${status.toLowerCase()} it!`
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        // Show a loading spinner while the AJAX request is being processed
+                        Swal.fire({
+                            title: 'Processing...',
+                            text: 'Please wait while we update the transaction status.',
+                            icon: 'info',
+                            showConfirmButton: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
                         // AJAX request to update the transaction status and send notification
                         var xhr = new XMLHttpRequest();
                         xhr.open("POST", "update_status_approved.php", true);
@@ -355,10 +366,13 @@ $adminUsername = $_SESSION['username'];
 
                         xhr.onreadystatechange = function () {
                             if (xhr.readyState == 4 && xhr.status == 200) {
+                                // Hide the loading spinner
+                                Swal.close();
+
                                 if (xhr.responseText.trim() === 'Success') {
                                     Swal.fire(
                                         `${status}!`,
-                                        `The transaction has been ${status.toLowerCase()}d successfully.`,
+                                        `The transaction has been ${status.toLowerCase()} successfully.`,
                                         'success'
                                     ).then(() => {
                                         // Reload the page to reflect the changes

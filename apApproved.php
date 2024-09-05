@@ -348,6 +348,17 @@ $adminUsername = $_SESSION['username'];
                     confirmButtonText: 'Yes, complete it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        // Show a loading spinner while the AJAX request is being processed
+                        Swal.fire({
+                            title: 'Processing...',
+                            text: 'Please wait while we update the transaction status.',
+                            icon: 'info',
+                            showConfirmButton: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
                         // Proceed with updating the transaction status
                         updateTransactionStatus(transactionId, 'Completed');
                     }
@@ -361,6 +372,8 @@ $adminUsername = $_SESSION['username'];
 
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
+                        Swal.close(); // Close the loading spinner
+
                         if (xhr.responseText.trim() === 'Success') {
                             Swal.fire(
                                 'Completed!',
@@ -383,6 +396,7 @@ $adminUsername = $_SESSION['username'];
                 // Send the data to the server
                 xhr.send("id=" + encodeURIComponent(id) + "&status=" + encodeURIComponent(status));
             }
+
 
         </script>
 
