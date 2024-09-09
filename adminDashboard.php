@@ -15,6 +15,7 @@ include 'count_Dashboard.php';
 // Fetch notifications
 include 'notification_functions.php'; // Include the file with fetchNotificationsAdmin function
 $notificationsAdmin = fetchNotificationsAdmin();
+$unread_count = countUnreadNotificationsAdmin();
 
 ?>
 
@@ -125,6 +126,16 @@ $notificationsAdmin = fetchNotificationsAdmin();
         #statusDoughnutChart {
             width: 100% !important;
             height: 100% !important;
+        }
+
+        .read {
+            background-color: #f0f0f0;
+            /* Example styling for unread */
+        }
+
+        .unread {
+            background-color: #e0e0e0;
+            /* Example styling for read */
         }
     </style>
 </head>
@@ -241,20 +252,27 @@ $notificationsAdmin = fetchNotificationsAdmin();
                                 <a href="javascript:;" class="dropdown-toggle info-number" id="navbarDropdown1"
                                     data-toggle="dropdown" aria-expanded="false">
                                     <i class="fa fa-envelope-o"></i>
-                                    <!-- You might want to show a count of unread notifications here -->
+                                    <span class="badge bg-green"><?php echo $unread_count; ?></span>
                                 </a>
                                 <ul class="dropdown-menu list-unstyled msg_list" role="menu"
                                     aria-labelledby="navbarDropdown1">
                                     <?php
                                     foreach ($notificationsAdmin as $notification) {
+                                        $statusClass = $notification['status'] == 0 ? 'unread' : 'read';
+                                        $transactionNo = htmlspecialchars($notification['transaction_no']);
+                                        $message = htmlspecialchars($notification['message']);
+                                        $createdAt = htmlspecialchars($notification['created_at']);
+
                                         echo '<li class="nav-item">';
-                                        echo '<a class="dropdown-item" href="javascript:;">';
-                                        echo '<span class="message">' . htmlspecialchars($notification['message']) . '</span>';
-                                        echo '<span class="time">' . htmlspecialchars($notification['created_at']) . '</span>';
+                                        echo '<a class="dropdown-item ' . $statusClass . '" href="javascript:;" onclick="markAsRead(\'' . $transactionNo . '\')">';
+                                        echo '<span class="message">' . $message . '</span>';
+                                        echo '<span class="time">' . $createdAt . '</span>';
                                         echo '</a>';
                                         echo '</li>';
                                     }
                                     ?>
+
+
                                     <li class="nav-item">
                                         <a class="dropdown-item" href="javascript:;" onclick="markAllAsRead()">
                                             <i class="fa fa-check"></i> Mark All as Read
@@ -659,6 +677,46 @@ $notificationsAdmin = fetchNotificationsAdmin();
                     }
                 });
             });
+
+            function markAsRead(transaction_no) {
+                fetch(`mark_notification_read_admin.php?transaction_no=${encodeURIComponent(transaction_no)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Find the notification link
+                            const notificationLink = document.querySelector(`a[onclick*='markAsRead("${transaction_no}")']`);
+                            if (notificationLink) {
+                                // Update the notification's class to 'read'
+                                notificationLink.classList.remove('unread');
+                                notificationLink.classList.add('read');
+
+                            }
+                            location.reload();
+                        } else {
+                            console.error('Failed to mark notification as read.');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+
+
+
+            function markAllAsRead() {
+                fetch('mark_all_notification_read_admin.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update all notifications' classes to 'read'
+                            document.querySelectorAll('.dropdown-item.unread').forEach(item => {
+                                item.classList.remove('unread');
+                                item.classList.add('read');
+                            });
+
+                            // Update the count
+                            location.reload();
+                        }
+                    });
+            }
         </script>
 
 </body>

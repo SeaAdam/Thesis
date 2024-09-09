@@ -60,7 +60,7 @@ function fetchNotificationsAdmin() //THIS IS WHERE I LEFT
     include 'includes/dbconn.php';
 
     // Fetch notifications for the specific user, unread first
-    $sql = "SELECT transaction_no, message, created_at FROM admin_notification";
+    $sql = "SELECT transaction_no, message, created_at, status FROM admin_notification ORDER BY status ASC, created_at DESC LIMIT 10";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -96,6 +96,22 @@ function fetchNotifications($user_id)
     return $notifications;
 }
 
+function countUnreadNotificationsAdmin()
+{
+    include 'includes/dbconn.php';
+
+    $sql = "SELECT COUNT(*) AS unread_count FROM admin_notification WHERE status = 0";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $unread_count = $row['unread_count'];
+
+    $stmt->close();
+    $conn->close();
+    return $unread_count;
+}
+
 
 function countUnreadNotifications($user_id)
 {
@@ -112,6 +128,29 @@ function countUnreadNotifications($user_id)
     $stmt->close();
     $conn->close();
     return $unread_count;
+}
+
+function markNotificationAsReadAdmin($transaction_no)
+{
+    include 'includes/dbconn.php';
+
+    $sql = "UPDATE admin_notification SET status = 1 WHERE transaction_no = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('s', $transaction_no);
+    $stmt->execute();
+
+    $stmt->close();
+    $conn->close();
+}
+
+function markAllAsReadAdmin()
+{
+    include 'includes/dbconn.php';
+
+    $sql = "UPDATE admin_notification SET status = 1";
+    $conn->query($sql);
+
+    $conn->close();
 }
 
 function markNotificationAsRead($transaction_id)
