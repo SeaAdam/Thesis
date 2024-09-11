@@ -1,27 +1,46 @@
 <?php
-// Include your database connection
 include 'includes/dbconn.php';
 
-// Example client ID (fetch dynamically if needed)
+// Get the client ID from the URL (default to 1 if not set)
 $id = isset($_GET['id']) ? intval($_GET['id']) : 1;
 
-// Fetch client data
-$sql = "SELECT * FROM clients_info WHERE id = '$id'";
+// Query to select client information
+$sql = "SELECT id, client_name, company_name, address, contact_number, email_address FROM clients_info WHERE id = '$id'";
 $query = $conn->query($sql);
 
-// Check if the query was successful
-if ($query === false) {
-    die('Query failed: ' . $conn->error);
-}
+// Initialize variables for options
+$clientNameOptions = '';
+$companyNameOptions = '';
+$addressOptions = '';
+$contactOptions = '';
+$emailAddress = '';
 
-$options = '';
+// Fetch the client information
 while ($row = $query->fetch_assoc()) {
-    $options .= '<option value="' . htmlspecialchars($row['id']) . '">'
+    $clientNameOptions .= '<option value="' . htmlspecialchars($row['id']) . '">'
         . htmlspecialchars($row['client_name']) . '</option>';
+    $companyNameOptions .= '<option value="' . htmlspecialchars($row['company_name']) . '">'
+        . htmlspecialchars($row['company_name']) . '</option>';
+    $addressOptions .= '<option value="' . htmlspecialchars($row['address']) . '">'
+        . htmlspecialchars($row['address']) . '</option>';
+    $contactOptions .= '<option value="' . htmlspecialchars($row['contact_number']) . '">'
+        . htmlspecialchars($row['contact_number']) . '</option>';
+    $emailAddress .= '<option value="' . htmlspecialchars($row['email_address']) . '">'
+        . htmlspecialchars($row['email_address']) . '</option>';
 }
 
-if (empty($options)) {
-    $options = '<option value="">No client found</option>';
+// Fallback if no client found
+if (empty($clientNameOptions)) {
+    $clientNameOptions = '<option value="">No client found</option>';
+}
+if (empty($companyNameOptions)) {
+    $companyNameOptions = '<option value="">No company name found</option>';
+}
+if (empty($addressOptions)) {
+    $addressOptions = '<option value="">No address found</option>';
+}
+if (empty($contactOptions)) {
+    $contactOptions = '<option value="">No contact number found</option>';
 }
 ?>
 
@@ -313,15 +332,68 @@ if (empty($options)) {
                             </div>
                             <div class="modal-body">
                                 <form id="bookingForm" method="POST" action="add_booking_as_client.php">
-                                    <div class="mb-3">
-                                        <label for="patientName" class="form-label">Patient Name</label>
-                                        <select class="form-control" id="patientName" name="patientName">
-                                            <?php echo $options; ?>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label for="clientName" class="form-label">Client Name</label>
+                                            <select class="form-control" id="clientName" name="clientName">
+                                                <?php echo $clientNameOptions; ?>
+                                            </select>
+                                        </div>
 
+                                        <div class="col-6 mb-3">
+                                            <label for="companyName" class="form-label">Company Name</label>
+                                            <select class="form-control" id="companyName" name="companyName">
+                                                <?php echo $companyNameOptions; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="address" class="form-label">Address</label>
+                                            <select class="form-control" id="address" name="address">
+                                                <?php echo $addressOptions; ?>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-4 mb-3">
+                                            <label for="contact" class="form-label">Contact Number</label>
+                                            <select class="form-control" id="contact" name="contact">
+                                                <?php echo $contactOptions; ?>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-4 mb-3">
+                                            <label for="email" class="form-label">Email Address</label>
+                                            <select class="form-control" id="email" name="email">
+                                                <?php echo $emailAddress; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="mb-3">
+                                        <label for="serviceType" class="form-label">Service Type</label>
+                                        <select class="form-control" id="serviceType" name="serviceType">
+                                            <option>--SELECT--</option>
+                                            <?php
+                                            include 'includes/dbconn.php';
+                                            $sql = "SELECT * FROM services_table";
+                                            $query = $conn->query($sql);
+                                            while ($row = $query->fetch_assoc()) {
+                                                ?>
+                                                <option value="<?php echo $row['ID']; ?>">
+                                                    <?php echo $row['Services']; ?>
+                                                </option>
+                                                <?php
+                                            }
+                                            ?>
                                         </select>
                                     </div>
 
                                     <button type="submit" class="btn btn-primary">Submit Booking</button>
+
+                                    <input type="hidden" id="selectedDate" name="selectedDate">
                                 </form>
                             </div>
                         </div>
@@ -435,14 +507,26 @@ if (empty($options)) {
                             bookButton.innerText = 'Book Appointment';
                             bookButton.classList.add('book-appointment-btn');
 
+                            // bookButton.addEventListener('click', function () {
+                            //     // Set the date in the modal title
+                            //     var dateStr = info.event.startStr;
+                            //     modalTitle.innerText = 'Book for: ' + dateStr;
+
+                            //     // Show the modal
+                            //     modal.show();
+                            // });
+
                             bookButton.addEventListener('click', function () {
-                                // Set the date in the modal title
                                 var dateStr = info.event.startStr;
                                 modalTitle.innerText = 'Book for: ' + dateStr;
+
+                                // Update the hidden field with the selected date
+                                document.getElementById('selectedDate').value = dateStr;
 
                                 // Show the modal
                                 modal.show();
                             });
+
 
                             // Append the button to the event's container
                             info.el.querySelector('.fc-event-main').appendChild(bookButton);

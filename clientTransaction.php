@@ -135,11 +135,11 @@
                                 <a href="javascript:;" class="dropdown-toggle info-number" id="navbarDropdown1"
                                     data-toggle="dropdown" aria-expanded="false">
                                     <i class="fa fa-envelope-o"></i>
-                                   
+
                                 </a>
                                 <ul class="dropdown-menu list-unstyled msg_list" role="menu"
                                     aria-labelledby="navbarDropdown1">
-                                
+
                                     <li class="nav-item">
                                         <a class="dropdown-item" href="javascript:;" onclick="markAllAsRead()">
                                             <i class="fa fa-check"></i> Mark All as Read
@@ -162,15 +162,62 @@
                                 <th>#</th>
                                 <th>Status</th>
                                 <th>Booking No.</th>
-                                <th>Services Acquried</th>
+                                <th>Services Acquired</th>
                                 <th>Date Appointment</th>
-                                <th>Time Slot</th>
                                 <th>Date Seen</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                          
+                            <?php
+                            include 'includes/dbconn.php';
+
+                            // Updated SQL query to join with services_table
+                            $sql = "
+                                SELECT 
+                                    cb.id, 
+                                    cb.status, 
+                                    cb.booking_no, 
+                                    st.Services AS service_name, -- Retrieve the service name
+                                    cb.date_appointment, 
+                                    cb.date_seen
+                                FROM 
+                                    client_booking cb
+                                LEFT JOIN 
+                                    services_table st ON cb.services = st.ID";
+
+                            $query = $conn->query($sql);
+
+                            if ($query) {
+                                while ($row = $query->fetch_assoc()) {
+                                    ?>
+                                    <tr>
+                                        <th scope="row"><?php echo htmlspecialchars($row['id']); ?></th>
+                                        <td><?php echo htmlspecialchars($row['status']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['booking_no']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['service_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['date_appointment']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['date_seen']); ?></td>
+                                        <td>
+                                            <a href="#" data-id="<?php echo htmlspecialchars($row['id']); ?>"
+                                                class="btn btn-success btn-sm edit"><i class="fa fa-edit"
+                                                    aria-hidden="true"></i>
+                                                Edit</a>
+                                            <a href="#" data-id="<?php echo htmlspecialchars($row['id']); ?>"
+                                                class="btn btn-danger btn-sm delete"><i class="fa fa-trash"
+                                                    aria-hidden="true"></i>
+                                                Delete</a>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                }
+                            } else {
+                                echo "Error: " . $conn->error;
+                            }
+
+                            // Close the connection
+                            $conn->close();
+                            ?>
                         </tbody>
                     </table>
 
@@ -225,7 +272,7 @@
         <script src="build/js/custom.min.js"></script>
 
         <script>
-            
+
         </script>
 
 </body>
