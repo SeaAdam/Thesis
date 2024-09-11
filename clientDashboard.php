@@ -507,14 +507,6 @@ if (empty($contactOptions)) {
                             bookButton.innerText = 'Book Appointment';
                             bookButton.classList.add('book-appointment-btn');
 
-                            // bookButton.addEventListener('click', function () {
-                            //     // Set the date in the modal title
-                            //     var dateStr = info.event.startStr;
-                            //     modalTitle.innerText = 'Book for: ' + dateStr;
-
-                            //     // Show the modal
-                            //     modal.show();
-                            // });
 
                             bookButton.addEventListener('click', function () {
                                 var dateStr = info.event.startStr;

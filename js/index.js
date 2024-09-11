@@ -36,7 +36,7 @@ function changeBackground() {
 // Set initial background image on page load
 window.onload = function () {
     homeSection.style.backgroundImage = `url(${images[0]})`;
-    setInterval(changeBackground, 2000); 
+    setInterval(changeBackground, 2000);
 };
 
 
@@ -46,8 +46,6 @@ var modal = document.getElementById("myModal");
 var modalReg = document.getElementById("myModalReg");
 
 var modalRegPatient = document.getElementById("myModalRegPatient");
-
-
 
 // Get the button that opens the modal
 var openModalBtn = document.getElementById("openModalBtn");
@@ -93,16 +91,14 @@ closeModalBtnRegPatient.onclick = function () {
     modalRegPatient.style.display = "none";
 }
 
-
-
-
-
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function (event) {
     if (event.target == modal) {
         modal.style.display = "none";
     }
 }
+
+
 
 
 

@@ -23,9 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param('sss', $booking_no, $serviceType, $selectedDate); // Bind the selected date
 
     if ($stmt->execute()) {
-        echo "Booking successfully created!";
-        // You can redirect to another page after successful booking
-        // header("Location: success_page.php");
+        header("Location: clientDashboard.php");
     } else {
         echo "Error: " . $conn->error;
     }

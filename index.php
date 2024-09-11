@@ -221,7 +221,7 @@ session_start();
                                 <div class="form-group col-md-6">
                                     <label for="LastName">Last Name</label>
                                     <input type="text" class="form-control" id="LastName" name="LastName"
-                                        --placeholder="Last Name" required>
+                                        placeholder="Last Name" required>
                                 </div>
                             </div>
 
@@ -310,6 +310,79 @@ session_start();
                                 <!-- Register Button -->
                                 <button type="submit" class="btn-primary button">Register</button>
                                 <button type="button" id="closeModalBtnRegPatient" class="btn-dark button"
+                                    data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="myModalRegClient" class="modal">
+                <div class="modal-content regForm">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Register As Client</h2>
+                    </div>
+                    <div class="modal-body">
+                        <form class="formClient" id="registrationFormClient" action="registration_client.php"
+                            method="POST">
+
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="client_name">Client Name</label>
+                                    <input type="text" class="form-control" id="client_name" name="client_name"
+                                        placeholder="Client Name" required>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label for="position">Position</label>
+                                    <input type="text" class="form-control" id="position" name="position"
+                                        placeholder="Position" required>
+                                </div>
+                            </div>
+
+
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="company_name">Company Name</label>
+                                    <input type="text" class="form-control" id="company_name" name="company_name"
+                                        placeholder="Company Name" required>
+                                    <!-- <select class="form-control" name="company_name" id="company_name">
+                                        <option>--SELECT--</option>
+                                        <option>Accenture</option>
+                                    </select> -->
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label for="contact_number">Contact Number</label>
+                                    <input type="text" class="form-control" id="contact_number" name="contact_number"
+                                        placeholder="Contact Number" required>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group" style="margin-left: 0; width: 100%;">
+                                <label for="address">Address</label>
+                                <input type="text" class="form-control" id="address"
+                                    placeholder="Address" name="address" required>
+                            </div>
+
+
+                            <div class="form-group" style="margin-left: 0; width: 100%;">
+                                <label for="email_address">Email Address</label>
+                                <input type="text" class="form-control" id="email_address" placeholder="@"
+                                    name="email_address" autocomplete="off" required>
+                            </div>
+
+                            <div class="form-group form-check">
+                                <input type="checkbox" class="form-check-input" id="terms" required>
+                                <label class="form-check-label" for="terms">I agree to the terms and conditions</label>
+                            </div>
+
+                            <div class="modal-footer">
+                                <!-- Register Button -->
+                                <button type="submit" class="btn-primary button">Register</button>
+                                <button type="button" id="closeModalBtnRegClient" class="btn-dark button"
                                     data-bs-dismiss="modal">Cancel</button>
                             </div>
                         </form>
@@ -462,6 +535,29 @@ session_start();
                         text: 'An error occurred. Please try again later.',
                     });
                 });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var modalRegClient = document.getElementById("myModalRegClient");
+            var openModalBtnRegClient = document.getElementById("modalRegClient");
+            var closeModalBtnRegClient = document.getElementById("closeModalBtnRegClient");
+
+            // Open the modal
+            openModalBtnRegClient.onclick = function () {
+                modalRegClient.style.display = "block";
+            }
+
+            // Close the modal
+            closeModalBtnRegClient.onclick = function () {
+                modalRegClient.style.display = "none";
+            }
+
+            // Close the modal when clicking outside of it
+            window.onclick = function (event) {
+                if (event.target == modalRegClient) {
+                    modalRegClient.style.display = "none";
+                }
+            }
         });
 
     </script>
