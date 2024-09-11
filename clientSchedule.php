@@ -1,17 +1,6 @@
 <?php
-include 'login.php';
-
-// Check if the user is logged in and is an admin
-if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'admin') {
-    header('Location: index.php'); // Redirect to login page if not logged in as admin
-    exit();
-}
-
-// Retrieve the admin username from the session
-$adminUsername = $_SESSION['username'];
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,7 +12,7 @@ $adminUsername = $_SESSION['username'];
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="images/favicon.ico" type="image/ico" />
 
-    <title>Admin Services</title>
+    <title>Admin Schedule</title>
 
     <!-- Bootstrap -->
     <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -52,7 +41,7 @@ $adminUsername = $_SESSION['username'];
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
-                            <h2><?php echo htmlspecialchars($adminUsername); ?></h2>
+                            <h2></h2>
                         </div>
                     </div>
                     <!-- /menu profile quick info -->
@@ -137,7 +126,7 @@ $adminUsername = $_SESSION['username'];
                             <li class="nav-item dropdown open" style="padding-left: 15px;">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true"
                                     id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
-                                    <?php echo htmlspecialchars($adminUsername); ?>
+                                    
                                 </a>
                                 <div class="dropdown-menu dropdown-usermenu pull-right"
                                     aria-labelledby="navbarDropdown">
@@ -222,43 +211,34 @@ $adminUsername = $_SESSION['username'];
             </div>
             <!-- /top navigation -->
 
+
             <div class="right_col" role="main">
                 <?php
-                if (isset($_SESSION['successEditContacts'])) {
+                if (isset($_SESSION['successEditSchedule'])) {
                     echo "
                         <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
                             <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success!</h4>
-                            <p>Contacts is edited!;</p>
-                        </div>
-                    ";
-
-                    unset($_SESSION['successEditContacts']);
-                }
-
-                if (isset($_SESSION['saveContacts'])) {
-                    echo "
-                        <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
-                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success!</h4>
-                            <p>New Contacts added successfully!;</p>
-                        </div>
-                    ";
-
-                    unset($_SESSION['saveContacts']);
-                }
-
-                if (isset($_SESSION['errorContacts'])) {
-                    echo "
-                        <div class='alert alert-danger alert-dismissable' id='alert' style='background: red;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
-                            <h4><i class='fa fa-exclamation-triangle'></i> Error!</h4>
-                            <p>The selected contacts is already in the record!;</p>
+                            <p>Schedule is edited!;</p>
                         </div>
                     ";
 
                     // Clear the alert message
-                    unset($_SESSION['errorContacts']);
+                    unset($_SESSION['successEditSchedule']);
                 }
 
-                if (isset($_SESSION['deletedContacts'])) {
+                if (isset($_SESSION['save'])) {
+                    echo "
+                        <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success!</h4>
+                            <p>Event added successfully!;</p>
+                        </div>
+                    ";
+
+                    // Clear the alert message
+                    unset($_SESSION['save']);
+                }
+
+                if (isset($_SESSION['deleted'])) {
                     echo "
                         <div class='alert alert-dark alert-dismissable' id='alert' style='background: gray;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
                             <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Deleted!</h4>
@@ -267,12 +247,25 @@ $adminUsername = $_SESSION['username'];
                     ";
 
                     // Clear the alert message
-                    unset($_SESSION['deletedContacts']);
+                    unset($_SESSION['deleted']);
+                }
+
+                if (isset($_SESSION['errorevent'])) {
+                    echo "
+                        <div class='alert alert-danger alert-dismissable' id='alert' style='background: red;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                            <h4><i class='fa fa-exclamation-triangle'></i> Error!</h4>
+                            <p>The selected date range is already occupied by another event!;</p>
+                        </div>
+                    ";
+
+                    // Clear the alert message
+                    unset($_SESSION['errorevent']);
                 }
                 ?>
+
                 <!-- Button trigger modal -->
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                    New Contacts
+                    New Schedule
                 </button>
 
                 <!-- Modal -->
@@ -281,21 +274,35 @@ $adminUsername = $_SESSION['username'];
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Add New Contacts;</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Add New Schedule</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form action="add_contacts.php" method="POST">
+                                <form action="add_sched_add_timeslots.php" method="POST">
                                     <div class="mb-3">
-                                        <label for="ServiceProvider" class="form-label">Service Provider :</label>
-                                        <input type="text" class="form-control" id="ServiceProvider"
-                                            name="ServiceProvider" required>
+                                        <label for="Slots" class="form-label">Slots</label>
+                                        <input type="text" class="form-control" id="Slots" name="Slots" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="MobileNo" class="form-label">Mobile Number :</label>
-                                        <input type="texxt" class="form-control" id="MobileNo" name="MobileNo" required>
+                                        <label for="SlotsDate" class="form-label">Slots Date</label>
+                                        <input type="date" class="form-control" id="SlotsDate" name="SlotsDate"
+                                            required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="StartTime" class="form-label">Start Time</label>
+                                        <input type="time" class="form-control" id="StartTime" name="StartTime"
+                                            required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="EndTime" class="form-label">End Time</label>
+                                        <input type="time" class="form-control" id="EndTime" name="EndTime" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="Durations" class="form-label">Durations</label>
+                                        <input type="text" class="form-control" id="Durations" name="Durations"
+                                            required>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="reset" class="btn btn-secondary"
@@ -307,39 +314,40 @@ $adminUsername = $_SESSION['username'];
                         </div>
                     </div>
                 </div>
+
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Service Provider</th>
-                            <th scope="col">Contact No</th>
+                            <th scope="col">Slots Date</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
                         include 'includes/dbconn.php';
 
-                        $sql = "SELECT * FROM contactus_table";
+                        $sql = "SELECT * FROM client_schedule";
                         $query = $conn->query($sql);
                         while ($row = $query->fetch_assoc()) {
                             ?>
-
                             <tr>
-                                <th scope="row"><?php echo $row['ID']; ?></th>
-                                <td><?php echo $row['ServiceProvider'] ?></td>
-                                <td><?php echo $row['MobileNo'] ?></td>
-
+                                <th scope="row"><?php echo $row['id']; ?></th>
+                                <td><?php echo $row['schedule_date']; ?></td>
                                 <td>
-                                    <a href="#" data-id="<?php echo $row['ID']; ?>" class="btn btn-success btn-sm edit"><i
+
+                                    <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-success btn-sm edit"><i
                                             class="fa fa-edit" aria-hidden="true"></i>
                                         Edit</a>
-                                    <a href="#" data-id="<?php echo $row['ID']; ?>" class="btn btn-danger btn-sm delete"><i
+                                    <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-danger btn-sm delete"><i
                                             class="fa fa-trash" aria-hidden="true"></i> Delete</a>
                                 </td>
                             </tr>
+
                             <?php
                         }
                         ?>
+                        <!-- More rows as needed -->
                     </tbody>
                 </table>
             </div>
@@ -390,9 +398,50 @@ $adminUsername = $_SESSION['username'];
         <!-- Custom Theme Scripts -->
         <script src="build/js/custom.min.js"></script>
 
+
         <?php include "includes/booking_modal.php"; ?>
 
         <script>
+            $(function () {
+                $('.edit').click(function (e) {
+                    e.preventDefault();
+                    $('#editSchedule').modal('show');
+                    var id = $(this).data('id');
+                    getRow(id);
+                });
+
+                $('.delete').click(function (e) {
+                    e.preventDefault();
+                    $('#delete').modal('show');
+                    var id = $(this).data('id');
+                    getRow(id);
+                });
+
+            });
+
+
+
+            function getRow(id) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'booking_row_sched.php',
+                    data: { id: id },
+                    dataType: 'json',
+                    success: function (response) {
+                        $('.ID').val(response.ID);
+                        $('.Slots').html(response.Slots);
+                        $('.Slots_Date').html(response.Slots_Date);
+                        $('#editSlots').val(response.Slots);
+                        $('#Slots_Date').val(response.Slots_Date);
+                        $('#Start_Time').val(response.Start_Time);
+                        $('#End_Time').val(response.End_Time);
+                        $('#editDurations').val(response.Durations);
+
+                    }
+                });
+            }
+
+
             $(document).ready(function () {
                 window.setTimeout(function () {
                     $("#alert").fadeTo(1000, 0).slideUp(1000, function () {
@@ -400,43 +449,7 @@ $adminUsername = $_SESSION['username'];
                     });
                 }, 5000);
             });
-
-            $(function () {
-                $('.edit').click(function (e) {
-                    e.preventDefault();
-                    $('#editContacts').modal('show');
-                    var id = $(this).data('id');
-                    getRow(id);
-                });
-
-                $('.delete').click(function (e) {
-                    e.preventDefault();
-                    $('#deleteContacts').modal('show');
-                    var id = $(this).data('id');
-                    getRow(id);
-                });
-
-            });
-
-
-            function getRow(id) {
-                $.ajax({
-                    type: 'POST',
-                    url: 'booking_row_contacts.php',
-                    data: { id: id },
-                    dataType: 'json',
-                    success: function (response) {
-                        $('.ID').val(response.ID);
-                        $('.ServiceProvider').html(response.ServiceProvider);
-                        $('.MobileNo').html(response.MobileNo);
-                        $('#editServiceProvider').val(response.ServiceProvider);
-                        $('#editMobileNo').val(response.MobileNo);
-                    }
-                });
-            }
         </script>
-
-
 
 </body>
 

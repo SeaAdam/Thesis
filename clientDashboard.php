@@ -1,7 +1,29 @@
 <?php
+// Include your database connection
+include 'includes/dbconn.php';
 
+// Example client ID (fetch dynamically if needed)
+$id = isset($_GET['id']) ? intval($_GET['id']) : 1;
+
+// Fetch client data
+$sql = "SELECT * FROM clients_info WHERE id = '$id'";
+$query = $conn->query($sql);
+
+// Check if the query was successful
+if ($query === false) {
+    die('Query failed: ' . $conn->error);
+}
+
+$options = '';
+while ($row = $query->fetch_assoc()) {
+    $options .= '<option value="' . htmlspecialchars($row['id']) . '">'
+        . htmlspecialchars($row['client_name']) . '</option>';
+}
+
+if (empty($options)) {
+    $options = '<option value="">No client found</option>';
+}
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -78,43 +100,36 @@
             color: black;
         }
 
-        .custom-button {
-            display: block;
-            margin: 5px auto;
-            padding: 5px;
+        .fc-daygrid-event {
+            position: relative;
+            background-color: transparent;
+            /* Make sure background is transparent */
+            border: none;
+            /* Remove border if present */
+        }
+
+        .fc-event-main {
+            padding: 0;
+            /* Remove padding if present */
+            margin: 0;
+            /* Remove margin if present */
+        }
+
+        .book-appointment-btn {
             background-color: #007bff;
             color: white;
             border: none;
-            border-radius: 4px;
+            padding: 5px 10px;
+            border-radius: 3px;
             cursor: pointer;
+            margin-top: 5px;
+            font-size: 12px;
+            display: block;
+            /* Ensure button is displayed as block element */
         }
 
-        .custom-button:hover {
+        .book-appointment-btn:hover {
             background-color: #0056b3;
-        }
-
-        .fc-h-event .fc-event-title {
-            font-size: .8rem;
-        }
-
-        .event-available .fc-event-title {
-            background-color: green !important;
-            /* Ensure green background for available slots */
-        }
-
-        .event-unavailable .fc-event-title {
-            background-color: red !important;
-            /* Ensure red background for unavailable slots */
-        }
-
-        .dropdown-item.unread {
-            background-color: #f8f9fa;
-            font-weight: bold;
-        }
-
-        .dropdown-item.read {
-            background-color: #ffffff;
-            font-weight: normal;
         }
     </style>
 
@@ -221,11 +236,11 @@
                                 <a href="javascript:;" class="dropdown-toggle info-number" id="navbarDropdown1"
                                     data-toggle="dropdown" aria-expanded="false">
                                     <i class="fa fa-envelope-o"></i>
-                                    
+
                                 </a>
                                 <ul class="dropdown-menu list-unstyled msg_list" role="menu"
                                     aria-labelledby="navbarDropdown1">
-                                    
+
                                     <li class="nav-item">
                                         <a class="dropdown-item" href="javascript:;" onclick="markAllAsRead()">
                                             <i class="fa fa-check"></i> Mark All as Read
@@ -285,6 +300,7 @@
                     </div>
                 </div>
 
+
                 <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog">
@@ -296,50 +312,14 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <p id="modalDate">Select a time slot:</p>
-                                <div id="modalSlots"></div>
-
-                                <button id="toggleSlotsButton" class="btn btn-secondary" style="margin-top: 15px;">Show
-                                    Time Slots</button>
-
-                                <form id="bookingForm" method="POST" action="add_booking_user.php"
-                                    style="display: none; margin-top: 15px;">
-                                    <div class="mb-3">
-                                        <label for="selectedTimeSlot" class="form-label">Selected Time Slot</label>
-                                        <input type="text" class="form-control" id="selectedTimeSlot"
-                                            name="selectedTimeSlot" readonly>
-                                    </div>
-
+                                <form id="bookingForm" method="POST" action="add_booking_as_client.php">
                                     <div class="mb-3">
                                         <label for="patientName" class="form-label">Patient Name</label>
                                         <select class="form-control" id="patientName" name="patientName">
-                                            <option value="<?php echo isset($patientId) ? $patientId : ''; ?>">
-                                                <?php echo htmlspecialchars($fullName); ?>
-                                            </option>
+                                            <?php echo $options; ?>
+
                                         </select>
                                     </div>
-
-                                    <div class="mb-3">
-                                        <label for="serviceType" class="form-label">Service Type</label>
-                                        <select class="form-control" id="serviceType" name="serviceType">
-                                            <option>--SELECT--</option>
-                                            <?php
-                                            include 'includes/dbconn.php';
-                                            $sql = "SELECT * FROM services_table";
-                                            $query = $conn->query($sql);
-                                            while ($row = $query->fetch_assoc()) {
-                                                ?>
-                                                <option value="<?php echo $row['ID']; ?>">
-                                                    <?php echo $row['Services']; ?>
-                                                </option>
-                                                <?php
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-
-                                    <input type="hidden" id="scheduleId" name="scheduleId">
-                                    <input type="hidden" id="timeSlotId" name="timeSlotId">
 
                                     <button type="submit" class="btn btn-primary">Submit Booking</button>
                                 </form>
@@ -347,6 +327,7 @@
                         </div>
                     </div>
                 </div>
+
 
             </div>
 
@@ -399,24 +380,15 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                var dashboardCalendarEl = document.getElementById('calendar');
-                var eventModal = document.getElementById('eventModal');
-                var toggleButton = document.getElementById('toggleSlotsButton');
-                var modalSlots = document.getElementById('modalSlots');
-                var bookingForm = document.getElementById('bookingForm');
+                var calendarEl = document.getElementById('calendar');
+                var modal = new bootstrap.Modal(document.getElementById('eventModal'));
                 var modalTitle = document.getElementById('modalTitle');
-                var modalDate = document.getElementById('modalDate');
-                var selectedTimeSlot = document.getElementById('selectedTimeSlot');
-                var scheduleIdField = document.getElementById('scheduleId');
-                var timeSlotIdField = document.getElementById('timeSlotId');
-                var serviceTypeSelect = document.getElementById('serviceType');
 
-                // Initialize FullCalendar
-                var dashboardCalendar = new FullCalendar.Calendar(dashboardCalendarEl, {
+                var calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'dayGridMonth',
                     selectable: true,
                     events: function (info, successCallback, failureCallback) {
-                        var sources = ['schedule.php', 'fetch_events.php'];
+                        var sources = ['fetch_events.php', 'fetch_client_schedule.php'];
                         var combinedEvents = [];
 
                         var fetchNext = function (index) {
@@ -428,16 +400,15 @@
                             fetch(sources[index])
                                 .then(response => response.json())
                                 .then(data => {
-                                    // Add a source identifier to each event
                                     data.forEach(event => {
-                                        event.source = sources[index]; // Assign the source filename
+                                        event.source = sources[index];
                                     });
 
                                     combinedEvents = combinedEvents.concat(data);
                                     fetchNext(index + 1);
                                 })
                                 .catch(error => {
-                                    console.error('Error fetching events:', error);
+                                    console.error('Error fetching events from source:', sources[index], error);
                                     fetchNext(index + 1);
                                 });
                         };
@@ -445,115 +416,45 @@
                         fetchNext(0);
                     },
                     eventDidMount: function (info) {
-                        // Check if the event is from 'schedule.php'
-                        if (info.event.extendedProps && info.event.extendedProps.source === 'schedule.php') {
-                            const slotsRemaining = parseInt(info.el.querySelector('.fc-event-title').textContent, 10);
+                        console.log('Event mounted:', info.event);
 
-                            // Apply background color based on slot availability
-                            if (slotsRemaining === undefined) {
-                                console.error('slots_remaining is undefined for event:', info.event);
-                            } else if (slotsRemaining === 0) {
-                                // Change background color of the event to red
-                                info.el.style.backgroundColor = 'red';
-                                info.el.classList.add('event-unavailable');
-                            } else {
-                                // Change background color of the event to green
-                                info.el.style.backgroundColor = 'green';
-                                info.el.classList.add('event-available');
+                        // Remove all child elements except the button
+                        var mainFrame = info.el.querySelector('.fc-event-main-frame');
+                        if (mainFrame) {
+                            // Remove all children from .fc-event-main-frame
+                            while (mainFrame.firstChild) {
+                                mainFrame.removeChild(mainFrame.firstChild);
                             }
+                        }
 
-                            // Add the button for slot viewing
-                            let button = document.createElement('button');
-                            button.textContent = info.event.extendedProps.buttonText || 'View Slots';
-                            button.className = 'btn btn-warning btn-sm';
-                            button.onclick = function () {
-                                modalTitle.textContent = `BOOK FOR: ${info.event.start.toLocaleDateString()}`;
-                                modalDate.textContent = `SLOTS: ${info.event.title}`;
+                        if (info.event.extendedProps.source === 'fetch_client_schedule.php') {
+                            console.log('Adding button to event:', info.event);
 
-                                let scheduleId = info.event.extendedProps.schedule_id;
-                                scheduleIdField.value = scheduleId; // Set the scheduleId field
+                            // Create the "Book Appointment" button
+                            var bookButton = document.createElement('button');
+                            bookButton.innerText = 'Book Appointment';
+                            bookButton.classList.add('book-appointment-btn');
 
-                                fetch(`fetch_time_slots.php?schedule_id=${scheduleId}`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (Array.isArray(data) && data.length > 0) {
-                                            let slotsHtml = data.map(slot => {
-                                                let buttonClass = slot.is_booked ? 'btn btn-outline-secondary disabled' : 'btn btn-outline-primary slot-button';
-                                                let buttonText = slot.is_booked ? 'Unavailable' : `${slot.start_time} - ${slot.end_time}`;
-
-                                                return `
-                                        <li>
-                                            <button class="${buttonClass}" 
-                                                    data-id="${slot.id}" 
-                                                    data-start="${slot.start_time}" 
-                                                    data-end="${slot.end_time}"
-                                                    data-slots="${slot.slots_remaining}">
-                                                ${buttonText}
-                                            </button>
-                                        </li>`;
-                                            }).join('');
-                                            modalSlots.innerHTML = `Available Time Slots:<ul>${slotsHtml}</ul>`;
-
-                                            document.querySelectorAll('.slot-button:not(.disabled)').forEach(button => {
-                                                button.addEventListener('click', function () {
-                                                    selectedTimeSlot.value = `${this.dataset.start} - ${this.dataset.end}`;
-                                                    timeSlotIdField.value = this.dataset.id; // Set the timeSlotId field
-                                                    bookingForm.style.display = 'block';
-                                                    modalSlots.style.display = 'none';
-                                                    toggleButton.style.display = 'inline-block';
-                                                });
-                                            });
-                                        } else {
-                                            modalSlots.innerHTML = 'No available time slots.';
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error fetching time slots:', error);
-                                        modalSlots.textContent = 'Failed to load time slots.';
-                                    });
+                            bookButton.addEventListener('click', function () {
+                                // Set the date in the modal title
+                                var dateStr = info.event.startStr;
+                                modalTitle.innerText = 'Book for: ' + dateStr;
 
                                 // Show the modal
-                                $(eventModal).modal('show');
-                            };
+                                modal.show();
+                            });
 
-                            info.el.appendChild(button);
-                        } else {
-                            // Reset background color for events not from 'schedule.php' (e.g., holidays)
-                            info.el.style.backgroundColor = 'gray'; // Reset to default background color
+                            // Append the button to the event's container
+                            info.el.querySelector('.fc-event-main').appendChild(bookButton);
                         }
                     }
                 });
 
-                dashboardCalendar.render();
-
-                // Initially hide the toggle button and the booking form
-                toggleButton.style.display = 'none';
-                bookingForm.style.display = 'none';
-
-                // Event listener for the toggle button
-                toggleButton.addEventListener('click', function () {
-                    if (modalSlots.style.display === 'none') {
-                        // Show the time slots
-                        modalSlots.style.display = 'block';
-                        // Hide the booking form
-                        bookingForm.style.display = 'none';
-                        // Hide the toggle button again
-                        toggleButton.style.display = 'none';
-                    } else {
-                        // Hide the time slots
-                        modalSlots.style.display = 'none';
-                        // Show the booking form
-                        bookingForm.style.display = 'block';
-                        // Show the toggle button
-                        toggleButton.style.display = 'inline-block';
-                    }
-                });
-
-                // Refresh page when the modal is closed
-                $(eventModal).on('hidden.bs.modal', function () {
-                    location.reload();
-                });
+                calendar.render();
             });
+
+
+
 
             // Intercept form submission
             document.getElementById('bookingForm').addEventListener('submit', function (e) {

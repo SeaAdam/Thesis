@@ -1,14 +1,5 @@
 <?php
-include 'login.php';
 
-// Check if the user is logged in and is an admin
-if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'admin') {
-    header('Location: index.php'); // Redirect to login page if not logged in as admin
-    exit();
-}
-
-// Retrieve the admin username from the session
-$adminUsername = $_SESSION['username'];
 
 ?>
 
@@ -23,7 +14,7 @@ $adminUsername = $_SESSION['username'];
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="images/favicon.ico" type="image/ico" />
 
-    <title>Admin Services</title>
+    <title>Admin Patients</title>
 
     <!-- Bootstrap -->
     <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -40,7 +31,8 @@ $adminUsername = $_SESSION['username'];
             <div class="col-md-3 left_col">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-                    <a href="adminDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain Master DC</span></a>
+                        <a href="adminDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain
+                                Master DC</span></a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -52,7 +44,7 @@ $adminUsername = $_SESSION['username'];
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
-                            <h2><?php echo htmlspecialchars($adminUsername); ?></h2>
+                            <h2>h2>
                         </div>
                     </div>
                     <!-- /menu profile quick info -->
@@ -137,7 +129,6 @@ $adminUsername = $_SESSION['username'];
                             <li class="nav-item dropdown open" style="padding-left: 15px;">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true"
                                     id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
-                                    <?php echo htmlspecialchars($adminUsername); ?>
                                 </a>
                                 <div class="dropdown-menu dropdown-usermenu pull-right"
                                     aria-labelledby="navbarDropdown">
@@ -224,55 +215,57 @@ $adminUsername = $_SESSION['username'];
 
             <div class="right_col" role="main">
                 <?php
-                if (isset($_SESSION['successEditContacts'])) {
+                if (isset($_SESSION['AddednewPatients'])) {
                     echo "
-                        <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
-                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success!</h4>
-                            <p>Contacts is edited!;</p>
-                        </div>
-                    ";
+                                    <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                                        <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success!</h4>
+                                        <p>Added New Patient Successfully!;</p>
+                                    </div>
+                                ";
 
-                    unset($_SESSION['successEditContacts']);
+                    unset($_SESSION['AddednewPatients']);
                 }
 
-                if (isset($_SESSION['saveContacts'])) {
-                    echo "
-                        <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
-                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success!</h4>
-                            <p>New Contacts added successfully!;</p>
-                        </div>
-                    ";
 
-                    unset($_SESSION['saveContacts']);
-                }
-
-                if (isset($_SESSION['errorContacts'])) {
+                if (isset($_SESSION['errorUserAlreadyAdded'])) {
                     echo "
-                        <div class='alert alert-danger alert-dismissable' id='alert' style='background: red;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
-                            <h4><i class='fa fa-exclamation-triangle'></i> Error!</h4>
-                            <p>The selected contacts is already in the record!;</p>
-                        </div>
-                    ";
+                                    <div class='alert alert-dark alert-dismissable' id='alert' style='background: red;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                                        <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Error!</h4>
+                                        <p>User Information Already Registered!;</p>
+                                    </div>
+                                ";
 
                     // Clear the alert message
-                    unset($_SESSION['errorContacts']);
+                    unset($_SESSION['errorUserAlreadyAdded']);
                 }
 
-                if (isset($_SESSION['deletedContacts'])) {
+                if (isset($_SESSION['deletedPatients'])) {
                     echo "
-                        <div class='alert alert-dark alert-dismissable' id='alert' style='background: gray;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
-                            <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Deleted!</h4>
-                            <p>Record has been deleted!;</p>
-                        </div>
-                    ";
+                                    <div class='alert alert-dark alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                                        <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success</h4>
+                                        <p>Patients Record Deleted!;</p>
+                                    </div>
+                                ";
 
                     // Clear the alert message
-                    unset($_SESSION['deletedContacts']);
+                    unset($_SESSION['deletedPatients']);
+                }
+
+                if (isset($_SESSION['successEditPatients'])) {
+                    echo "
+                                    <div class='alert alert-dark alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
+                                        <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success</h4>
+                                        <p>Patients Record Edited Successfully!;</p>
+                                    </div>
+                                ";
+
+                    // Clear the alert message
+                    unset($_SESSION['successEditPatients']);
                 }
                 ?>
                 <!-- Button trigger modal -->
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                    New Contacts
+                    + New Patient
                 </button>
 
                 <!-- Modal -->
@@ -281,22 +274,115 @@ $adminUsername = $_SESSION['username'];
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Add New Contacts;</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Add New Patient;</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form action="add_contacts.php" method="POST">
-                                    <div class="mb-3">
-                                        <label for="ServiceProvider" class="form-label">Service Provider :</label>
-                                        <input type="text" class="form-control" id="ServiceProvider"
-                                            name="ServiceProvider" required>
+                                <form id="registrationForm" action="add_patients.php" method="POST">
+                                    <!-- First Row: First Name, Middle Initial, Last Name -->
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="FirstName">First Name</label>
+                                            <input type="text" class="form-control" id="FirstName" name="FirstName"
+                                                placeholder="First Name" required>
+                                        </div>
+                                        <div class="form-group col-md-2">
+                                            <label for="MI">M.I.</label>
+                                            <input type="text" class="form-control" id="MI" name="MI" placeholder="M.I."
+                                                maxlength="1">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="LastName">Last Name</label>
+                                            <input type="text" class="form-control" id="LastName" name="LastName"
+                                                --placeholder="Last Name" required>
+                                        </div>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="MobileNo" class="form-label">Mobile Number :</label>
-                                        <input type="texxt" class="form-control" id="MobileNo" name="MobileNo" required>
+
+                                    <!-- Second Row: Gender, Date of Birth, Age -->
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="Gender">Gender</label>
+                                            <select id="Gender" class="form-control" name="Gender" required>
+                                                <option value="" disabled selected>Choose...</option>
+                                                <option>Male</option>
+                                                <option>Female</option>
+                                                <option>Other</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="DOB">Date of Birth</label>
+                                            <input type="date" class="form-control" id="DOB" name="DOB" required>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="Age">Age</label>
+                                            <input type="number" class="form-control" id="Age" placeholder="Age"
+                                                name="Age" required>
+                                        </div>
                                     </div>
+
+                                    <!-- Third Row: Contact, Address -->
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="Contact">Contact</label>
+                                            <input type="text" class="form-control" id="Contact" placeholder="Contact"
+                                                name="Contact" required>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="PresentAddress">Address</label>
+                                            <input type="text" class="form-control" id="PresentAddress"
+                                                placeholder="PresentAddress" name="PresentAddress" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Fourth Row: Username -->
+                                    <div class="form-group" style="margin-left: 0; width: 100%;">
+                                        <label for="Username">Username</label>
+                                        <input type="text" class="form-control" id="Username" placeholder="Username"
+                                            name="Username" autocomplete="off" required>
+                                    </div>
+
+                                    <!-- Fifth Row: Password, Confirm Password -->
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="Password">Password</label>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control" id="Password"
+                                                    name="Password" placeholder="Password" required
+                                                    pattern="(?=.*\d)(?=.*[a-zA-Z]).{8,}"
+                                                    title="Password must be at least 8 characters long and contain both numbers and letters">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="togglePassword">
+                                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="ConfirmPassword">Confirm Password</label>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control" id="ConfirmPassword"
+                                                    name="ConfirmPassword" placeholder="Confirm Password" required
+                                                    pattern="(?=.*\d)(?=.*[a-zA-Z]).{8,}"
+                                                    title="Password must be at least 8 characters long and contain both numbers and letters">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="toggleConfirmPassword">
+                                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="passwordError" class="text-danger"></div>
+                                    </div>
+
+                                    <!-- I agree to the terms checkbox -->
+                                    <div class="form-group form-check">
+                                        <input type="checkbox" class="form-check-input" id="terms" required>
+                                        <label class="form-check-label" for="terms">I agree to the terms and
+                                            conditions</label>
+                                    </div>
+
                                     <div class="modal-footer">
                                         <button type="reset" class="btn btn-secondary"
                                             data-dismiss="modal">Close</button>
@@ -310,30 +396,41 @@ $adminUsername = $_SESSION['username'];
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Service Provider</th>
-                            <th scope="col">Contact No</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Client Name</th>
+                            <th scope="col">Company Name</tPatienth>
+                            <th scope="col">Position</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">Contact</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
                         include 'includes/dbconn.php';
 
-                        $sql = "SELECT * FROM contactus_table";
+                        $sql = "SELECT * FROM clients_info";
                         $query = $conn->query($sql);
                         while ($row = $query->fetch_assoc()) {
                             ?>
-
                             <tr>
-                                <th scope="row"><?php echo $row['ID']; ?></th>
-                                <td><?php echo $row['ServiceProvider'] ?></td>
-                                <td><?php echo $row['MobileNo'] ?></td>
+                                <td><?php echo $row['id']; ?></td>
+                                <td> <?php echo $row['client_name'];?></td>
+                                <td><?php echo $row['company_name']; ?></td>
+                                <td><?php echo $row['position']; ?></td>
+                                <td><?php echo $row['address']; ?></td>
+                                <td><?php echo $row['contact_number']; ?></td>
+                                <td><?php echo $row['email_address']; ?></td>
 
                                 <td>
-                                    <a href="#" data-id="<?php echo $row['ID']; ?>" class="btn btn-success btn-sm edit"><i
+                                    <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-info btn-sm view"><i
+                                            class="fa fa-edit" aria-hidden="true"></i>
+                                        View</a>
+                                    <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-success btn-sm edit"><i
                                             class="fa fa-edit" aria-hidden="true"></i>
                                         Edit</a>
-                                    <a href="#" data-id="<?php echo $row['ID']; ?>" class="btn btn-danger btn-sm delete"><i
+                                    <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-danger btn-sm delete"><i
                                             class="fa fa-trash" aria-hidden="true"></i> Delete</a>
                                 </td>
                             </tr>
@@ -404,14 +501,21 @@ $adminUsername = $_SESSION['username'];
             $(function () {
                 $('.edit').click(function (e) {
                     e.preventDefault();
-                    $('#editContacts').modal('show');
+                    $('#editPatients').modal('show');
                     var id = $(this).data('id');
                     getRow(id);
                 });
 
                 $('.delete').click(function (e) {
                     e.preventDefault();
-                    $('#deleteContacts').modal('show');
+                    $('#deletePatients').modal('show');
+                    var id = $(this).data('id');
+                    getRow(id);
+                });
+
+                $('.view').click(function (e) {
+                    e.preventDefault();
+                    $('#viewPatients').modal('show');
                     var id = $(this).data('id');
                     getRow(id);
                 });
@@ -422,21 +526,77 @@ $adminUsername = $_SESSION['username'];
             function getRow(id) {
                 $.ajax({
                     type: 'POST',
-                    url: 'booking_row_contacts.php',
+                    url: 'booking_row_patients.php',
                     data: { id: id },
                     dataType: 'json',
                     success: function (response) {
+                        var fullName = response.FirstName + " " + response.MI + " " + response.LastName;
+                        $('.FullName').text(fullName);
                         $('.ID').val(response.ID);
-                        $('.ServiceProvider').html(response.ServiceProvider);
-                        $('.MobileNo').html(response.MobileNo);
-                        $('#editServiceProvider').val(response.ServiceProvider);
-                        $('#editMobileNo').val(response.MobileNo);
+                        $('.FirstName').text(response.FirstName);
+                        $('.MI').text(response.MI);
+                        $('.LastName').text(response.LastName);
+                        $('.Gender').text(response.Gender);
+                        $('.Age').text(response.Age);
+                        $('.DOB').text(response.DOB);
+                        $('.Contact').text(response.Contact);
+                        $('.PresentAddress').text(response.PresentAddress);
+                        $('.Username').text(response.Username);
+
+                        $('#EFirstName').val(response.FirstName);
+                        $('#EMI').val(response.MI);
+                        $('#ELastName').val(response.LastName);
+                        $('#EGender').val(response.Gender);
+                        $('#EAge').val(response.Age);
+                        $('#EDOB').val(response.DOB);
+                        $('#EContact').val(response.Contact);
+                        $('#EPresentAddress').val(response.PresentAddress);
+                        $('#EUsername').val(response.Username);
+                        $('#EPassword').val(response.Password);
+                        $('#EConfirmPassword').val(response.ConfirmPassword);
                     }
                 });
             }
+
+            $(document).ready(function () {
+                $('#togglePassword').click(function () {
+                    const passwordField = $('#Password');
+                    const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
+                    passwordField.attr('type', type);
+                    $(this).find('i').toggleClass('fa-eye fa-eye-slash');
+                });
+
+                $('#toggleConfirmPassword').click(function () {
+                    const confirmPasswordField = $('#ConfirmPassword');
+                    const type = confirmPasswordField.attr('type') === 'password' ? 'text' : 'password';
+                    confirmPasswordField.attr('type', type);
+                    $(this).find('i').toggleClass('fa-eye fa-eye-slash');
+                });
+
+                $('#toggleLoginPassword').click(function () {
+                    const passwordField = $('#loginPassword');
+                    const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
+                    passwordField.attr('type', type);
+                    $(this).find('i').toggleClass('fa-eye fa-eye-slash');
+                });
+
+            });
+
+            document.getElementById('registrationForm').addEventListener('submit', function (event) {
+                // Clear previous error messages
+                document.getElementById('passwordError').textContent = '';
+
+                // Get password and confirm password values
+                var password = document.getElementById('Password').value;
+                var confirmPassword = document.getElementById('ConfirmPassword').value;
+
+                // Check if passwords match
+                if (password !== confirmPassword) {
+                    document.getElementById('passwordError').textContent = 'Passwords do not match.';
+                    event.preventDefault(); // Prevent form submission
+                }
+            });
         </script>
-
-
 
 </body>
 
