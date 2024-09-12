@@ -1,8 +1,32 @@
 <?php
 include 'includes/dbconn.php';
 
-// Get the client ID from the URL (default to 1 if not set)
-$id = isset($_GET['id']) ? intval($_GET['id']) : 1;
+include 'login.php';
+
+if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'client') {
+    header('Location: index.php'); // Redirect to login page if not logged in as admin
+    exit();
+}
+
+// Retrieve the admin username from the session
+$clientUsername = $_SESSION['username'];
+
+$sql = "SELECT client_id FROM clients_account WHERE username = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $clientUsername);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Check if a record was found
+if ($result->num_rows > 0) {
+    // Fetch the client_id from the database
+    $row = $result->fetch_assoc();
+    $id = $row['client_id'];
+} else {
+    // Handle the case where no user was found (optional)
+    echo "No client found with this username.";
+    exit();
+}
 
 // Query to select client information
 $sql = "SELECT id, client_name, company_name, address, contact_number, email_address FROM clients_info WHERE id = '$id'";
@@ -42,6 +66,10 @@ if (empty($addressOptions)) {
 if (empty($contactOptions)) {
     $contactOptions = '<option value="">No contact number found</option>';
 }
+
+// Close the statement and the database connection
+$stmt->close();
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -174,7 +202,7 @@ if (empty($contactOptions)) {
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
-                            <h2></h2>
+                            <h2><?php echo htmlspecialchars($clientUsername); ?></h2>
                         </div>
                     </div>
                     <!-- /menu profile quick info -->

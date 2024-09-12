@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // Regular users are redirected to 2FA page
                 $response['status'] = 'success';
                 $response['message'] = 'Redirecting to 2FA authentication...';
-                $response['redirect'] = 'test.php';
+                $response['redirect'] = 'clientDashboard.php';
             } else {
                 // Regular users are redirected to 2FA page
                 $response['status'] = 'success';

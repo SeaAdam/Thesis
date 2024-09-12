@@ -1,5 +1,59 @@
 <?php
+include 'includes/dbconn.php';
 
+include 'login.php';
+
+if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'client') {
+    header('Location: index.php'); // Redirect to login page if not logged in as admin
+    exit();
+}
+
+// Retrieve the admin username from the session
+$clientUsername = $_SESSION['username'];
+
+$sql = "SELECT client_id FROM clients_account WHERE username = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $clientUsername);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Check if a record was found
+if ($result->num_rows > 0) {
+    // Fetch the client_id from the database
+    $row = $result->fetch_assoc();
+    $id = $row['client_id'];
+} else {
+    // Handle the case where no user was found (optional)
+    echo "No client found with this username.";
+    exit();
+}
+
+// Fetch user details based on client_id (from $id)
+$sql = "SELECT * FROM clients_info WHERE id = ?";
+$stmt = $conn->prepare($sql);
+
+if ($stmt === false) {
+    // Check if there was an error in preparing the statement
+    die('Prepare failed: ' . $conn->error);
+}
+
+// Bind the client ID to the query (integer 'i' type)
+$stmt->bind_param('i', $id);  // 'i' for integer type since $id is an integer
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    // Fetch the user data
+    $user = $result->fetch_assoc();
+} else {
+    // If no matching user is found
+    echo "User not found.";
+    exit();
+}
+
+// Close the statement and the connection
+$stmt->close();
+$conn->close();
 
 ?>
 
@@ -170,7 +224,7 @@
                                     <img src="images\profile-pic.jpg" class="mb-3" alt="Profile Picture" width="150"
                                         height="150">
                                     <h4 class="FullName">
-                                        Client Name
+                                    <?php echo htmlspecialchars($user['client_name']); ?>
                                     </h4>
                                 </div>
                             </div>
@@ -185,37 +239,37 @@
                                             <tr>
                                                 <th scope="row">Company Name</th>
                                                 <td>
-                                                    
+                                                <?php echo htmlspecialchars($user['company_name']); ?>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Position</th>
                                                 <td>
-                                                    
+                                                <?php echo htmlspecialchars($user['position']); ?>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Address</th>
                                                 <td>
-                                                    
+                                                <?php echo htmlspecialchars($user['address']); ?>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Contact Number</th>
                                                 <td>
-                                                    
+                                                <?php echo htmlspecialchars($user['contact_number']); ?>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Email Address</th>
                                                 <td>
-                                                    
+                                                <?php echo htmlspecialchars($user['email_address']); ?>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Username</th>
                                                 <td>
-                                                    
+                                                <?php echo htmlspecialchars($clientUsername); ?>
                                                 </td>
                                             </tr>
                                             <tr>
