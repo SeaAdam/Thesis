@@ -11,14 +11,13 @@ if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'admin') {
 // Retrieve the admin username from the session
 $adminUsername = $_SESSION['username'];
 
+
 include 'count_Dashboard.php';
 // Fetch notifications
 include 'notification_functions.php'; // Include the file with fetchNotificationsAdmin function
 $notificationsAdmin = fetchNotificationsAdmin();
 $unread_count = countUnreadNotificationsAdmin();
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -213,23 +212,6 @@ $unread_count = countUnreadNotificationsAdmin();
 
                     </div>
                     <!-- /sidebar menu -->
-
-                    <!-- /menu footer buttons -->
-                    <div class="sidebar-footer hidden-small">
-                        <a data-toggle="tooltip" data-placement="top" title="Settings">
-                            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-                        </a>
-                        <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-                            <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
-                        </a>
-                        <a data-toggle="tooltip" data-placement="top" title="Lock">
-                            <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-                        </a>
-                        <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.php">
-                            <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-                        </a>
-                    </div>
-                    <!-- /menu footer buttons -->
                 </div>
             </div>
 
@@ -248,7 +230,7 @@ $unread_count = countUnreadNotificationsAdmin();
                                 </a>
                                 <div class="dropdown-menu dropdown-usermenu pull-right"
                                     aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="index.php"><i class="fa fa-sign-out pull-right"></i>
+                                    <a class="dropdown-item" href="logout.php"><i class="fa fa-sign-out pull-right"></i>
                                         Log Out</a>
                                 </div>
                             </li>

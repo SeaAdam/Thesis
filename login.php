@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($loginType === 'admin') {
         // Fetch admin details including ID
         $query = "SELECT ID, Username, Password FROM admin_table WHERE Username = ?";
-    } elseif ($loginType === 'client') {
+    } elseif ($loginType === 'clients') {
         $query = "SELECT ID, Username, Password FROM clients_account WHERE Username = ?";
     } else {
         // Fetch user details including ID
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $response['status'] = 'success';
                 $response['message'] = 'Successfully logged in as admin!';
                 $response['redirect'] = 'adminDashboard.php';
-            } elseif ($loginType === 'client') {
+            } elseif ($loginType === 'clients') {
                 // Regular users are redirected to 2FA page
                 $response['status'] = 'success';
                 $response['message'] = 'Redirecting to 2FA authentication...';

@@ -160,7 +160,7 @@ session_start();
                                 <select name="loginType" class="form-control" required>
                                     <option value="user">User</option>
                                     <option value="admin">Admin</option>
-                                    <option value="client">Client</option>
+                                    <option value="clients">Client</option>
                                 </select>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
