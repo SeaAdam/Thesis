@@ -160,6 +160,7 @@ session_start();
                                 <select name="loginType" class="form-control" required>
                                     <option value="user">User</option>
                                     <option value="admin">Admin</option>
+                                    <option value="client">Client</option>
                                 </select>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
@@ -350,7 +351,7 @@ session_start();
                                     <!-- <select class="form-control" name="company_name" id="company_name">
                                         <option>--SELECT--</option>
                                         <option>Accenture</option>
-                                    </select> -->
+                                    </select> --> 
                                 </div>
 
                                 <div class="form-group col-md-6">
