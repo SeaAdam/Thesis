@@ -116,7 +116,7 @@ $conn->close();
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
-                            <h2></h2>
+                            <h2><?php echo htmlspecialchars($clientUsername); ?></h2>
                         </div>
                     </div>
                     <!-- /menu profile quick info -->

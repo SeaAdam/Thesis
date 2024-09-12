@@ -1,6 +1,15 @@
 <?php
+include 'includes/dbconn.php';
+include 'login.php';
 
+if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'client') {
+    header('Location: index.php'); 
+    exit();
+}
+
+$clientUsername = $_SESSION['username'];
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -54,7 +63,7 @@
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
-                            <h2></h2>
+                            <h2><?php echo htmlspecialchars($clientUsername); ?></h2>
                         </div>
                     </div>
                     <!-- /menu profile quick info -->
@@ -76,7 +85,7 @@
                                 <li><a href="#"><i></i> HELP DESK </a>
                                 </li>
                                 <?php
-                                include './contactsFetch.php'; // Assuming this file sets up the $data array
+                                include './no_error_contacts.php'; // Assuming this file sets up the $data array
                                 
                                 foreach ($data as $item): ?>
                                     <li>
@@ -170,26 +179,36 @@
                         </thead>
                         <tbody>
                             <?php
-                            include 'includes/dbconn.php';
+                            $sqlClientId = "SELECT client_id FROM clients_account WHERE username = ?";
+                            $stmt = $conn->prepare($sqlClientId);
+                            $stmt->bind_param('s', $clientUsername);
+                            $stmt->execute();
+                            $stmt->bind_result($clientId);
+                            $stmt->fetch();
+                            $stmt->close();
 
-                            // Updated SQL query to join with services_table
                             $sql = "
                                 SELECT 
                                     cb.id, 
                                     cb.status, 
                                     cb.booking_no, 
-                                    st.Services AS service_name, -- Retrieve the service name
+                                    st.Services AS service_name, 
                                     cb.date_appointment, 
                                     cb.date_seen
                                 FROM 
                                     client_booking cb
                                 LEFT JOIN 
-                                    services_table st ON cb.services = st.ID";
+                                    services_table st ON cb.services = st.ID
+                                WHERE 
+                                    cb.account_id = ?";
 
-                            $query = $conn->query($sql);
+                            $query = $conn->prepare($sql);
+                            $query->bind_param('i', $clientId);
+                            $query->execute();
+                            $result = $query->get_result();
 
-                            if ($query) {
-                                while ($row = $query->fetch_assoc()) {
+                            if ($result) {
+                                while ($row = $result->fetch_assoc()) {
                                     ?>
                                     <tr>
                                         <th scope="row"><?php echo htmlspecialchars($row['id']); ?></th>
@@ -215,7 +234,6 @@
                                 echo "Error: " . $conn->error;
                             }
 
-                            // Close the connection
                             $conn->close();
                             ?>
                         </tbody>

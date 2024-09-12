@@ -1,5 +1,15 @@
 <?php
+include 'includes/dbconn.php';
 
+include 'login.php';
+
+if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'client') {
+    header('Location: index.php'); // Redirect to login page if not logged in as admin
+    exit();
+}
+
+// Retrieve the admin username from the session
+$clientUsername = $_SESSION['username'];
 ?>
 
 <!DOCTYPE html>
@@ -102,7 +112,7 @@
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
-                            <h2></h2>
+                            <h2><?php echo htmlspecialchars($clientUsername); ?></h2>
                         </div>
                     </div>
                     <!-- /menu profile quick info -->
