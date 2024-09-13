@@ -1,4 +1,14 @@
 <?php
+include 'login.php';
+
+// Check if the user is logged in and is an admin
+if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'admin') {
+    header('Location: index.php'); // Redirect to login page if not logged in as admin
+    exit();
+}
+
+// Retrieve the admin username from the session
+$adminUsername = $_SESSION['username'];
 
 
 ?>
@@ -44,7 +54,7 @@
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
-                            <h2>h2>
+                            <h2><?php echo htmlspecialchars($adminUsername); ?></h2>
                         </div>
                     </div>
                     <!-- /menu profile quick info -->
@@ -113,6 +123,7 @@
                             <li class="nav-item dropdown open" style="padding-left: 15px;">
                                 <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true"
                                     id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
+                                    <?php echo htmlspecialchars($adminUsername); ?>
                                 </a>
                                 <div class="dropdown-menu dropdown-usermenu pull-right"
                                     aria-labelledby="navbarDropdown">
