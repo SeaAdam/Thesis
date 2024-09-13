@@ -221,7 +221,7 @@ $adminUsername = $_SESSION['username'];
                             <th scope="col">Services</th>
                             <th scope="col">Date Appointment</th>
                             <th scope="col">Time Slot</th>
-                            <th scope="col">Date Seen</th>
+                            <th scope="col">Date & Time Rejected</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -3,7 +3,7 @@ include 'includes/dbconn.php';
 
 include 'login.php';
 
-if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'client') {
+if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'clients') {
     header('Location: index.php'); // Redirect to login page if not logged in as admin
     exit();
 }

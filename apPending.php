@@ -227,7 +227,6 @@ $adminUsername = $_SESSION['username'];
                         <?php
                         include 'includes/dbconn.php';
 
-                        // Fetch pending transactions only
                         $sql = "SELECT 
                         t.ID AS transaction_id,
                         t.status,

@@ -2,7 +2,7 @@
 include 'includes/dbconn.php';
 include 'login.php';
 
-if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'client') {
+if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'clients') {
     header('Location: index.php'); 
     exit();
 }
@@ -164,6 +164,7 @@ $clientUsername = $_SESSION['username'];
                         </thead>
                         <tbody>
                             <?php
+                            
                             $sqlClientId = "SELECT client_id FROM clients_account WHERE username = ?";
                             $stmt = $conn->prepare($sqlClientId);
                             $stmt->bind_param('s', $clientUsername);

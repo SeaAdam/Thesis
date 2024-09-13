@@ -22,7 +22,7 @@ $adminUsername = $_SESSION['username'];
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="images/favicon.ico" type="image/ico" />
 
-    <title>Appointments Completed</title>
+    <title>Appointments Approved</title>
 
     <!-- Bootstrap -->
     <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -30,6 +30,8 @@ $adminUsername = $_SESSION['username'];
     <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="build/css/custom.min.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 
@@ -39,7 +41,8 @@ $adminUsername = $_SESSION['username'];
             <div class="col-md-3 left_col">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-                    <a href="adminDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain Master DC</span></a>
+                        <a href="adminDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain
+                                Master DC</span></a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -206,12 +209,8 @@ $adminUsername = $_SESSION['username'];
             </div>
             <!-- /top navigation -->
 
-            <?php
-            include 'includes/dbconn.php';
-            ?>
-
             <div class="right_col" role="main">
-                <h2>Completed Transactions</h2>
+                <h2>Approved Transactions</h2>
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -220,55 +219,53 @@ $adminUsername = $_SESSION['username'];
                             <th scope="col">Transaction No.</th>
                             <th scope="col">Services</th>
                             <th scope="col">Date Appointment</th>
-                            <th scope="col">Time Slot</th>
-                            <th scope="col">Date & Time Completed</th>
+                            <th scope="col">Date & Time Approved</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        // Fetch completed transactions
-                        $sql = "SELECT 
-                    t.ID AS transaction_id,
-                    t.status,
-                    t.transaction_no,
-                    s.Services AS service_id,
-                    sr.Slots_Date AS schedule_id,
-                    CONCAT(ts.start_time, ' - ', ts.end_time) AS time_slot_id,
-                    t.date_seen
-                FROM 
-                    appointment_system.transactions t
-                    LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
-                    LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
-                    LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
-                WHERE 
-                    t.status = 'Completed'";
+                        include 'includes/dbconn.php';
+
+                        $sql = "
+                            SELECT 
+                                cb.id, 
+                                cb.status, 
+                                cb.booking_no, 
+                                st.Services AS service_name, 
+                                cb.date_appointment,
+                                cb.date_seen
+                            FROM 
+                                client_booking cb
+                                LEFT JOIN services_table st ON cb.services = st.ID
+                            WHERE 
+                                cb.status = 'Approved'";
 
                         $stmt = $conn->prepare($sql);
                         $stmt->execute();
                         $result = $stmt->get_result();
 
-                        if ($result === false) {
-                            die('Query failed: ' . htmlspecialchars($stmt->error));
-                        }
-
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
                                 echo "<tr>
-                        <td>{$row['transaction_id']}</td>
-                        <td><span class='bg-info text-white'>{$row['status']}</span></td>
-                        <td>{$row['transaction_no']}</td>
-                        <td>{$row['service_id']}</td>
-                        <td>{$row['schedule_id']}</td>
-                        <td>{$row['time_slot_id']}</td>
-                        <td>{$row['date_seen']}</td>
-                    </tr>";
+                                <td>{$row['id']}</td>
+                                <td><span class='bg-dark text-white'>{$row['status']}</span></td>
+                                <td>{$row['booking_no']}</td>
+                                <td>{$row['service_name']}</td>
+                                <td>{$row['date_appointment']}</td>
+                                <td>{$row['date_seen']}</td>
+                                <td>
+                                    <button class='btn btn-success btn-sm' onclick='confirmAction({$row['id']}, \"Completed\")'>Complete</button>
+                                    <button class='btn btn-danger btn-sm' onclick='confirmAction({$row['id']}, \"Rejected\")'>Reject</button>
+                                </td>
+                            </tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='7'>No completed transactions found.</td></tr>";
+                            echo "<tr><td colspan='7'>No pending transactions found.</td></tr>";
                         }
-
-                        $stmt->close();
-                        $conn->close();
+                        
+                        $stmt->close(); 
+                        $conn->close(); 
                         ?>
                     </tbody>
                 </table>
@@ -320,6 +317,70 @@ $adminUsername = $_SESSION['username'];
 
         <!-- Custom Theme Scripts -->
         <script src="build/js/custom.min.js"></script>
+
+        <script>
+            function confirmCompleteTransaction(transactionId) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You want to mark this transaction as completed.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, complete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Show a loading spinner while the AJAX request is being processed
+                        Swal.fire({
+                            title: 'Processing...',
+                            text: 'Please wait while we update the transaction status.',
+                            icon: 'info',
+                            showConfirmButton: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        // Proceed with updating the transaction status
+                        updateTransactionStatus(transactionId, 'Completed');
+                    }
+                });
+            }
+
+            function updateTransactionStatus(id, status) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "update_status_approved.php", true); // Ensure this matches your PHP file
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        Swal.close(); // Close the loading spinner
+
+                        if (xhr.responseText.trim() === 'Success') {
+                            Swal.fire(
+                                'Completed!',
+                                'The transaction has been marked as completed.',
+                                'success'
+                            ).then(() => {
+                                // Reload the page to reflect the changes
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'Failed to update the transaction.',
+                                'error'
+                            );
+                        }
+                    }
+                };
+
+                // Send the data to the server
+                xhr.send("id=" + encodeURIComponent(id) + "&status=" + encodeURIComponent(status));
+            }
+
+
+        </script>
 
 </body>
 
