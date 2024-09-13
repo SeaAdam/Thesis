@@ -556,7 +556,8 @@
                         </div>
                         <div class="col-md-6">
                             <label for="PresentAddress" class="form-label">Address :</label>
-                            <input type="text" class="form-control" id="EUPresentAddress" name="PresentAddress" required>
+                            <input type="text" class="form-control" id="EUPresentAddress" name="PresentAddress"
+                                required>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -574,6 +575,58 @@
                                 required>
                         </div>
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" name="submit">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- EDIT CLIENT PROFILE -->
+<div class="modal fade" id="editClientProfile">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Client Profile:</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">&times;</button>
+            </div>
+            <form action="edit_client.php" method="POST">
+                <div class="modal-body">
+                    <input type="text" class="ID" name="ID" hidden>
+                    <!-- Form fields for editing user data -->
+                    <div class="row" style="margin-bottom: 10px;">
+                        <div class="col-md-4">
+                            <label for="client_name" class="form-label">Client Name:</label>
+                            <input type="text" class="form-control" id="Eclient_name" name="client_name" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="company_name" class="form-label">Company Name:</label>
+                            <input type="text" class="form-control" id="Ecompany_name" name="company_name" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="position" class="form-label">Position :</label>
+                            <input type="text" class="form-control" id="Eposition" name="position" required>
+                        </div>
+                    </div>
+                    <div class="row " style="margin-bottom: 10px;">
+                        <div class="col-md-6">
+                            <label for="address" class="form-label">Address :</label>
+                            <input type="text" class="form-control" id="Eaddress" name="address" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="contact_number" class="form-label">Contact Number:</label>
+                            <input type="number" class="form-control" id="Econtact_number" name="contact_number"
+                                required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="email_address" class="form-label">Email :</label>
+                        <input type="text" class="form-control" id="Eemail_address" name="email_address" required>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

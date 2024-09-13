@@ -260,7 +260,7 @@ $conn->close();
                                             <tr>
                                                 <th scope="row">Action</th>
                                                 <td>
-                                                    <a href="#" data-id=""
+                                                    <a href="#" data-id="<?php echo $user['id']; ?>"
                                                         class="btn btn-success btn-sm edit"><i class="fa fa-edit"
                                                             aria-hidden="true"></i>
                                                         Edit</a>
@@ -327,7 +327,7 @@ $conn->close();
             $(function () {
                 $('.edit').click(function (e) {
                     e.preventDefault();
-                    $('#editUserProfile').modal('show');
+                    $('#editClientProfile').modal('show');
                     var id = $(this).data('id');
                     getRow(id);
                 });
@@ -336,25 +336,20 @@ $conn->close();
             function getRow(id) {
                 $.ajax({
                     type: 'GET',
-                    url: 'fetch_user_editProfile.php',
+                    url: 'fetch_client_editProfile.php',
                     data: { id: id },
                     dataType: 'json',
                     success: function (response) {
                         if (response.error) {
                             console.error('Error:', response.error);
                         } else {
-                            $('.ID').val(response.ID);
-                            $('#EUFirstName').val(response.FirstName);
-                            $('#EUMI').val(response.MI);
-                            $('#EULastName').val(response.LastName);
-                            $('#EUGender').val(response.Gender);
-                            $('#EUAge').val(response.Age);
-                            $('#EUDOB').val(response.DOB);
-                            $('#EUContact').val(response.Contact);
-                            $('#EUPresentAddress').val(response.PresentAddress);
-                            $('#EPUsername').val(response.Username);
-                            $('#EPPassword').val(response.Password);
-                            $('#EPConfirmPassword').val(response.ConfirmPassword);
+                            $('.ID').val(response.id);
+                            $('#Ecompany_name').val(response.company_name);
+                            $('#Eclient_name').val(response.client_name);
+                            $('#Eposition').val(response.position);
+                            $('#Eaddress').val(response.address);
+                            $('#Econtact_number').val(response.contact_number);
+                            $('#Eemail_address').val(response.email_address);
                         }
                     },
                     error: function (xhr, status, error) {
@@ -363,12 +358,12 @@ $conn->close();
                 });
             }
 
-            $('#editUserProfile form').submit(function (e) {
+            $('#editClientProfile form').submit(function (e) {
                 e.preventDefault();
 
                 $.ajax({
                     type: 'POST',
-                    url: 'update_user_editProfile.php',
+                    url: 'update_client_editProfile.php',
                     data: $(this).serialize(),
                     dataType: 'json',
                     success: function (response) {
@@ -389,7 +384,7 @@ $conn->close();
                                 confirmButtonText: 'OK'
                             }).then((result) => {
                                 if (result.isConfirmed) {
-                                    $('#editUserProfile').modal('hide');
+                                    $('#editClientProfile').modal('hide');
                                     location.reload();
                                 }
                             });
