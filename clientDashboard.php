@@ -200,6 +200,7 @@ $conn->close();
             /* Bootstrap primary color */
             color: white;
         }
+        
     </style>
 
 
@@ -325,7 +326,7 @@ $conn->close();
                                 <h3>Legend</h3>
                                 <ul>
                                     <li><span style="background-color: #007bff;"></span> Available</li>
-                                    <li><span style="background-color: red;"></span> Fully Booked</li>
+                                    <li><span style="background-color: red;"></span>Already Booked</li>
                                     <li><span style="background-color: gray;"></span> Holidays</li>
                                 </ul>
                             </div>
@@ -500,13 +501,16 @@ $conn->close();
                 var calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'dayGridMonth',
                     selectable: true,
+
                     events: function (info, successCallback, failureCallback) {
                         var sources = ['fetch_events.php', 'fetch_client_schedule.php'];
                         var combinedEvents = [];
 
                         var fetchNext = function (index) {
                             if (index >= sources.length) {
+                                console.log('Combined Events:', combinedEvents); // Log all events
                                 successCallback(combinedEvents);
+                                calendar.render(); // Force re-render
                                 return;
                             }
 
@@ -516,7 +520,6 @@ $conn->close();
                                     data.forEach(event => {
                                         event.source = sources[index];
                                     });
-
                                     combinedEvents = combinedEvents.concat(data);
                                     fetchNext(index + 1);
                                 })

@@ -1,37 +1,5 @@
 <?php
 
-// include 'includes/dbconn.php';
-
-// // Fetch client-specific schedules
-// $sql = "SELECT schedule_date AS start FROM client_schedule";
-// $result = $conn->query($sql);
-
-// $events = [];   
-// while ($row = $result->fetch_assoc()) {
-//     $scheduleDate = $row['start'];
-
-//     // Check if this date is booked in client_booking
-//     $checkBookingSql = "SELECT COUNT(*) AS booked FROM client_booking WHERE date_appointment = ?";
-//     $stmt = $conn->prepare($checkBookingSql);
-//     $stmt->bind_param('s', $scheduleDate);
-//     $stmt->execute();
-//     $checkResult = $stmt->get_result();
-//     $booking = $checkResult->fetch_assoc();
-
-//     $isBooked = $booking['booked'] > 0; // Check if any bookings exist for this date
-
-//     $events[] = [
-//         'start' => $scheduleDate, // FullCalendar expects 'start' as the date
-//         'title' => 'Client Schedule', // Display title
-//         'extendedProps' => [
-//             'isBooked' => $isBooked // Include booking status
-//         ]
-//     ];
-// }
-
-// echo json_encode($events); // Return the events in JSON format
-// $conn->close();
-
 include 'includes/dbconn.php';
 
 header('Content-Type: application/json'); // Ensure the content type is JSON
@@ -72,7 +40,7 @@ try {
 
         $events[] = [
             'start' => $scheduleDate, // FullCalendar expects 'start' as the date
-            'title' => 'Client Schedule', // Display title
+            'title' => '', // Display title
             'extendedProps' => [
                 'isBooked' => $shouldBeRed, // Include booking status
                 'status' => $status // Include status

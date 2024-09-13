@@ -55,6 +55,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Error: " . $conn->error;
     }
 
+    // Insert a notification into the notifications table
+    $notificationSql = "INSERT INTO admin_notification (user_id, transaction_no, message, created_at) VALUES (?, ?, ?, NOW())";
+    $notificationStmt = $conn->prepare($notificationSql);
+
+    if (!$notificationStmt) {
+        die('Prepare failed: ' . $conn->error);
+    }
+
+    $message = "New Appointment Booking Transaction: $booking_no with client id $account_id.";
+    $notificationStmt->bind_param('iss', $account_id, $booking_no, $message);
+
+    if (!$notificationStmt->execute()) {
+        die('Execute failed: ' . $notificationStmt->error);
+    }
+
+    $notificationStmt->close();
+
     // Close the statement and connection
     $stmt->close();
     $conn->close();
