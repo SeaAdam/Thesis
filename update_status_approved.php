@@ -61,7 +61,7 @@ if (isset($_POST['id']) && isset($_POST['status'])) {
             }
 
             if ($status === 'Completed' || $status === 'Rejected') {
-                // Fetch the schedule_id related to this transaction
+                
                 $sql = "SELECT schedule_id FROM appointment_system.transactions WHERE ID = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param('i', $transactionId);

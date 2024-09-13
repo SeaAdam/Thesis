@@ -3,7 +3,7 @@ session_start();
 include 'includes/dbconn.php';
 
 if (isset($_POST['id']) && isset($_POST['status'])) {
-    $transactionId = $_POST['id'];
+    $clientBookingID = $_POST['id'];
     $status = $_POST['status'];
 
     // Start a transaction
@@ -15,7 +15,7 @@ if (isset($_POST['id']) && isset($_POST['status'])) {
                 SET status = ?, date_seen = NOW() 
                 WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('si', $status, $transactionId);
+        $stmt->bind_param('si', $status, $clientBookingID);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {

@@ -195,10 +195,20 @@ $clientUsername = $_SESSION['username'];
 
                             if ($result) {
                                 while ($row = $result->fetch_assoc()) {
+                                    $statusClass = '';
+                                    if ($row['status'] == 'Approved') {
+                                        $statusClass = 'bg-success text-white';
+                                    } elseif ($row['status'] == 'Completed') {
+                                        $statusClass = 'bg-info text-white';
+                                    } elseif ($row['status'] == 'Rejected') {
+                                        $statusClass = 'bg-danger text-white';
+                                    } else {
+                                        $statusClass = 'bg-dark text-white'; // Default case
+                                    }
                                     ?>
                                     <tr>
                                         <th scope="row"><?php echo htmlspecialchars($row['id']); ?></th>
-                                        <td><?php echo htmlspecialchars($row['status']); ?></td>
+                                        <td><span class="<?php echo htmlspecialchars($statusClass); ?>"><?php echo htmlspecialchars($row['status']); ?></span></td>
                                         <td><?php echo htmlspecialchars($row['booking_no']); ?></td>
                                         <td><?php echo htmlspecialchars($row['service_name']); ?></td>
                                         <td><?php echo htmlspecialchars($row['date_appointment']); ?></td>

@@ -249,14 +249,13 @@ $adminUsername = $_SESSION['username'];
                             while ($row = $result->fetch_assoc()) {
                                 echo "<tr>
                                 <td>{$row['id']}</td>
-                                <td><span class='bg-dark text-white'>{$row['status']}</span></td>
+                                <td><span class='bg-success text-white'>{$row['status']}</span></td>
                                 <td>{$row['booking_no']}</td>
                                 <td>{$row['service_name']}</td>
                                 <td>{$row['date_appointment']}</td>
                                 <td>{$row['date_seen']}</td>
                                 <td>
-                                    <button class='btn btn-success btn-sm' onclick='confirmAction({$row['id']}, \"Completed\")'>Complete</button>
-                                    <button class='btn btn-danger btn-sm' onclick='confirmAction({$row['id']}, \"Rejected\")'>Reject</button>
+                                    <button class='btn btn-success btn-sm' onclick='confirmCompleteTransaction({$row['id']}, \"Completed\")'>Complete</button>
                                 </td>
                             </tr>";
                             }
@@ -319,7 +318,7 @@ $adminUsername = $_SESSION['username'];
         <script src="build/js/custom.min.js"></script>
 
         <script>
-            function confirmCompleteTransaction(transactionId) {
+            function confirmCompleteTransaction(clientBookingID) {
                 Swal.fire({
                     title: 'Are you sure?',
                     text: "You want to mark this transaction as completed.",
@@ -342,14 +341,14 @@ $adminUsername = $_SESSION['username'];
                         });
 
                         // Proceed with updating the transaction status
-                        updateTransactionStatus(transactionId, 'Completed');
+                        updateTransactionStatus(clientBookingID, 'Completed');
                     }
                 });
             }
 
             function updateTransactionStatus(id, status) {
                 var xhr = new XMLHttpRequest();
-                xhr.open("POST", "update_status_approved.php", true); // Ensure this matches your PHP file
+                xhr.open("POST", "update_status_client.php", true); // Ensure this matches your PHP file
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
                 xhr.onreadystatechange = function () {

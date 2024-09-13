@@ -257,7 +257,7 @@ $adminUsername = $_SESSION['username'];
                             while ($row = $result->fetch_assoc()) {
                                 echo "<tr>
                         <td>{$row['transaction_id']}</td>
-                        <td><span class='bg-primary text-white'>{$row['status']}</span></td>
+                        <td><span class='bg-success text-white'>{$row['status']}</span></td>
                         <td>{$row['transaction_no']}</td>
                         <td>{$row['service_id']}</td>
                         <td>{$row['schedule_id']}</td>
