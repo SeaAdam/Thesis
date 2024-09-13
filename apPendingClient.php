@@ -344,7 +344,7 @@ $adminUsername = $_SESSION['username'];
 
                         // AJAX request to update the transaction status and send notification
                         var xhr = new XMLHttpRequest();
-                        xhr.open("POST", "update_status_client.php", true);
+                    xhr.open("POST", "update_status_client.php", true);
                         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
                         xhr.onreadystatechange = function () {

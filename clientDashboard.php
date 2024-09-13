@@ -179,6 +179,27 @@ $conn->close();
         .book-appointment-btn:hover {
             background-color: #0056b3;
         }
+
+        /* Style for btn-danger */
+        .book-appointment-btn.btn-danger {
+            background-color: #dc3545;
+            /* Bootstrap danger color */
+            color: white;
+        }
+
+        /* Style for btn-success */
+        .book-appointment-btn.btn-success {
+            background-color: #28a745;
+            /* Bootstrap success color */
+            color: white;
+        }
+
+        /* Style for btn-primary */
+        .book-appointment-btn.btn-primary {
+            background-color: #007bff;
+            /* Bootstrap primary color */
+            color: white;
+        }
     </style>
 
 
@@ -303,7 +324,7 @@ $conn->close();
                             <div id="legend">
                                 <h3>Legend</h3>
                                 <ul>
-                                    <li><span style="background-color: green;"></span> Available</li>
+                                    <li><span style="background-color: #007bff;"></span> Available</li>
                                     <li><span style="background-color: red;"></span> Fully Booked</li>
                                     <li><span style="background-color: gray;"></span> Holidays</li>
                                 </ul>
@@ -469,6 +490,13 @@ $conn->close();
                 var modal = new bootstrap.Modal(document.getElementById('eventModal'));
                 var modalTitle = document.getElementById('modalTitle');
 
+                function isPastDate(dateStr) {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0); // Set the time part to 00:00:00 for accurate comparison
+                    const eventDate = new Date(dateStr);
+                    return eventDate < today;
+                }
+
                 var calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'dayGridMonth',
                     selectable: true,
@@ -517,21 +545,39 @@ $conn->close();
 
                             // Create the "Book Appointment" button
                             var bookButton = document.createElement('button');
-                            bookButton.innerText = 'Book Appointment';
-                            bookButton.classList.add('book-appointment-btn');
+                            bookButton.classList.add('btn', 'book-appointment-btn');
 
+                            // Check if the date is already booked
+                            var isBooked = info.event.extendedProps.isBooked; // Check the 'isBooked' property
+                            var isPast = isPastDate(info.event.startStr); // Check if the date is in the past
+
+                            // Set button text and state based on booking status and date
+                            if (info.event.extendedProps.status === 'Completed' || info.event.extendedProps.status === 'Rejected') {
+                                bookButton.innerText = 'Appointment Completed';
+                                bookButton.classList.add('btn-success'); // Use Bootstrap's success button style for completed or rejected
+                                bookButton.disabled = true; // Ensure button is disabled
+                            } else if (isBooked) {
+                                bookButton.innerText = 'Already Booked';
+                                bookButton.classList.add('btn-danger'); // Use Bootstrap's danger button style for booked
+                                // No need to disable the button, keep it interactive
+                            } else {
+                                bookButton.innerText = 'Book Appointment';
+                                bookButton.classList.add('btn-primary'); // Use Bootstrap's primary button style
+                                bookButton.disabled = isPast; // Disable the button if the date is past
+                            }
 
                             bookButton.addEventListener('click', function () {
-                                var dateStr = info.event.startStr;
-                                modalTitle.innerText = 'Book for: ' + dateStr;
+                                if (!isBooked && !isPast) {
+                                    var dateStr = info.event.startStr;
+                                    modalTitle.innerText = 'Book for: ' + dateStr;
 
-                                // Update the hidden field with the selected date
-                                document.getElementById('selectedDate').value = dateStr;
+                                    // Update the hidden field with the selected date
+                                    document.getElementById('selectedDate').value = dateStr;
 
-                                // Show the modal
-                                modal.show();
+                                    // Show the modal
+                                    modal.show();
+                                }
                             });
-
 
                             // Append the button to the event's container
                             info.el.querySelector('.fc-event-main').appendChild(bookButton);
@@ -540,7 +586,50 @@ $conn->close();
                 });
 
                 calendar.render();
+
+                // Handle booking submission and update the calendar
+                document.getElementById('bookAppointmentBtn').addEventListener('click', function () {
+                    var dateStr = document.getElementById('selectedDate').value;
+
+                    fetch('book_appointment.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            date_appointment: dateStr
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Appointment booked successfully.');
+                                // Refresh the calendar to reflect changes
+                                calendar.refetchEvents();
+                            } else {
+                                alert('Failed to book appointment.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error booking appointment:', error);
+                        });
+                });
+
+                // Optional: Refresh the calendar periodically or on specific actions
+                function refreshCalendar() {
+                    calendar.refetchEvents();
+                }
             });
+
+
+
+
+
+
+
+
+
+
 
 
 

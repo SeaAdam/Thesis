@@ -215,13 +215,9 @@ $clientUsername = $_SESSION['username'];
                                         <td><?php echo htmlspecialchars($row['date_seen']); ?></td>
                                         <td>
                                             <a href="#" data-id="<?php echo htmlspecialchars($row['id']); ?>"
-                                                class="btn btn-success btn-sm edit"><i class="fa fa-edit"
+                                                class="btn btn-success btn-sm edit"><i class="fa fa-info"
                                                     aria-hidden="true"></i>
-                                                Edit</a>
-                                            <a href="#" data-id="<?php echo htmlspecialchars($row['id']); ?>"
-                                                class="btn btn-danger btn-sm delete"><i class="fa fa-trash"
-                                                    aria-hidden="true"></i>
-                                                Delete</a>
+                                                View Receipt</a>
                                         </td>
                                     </tr>
                                     <?php
