@@ -208,7 +208,7 @@ $conn->close();
                                 <div class="card-body text-center">
                                     <img src="images\profile-pic.jpg" class="mb-3" alt="Profile Picture" width="150"
                                         height="150">
-                                    <h4 class="FullName">
+                                    <h4>
                                     <?php echo htmlspecialchars($user['client_name']); ?>
                                     </h4>
                                 </div>
@@ -416,7 +416,7 @@ $conn->close();
                                 return;
                             }
 
-                            var fullName = response.FirstName + " " + response.MI + " " + response.LastName;
+                            var fullName = response.client_name
                             $('.FullName').text(fullName);
                             $('.ID').val(response.ID);
                             $('.FirstName').text(response.FirstName);
