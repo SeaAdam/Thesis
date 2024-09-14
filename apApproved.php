@@ -37,6 +37,18 @@ $unread_count = countUnreadNotificationsAdmin();
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <style>
+        .read {
+            background-color: #f0f0f0;
+            /* Example styling for unread */
+        }
+
+        .unread {
+            background-color: #e0e0e0;
+            /* Example styling for read */
+        }
+    </style>
+
 </head>
 
 <body class="nav-md">
@@ -351,6 +363,46 @@ $unread_count = countUnreadNotificationsAdmin();
 
                 // Send the data to the server
                 xhr.send("id=" + encodeURIComponent(id) + "&status=" + encodeURIComponent(status));
+            }
+
+            function markAsRead(transaction_no) {
+                fetch(`mark_notification_read_admin.php?transaction_no=${encodeURIComponent(transaction_no)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Find the notification link
+                            const notificationLink = document.querySelector(`a[onclick*='markAsRead("${transaction_no}")']`);
+                            if (notificationLink) {
+                                // Update the notification's class to 'read'
+                                notificationLink.classList.remove('unread');
+                                notificationLink.classList.add('read');
+
+                            }
+                            location.reload();
+                        } else {
+                            console.error('Failed to mark notification as read.');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+
+
+
+            function markAllAsRead() {
+                fetch('mark_all_notification_read_admin.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update all notifications' classes to 'read'
+                            document.querySelectorAll('.dropdown-item.unread').forEach(item => {
+                                item.classList.remove('unread');
+                                item.classList.add('read');
+                            });
+
+                            // Update the count
+                            location.reload();
+                        }
+                    });
             }
 
 

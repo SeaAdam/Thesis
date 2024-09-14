@@ -28,7 +28,7 @@ if (isset($_POST['id']) && isset($_POST['status'])) {
             $transaction = $result->fetch_assoc();
             $clientID = $transaction['account_id'];
 
-            
+            // THIS IS WHERE I LEFT GET NOTIFICATION IN CLIENTDASHBOARD !!
             $notificationSql = "INSERT INTO client_notification (client_id, transaction_id, status, message, created_at) 
                                 VALUES (?, ?, ?, ?, NOW())";
             $notificationStmt = $conn->prepare($notificationSql);

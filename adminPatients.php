@@ -36,6 +36,18 @@ $unread_count = countUnreadNotificationsAdmin();
     <!-- Custom Theme Style -->
     <link href="build/css/custom.min.css" rel="stylesheet">
 
+    <style>
+        .read {
+            background-color: #f0f0f0;
+            /* Example styling for unread */
+        }
+
+        .unread {
+            background-color: #e0e0e0;
+            /* Example styling for read */
+        }
+    </style>
+
 </head>
 
 <body class="nav-md">
@@ -75,7 +87,8 @@ $unread_count = countUnreadNotificationsAdmin();
                                 </li>
                                 <li><a href="adminClients.php"><i class="fa fa-desktop"></i> Clients </a>
                                 </li>
-                                <li><a><i class="fa fa-table"></i> Client Appointment <span class="fa fa-chevron-down"></span>
+                                <li><a><i class="fa fa-table"></i> Client Appointment <span
+                                            class="fa fa-chevron-down"></span>
                                     </a>
                                     <ul class="nav child_menu">
                                         <li><a href="apPendingClient.php">Pending</a></li>
@@ -86,7 +99,8 @@ $unread_count = countUnreadNotificationsAdmin();
                                 </li>
                                 <li><a href="adminPatients.php"><i class="fa fa-desktop"></i> Patients </a>
                                 </li>
-                                <li><a><i class="fa fa-table"></i> Patients Appointment <span class="fa fa-chevron-down"></span>
+                                <li><a><i class="fa fa-table"></i> Patients Appointment <span
+                                            class="fa fa-chevron-down"></span>
                                     </a>
                                     <ul class="nav child_menu">
                                         <li><a href="apPending.php">Pending</a></li>
@@ -116,7 +130,7 @@ $unread_count = countUnreadNotificationsAdmin();
             </div>
 
             <!-- top navigation -->
-           <div class="top_nav">
+            <div class="top_nav">
                 <div class="nav_menu">
                     <div class="nav toggle">
                         <a id="menu_toggle"><i class="fa fa-bars"></i></a>
@@ -558,6 +572,46 @@ $unread_count = countUnreadNotificationsAdmin();
                     event.preventDefault(); // Prevent form submission
                 }
             });
+
+            function markAsRead(transaction_no) {
+                fetch(`mark_notification_read_admin.php?transaction_no=${encodeURIComponent(transaction_no)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Find the notification link
+                            const notificationLink = document.querySelector(`a[onclick*='markAsRead("${transaction_no}")']`);
+                            if (notificationLink) {
+                                // Update the notification's class to 'read'
+                                notificationLink.classList.remove('unread');
+                                notificationLink.classList.add('read');
+
+                            }
+                            location.reload();
+                        } else {
+                            console.error('Failed to mark notification as read.');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+
+
+
+            function markAllAsRead() {
+                fetch('mark_all_notification_read_admin.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update all notifications' classes to 'read'
+                            document.querySelectorAll('.dropdown-item.unread').forEach(item => {
+                                item.classList.remove('unread');
+                                item.classList.add('read');
+                            });
+
+                            // Update the count
+                            location.reload();
+                        }
+                    });
+            }
         </script>
 
 </body>
