@@ -18,28 +18,6 @@ window.onscroll = () => {
     }
 }
 
-const images = [
-    "assets/StockCake-Doctors in clinic_1721751866.jpg",
-    "assets/Home-Health-Care-The-New-Trend-In-India.jpg",
-    "assets/new2.jpg"
-];
-
-let currentIndex = 0;
-const homeSection = document.querySelector('.home');
-
-// Function to change background image
-function changeBackground() {
-    currentIndex = (currentIndex + 1) % images.length;
-    homeSection.style.backgroundImage = `url(${images[currentIndex]})`;
-}
-
-// Set initial background image on page load
-window.onload = function () {
-    homeSection.style.backgroundImage = `url(${images[0]})`;
-    setInterval(changeBackground, 2000);
-};
-
-
 // Get the modal
 var modal = document.getElementById("myModal");
 
@@ -75,7 +53,6 @@ openModalBtnReg.onclick = function () {
 openModalBtnRegPatient.onclick = function () {
     modalRegPatient.style.display = "block";
 }
-
 
 
 // When the user clicks the close button, close the modal

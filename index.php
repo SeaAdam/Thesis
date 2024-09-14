@@ -124,272 +124,362 @@ session_start();
                 <span class="fancy-text">(B</span><span class="rest-text">MDC)</span>
                 <span class="fancy-text">A</span><span class="rest-text">PPOINTMENT</span>
             </h1>
-            <img src="assets/download1.jpg" alt="BMDC Logo" class="logo">
 
             <div>
-                <button id="openModalBtnReg" type="button" class="btn btn-danger button">REGISTER NOW</button>
-                <button id="openModalBtn" type="button" class="btn btn-success button">LOGIN</button>
+                <button type="button" class="btn btn-danger button" data-toggle="modal" data-target="#termsModal">
+                    REGISTER FOR APPOINTMENT
+                </button>
+                <button type="button" class="btn btn-success button" data-toggle="modal" data-target="#myModal">
+                    LOGIN
+                </button>
             </div>
 
-            <!-- The Modal -->
-            <div id="myModal" class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2 class="modal-title">Login Page</h2>
-                    </div>
-                    <div class="modal-body">
-                        <img src="assets/download1.jpg" alt="Logo" class="login-logo">
-                        <form id="loginForm" action="login.php" method="POST">
-                            <div class="form-group">
-                                <input type="text" class="form-control" id="usernameLogin" name="usernameLogin"
-                                    placeholder="Enter your username" autocomplete="off" required>
-                            </div>
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="loginPassword" name="loginPassword"
-                                        placeholder="Enter your password" required>
-                                    <div class="input-group-append">
-                                        <span class="input-group-text" id="toggleLoginPassword">
-                                            <i class="fa fa-eye" aria-hidden="true"></i>
-                                        </span>
+            <!-- Modals -->
+
+            <!-- modal login -->
+            <div class="modal fade" id="myModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title">Login Page</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <img src="assets/download1.jpg" alt="Logo" class="login-logo">
+                            <form id="loginForm" action="login.php" method="POST">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="usernameLogin" name="usernameLogin"
+                                        placeholder="Enter your username" autocomplete="off" required>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="loginPassword"
+                                            name="loginPassword" placeholder="Enter your password" required>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="toggleLoginPassword">
+                                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="loginType">Login as:</label>
-                                <select name="loginType" class="form-control" required>
-                                    <option value="user">User</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="clients">Client</option>
-                                </select>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <a href="#">Forgot Password?</a>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn-primary button">Login</button>
-                                <button type="button" id="closeModalBtn" class="btn-dark button"
-                                    data-bs-dismiss="modal">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-
-            <div id="myModalReg" class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2 class="modal-title">Register As Page</h2>
-                    </div>
-                    <div class="modal-body">
-                        <img src="assets/download1.jpg" alt="Logo" class="login-logo">
-                        <div class="regButtons">
-                            <button id="modalRegPatient" type="submit" class="btn btn-danger button">REGISTER AS A
-                                PATIENT</button>
-                            <button id="modalRegClient" type="submit" class="btn btn-warning button">REGISTER AS A
-                                CLIENT</button>
-
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" id="closeModalBtnReg" class="btn-dark button"
-                                data-bs-dismiss="modal">Cancel</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="myModalRegPatient" class="modal">
-                <div class="modal-content regForm">
-                    <div class="modal-header">
-                        <h2 class="modal-title">Register As Patient</h2>
-                    </div>
-                    <div class="modal-body">
-                        <form class="formPatient" id="registrationForm" action="registration.php" method="POST">
-                            <!-- First Row: First Name, Middle Initial, Last Name -->
-                            <div class="form-row">
-                                <div class="form-group col-md-4">
-                                    <label for="FirstName">First Name</label>
-                                    <input type="text" class="form-control" id="FirstName" name="FirstName"
-                                        placeholder="First Name" required>
-                                </div>
-                                <div class="form-group col-md-2">
-                                    <label for="MI">M.I.</label>
-                                    <input type="text" class="form-control" id="MI" name="MI" placeholder="M.I."
-                                        maxlength="1">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="LastName">Last Name</label>
-                                    <input type="text" class="form-control" id="LastName" name="LastName"
-                                        placeholder="Last Name" required>
-                                </div>
-                            </div>
-
-                            <!-- Second Row: Gender, Date of Birth, Age -->
-                            <div class="form-row">
-                                <div class="form-group col-md-4">
-                                    <label for="Gender">Gender</label>
-                                    <select id="Gender" class="form-control" name="Gender" required>
-                                        <option value="" disabled selected>Choose...</option>
-                                        <option>Male</option>
-                                        <option>Female</option>
-                                        <option>Other</option>
+                                <div class="form-group">
+                                    <label for="loginType">Login as:</label>
+                                    <select name="loginType" class="form-control" required>
+                                        <option value="user">User</option>
+                                        <option value="admin">Admin</option>
+                                        <option value="clients">Client</option>
                                     </select>
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="DOB">Date of Birth</label>
-                                    <input type="date" class="form-control" id="DOB" name="DOB" required>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a href="#">Forgot Password?</a>
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="Age">Age</label>
-                                    <input type="number" class="form-control" id="Age" placeholder="Age" name="Age"
-                                        required>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary button">Login</button>
+                                    <button type="button" class="btn btn-secondary button"
+                                        data-dismiss="modal">Close</button>
                                 </div>
-                            </div>
-
-                            <!-- Third Row: Contact, Address -->
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label for="Contact">Contact</label>
-                                    <input type="text" class="form-control" id="Contact" placeholder="Contact"
-                                        name="Contact" required>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="PresentAddress">Address</label>
-                                    <input type="text" class="form-control" id="PresentAddress"
-                                        placeholder="PresentAddress" name="PresentAddress" required>
-                                </div>
-                            </div>
-
-                            <!-- Fourth Row: Username -->
-                            <div class="form-group" style="margin-left: 0; width: 100%;">
-                                <label for="Username">Username</label>
-                                <input type="text" class="form-control" id="Username" placeholder="Username"
-                                    name="Username" autocomplete="off" required>
-                            </div>
-
-                            <!-- Fifth Row: Password, Confirm Password -->
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label for="Password">Password</label>
-                                    <div class="input-group">
-                                        <input type="password" class="form-control" id="Password" name="Password"
-                                            placeholder="Password" required pattern="(?=.*\d)(?=.*[a-zA-Z]).{8,}"
-                                            title="Password must be at least 8 characters long and contain both numbers and letters">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text" id="togglePassword">
-                                                <i class="fa fa-eye" aria-hidden="true"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="ConfirmPassword">Confirm Password</label>
-                                    <div class="input-group">
-                                        <input type="password" class="form-control" id="ConfirmPassword"
-                                            name="ConfirmPassword" placeholder="Confirm Password" required
-                                            pattern="(?=.*\d)(?=.*[a-zA-Z]).{8,}"
-                                            title="Password must be at least 8 characters long and contain both numbers and letters">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text" id="toggleConfirmPassword">
-                                                <i class="fa fa-eye" aria-hidden="true"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="passwordError" class="text-danger"></div>
-                            </div>
-
-                            <!-- I agree to the terms checkbox -->
-                            <div class="form-group form-check">
-                                <input type="checkbox" class="form-check-input" id="terms" required>
-                                <label class="form-check-label" for="terms">I agree to the terms and conditions</label>
-                            </div>
-
-                            <div class="modal-footer">
-                                <!-- Register Button -->
-                                <button type="submit" class="btn-primary button">Register</button>
-                                <button type="button" id="closeModalBtnRegPatient" class="btn-dark button"
-                                    data-bs-dismiss="modal">Cancel</button>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
+            <!-- modal login -->
 
-
-            <div id="myModalRegClient" class="modal">
-                <div class="modal-content regForm">
-                    <div class="modal-header">
-                        <h2 class="modal-title">Register As Client</h2>
-                    </div>
-                    <div class="modal-body">
-                        <form class="formClient" id="registrationFormClient" action="registration_client.php"
-                            method="POST">
-
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label for="client_name">Client Name</label>
-                                    <input type="text" class="form-control" id="client_name" name="client_name"
-                                        placeholder="Client Name" required>
-                                </div>
-
-                                <div class="form-group col-md-6">
-                                    <label for="position">Position</label>
-                                    <input type="text" class="form-control" id="position" name="position"
-                                        placeholder="Position" required>
-                                </div>
+            <!-- modal register -->
+            <div class="modal fade" id="myModalReg" data-backdrop="static" data-keyboard="false" tabindex="-1"
+                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title">Registration</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <img src="assets/download1.jpg" alt="Logo" class="login-logo">
+                            <div class="regButtons">
+                                <button type="submit" id="patientButton" class="btn btn-danger button">
+                                    REGISTER AS A PATIENT
+                                </button>
+                                <button type="submit" id="clientButton" class="btn btn-warning button">
+                                    REGISTER AS A CLIENT
+                                </button>
                             </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-dark button" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- modal register -->
+
+            <!-- modalregPatient -->
+            <div class="modal fade" id="myModalRegPatient" data-backdrop="static" data-keyboard="false" tabindex="-1"
+                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title">Register As Patient</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="formPatient" id="registrationForm" action="registration.php" method="POST">
+                                <!-- First Row: First Name, Middle Initial, Last Name -->
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="FirstName">First Name</label>
+                                        <input type="text" class="form-control" id="FirstName" name="FirstName"
+                                            placeholder="First Name" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="MI">M.I.</label>
+                                        <input type="text" class="form-control" id="MI" name="MI" placeholder="M.I."
+                                            maxlength="1">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="LastName">Last Name</label>
+                                        <input type="text" class="form-control" id="LastName" name="LastName"
+                                            placeholder="Last Name" required>
+                                    </div>
+                                </div>
+
+                                <!-- Second Row: Gender, Date of Birth, Age -->
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="Gender">Gender</label>
+                                        <select id="Gender" class="form-control" name="Gender" required>
+                                            <option value="" disabled selected>Choose...</option>
+                                            <option>Male</option>
+                                            <option>Female</option>
+                                            <option>Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="DOB">Date of Birth</label>
+                                        <input type="date" class="form-control" id="DOB" name="DOB" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="Age">Age</label>
+                                        <input type="number" class="form-control" id="Age" placeholder="Age" name="Age"
+                                            required>
+                                    </div>
+                                </div>
+
+                                <!-- Third Row: Contact, Address -->
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="Contact">Contact</label>
+                                        <input type="text" class="form-control" id="Contact" placeholder="Contact"
+                                            name="Contact" required>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="PresentAddress">Address</label>
+                                        <input type="text" class="form-control" id="PresentAddress"
+                                            placeholder="PresentAddress" name="PresentAddress" required>
+                                    </div>
+                                </div>
+
+                                <!-- Fourth Row: Username -->
+                                <div class="form-group" style="margin-left: 0; width: 100%;">
+                                    <label for="Username">Username</label>
+                                    <input type="text" class="form-control" id="Username" placeholder="Username"
+                                        name="Username" autocomplete="off" required>
+                                </div>
+
+                                <!-- Fifth Row: Password, Confirm Password -->
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="Password">Password</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="Password" name="Password"
+                                                placeholder="Password" required pattern="(?=.*\d)(?=.*[a-zA-Z]).{8,}"
+                                                title="Password must be at least 8 characters long and contain both numbers and letters">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="togglePassword">
+                                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="ConfirmPassword">Confirm Password</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="ConfirmPassword"
+                                                name="ConfirmPassword" placeholder="Confirm Password" required
+                                                pattern="(?=.*\d)(?=.*[a-zA-Z]).{8,}"
+                                                title="Password must be at least 8 characters long and contain both numbers and letters">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="toggleConfirmPassword">
+                                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="passwordError" class="text-danger"></div>
+                                </div>
+
+                                <!-- I agree to the terms checkbox -->
+                                <div class="form-check" style="margin-bottom: 1rem ;">
+                                    <input type="checkbox" class="form-check-input" id="terms" required>
+                                    <label class="form-check-label" for="terms">Please Check to Confirm your Information;</label>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <!-- Register Button -->
+                                    <button type="submit" class="btn btn-primary button">Register</button>
+                                    <button type="button" class="btn btn-dark button"
+                                        data-dismiss="modal">Cancel</button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- modalregPatient -->
+
+            <!-- modalregClient-->
+            <div class="modal fade" id="myModalRegClient" data-backdrop="static" data-keyboard="false" tabindex="-1"
+                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title">Register As Client</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="formClient" id="registrationFormClient" action="registration_client.php"
+                                method="POST">
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="client_name">Client Name</label>
+                                        <input type="text" class="form-control" id="client_name" name="client_name"
+                                            placeholder="Client Name" required>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label for="position">Position</label>
+                                        <input type="text" class="form-control" id="position" name="position"
+                                            placeholder="Position" required>
+                                    </div>
+                                </div>
 
 
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <label for="company_name">Company Name</label>
-                                    <input type="text" class="form-control" id="company_name" name="company_name"
-                                        placeholder="Company Name" required>
-                                    <!-- <select class="form-control" name="company_name" id="company_name">
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="company_name">Company Name</label>
+                                        <input type="text" class="form-control" id="company_name" name="company_name"
+                                            placeholder="Company Name" required>
+                                        <!-- <select class="form-control" name="company_name" id="company_name">
                                         <option>--SELECT--</option>
                                         <option>Accenture</option>
-                                    </select> --> 
+                                    </select> -->
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label for="contact_number">Contact Number</label>
+                                        <input type="text" class="form-control" id="contact_number"
+                                            name="contact_number" placeholder="Contact Number" required>
+                                    </div>
                                 </div>
 
-                                <div class="form-group col-md-6">
-                                    <label for="contact_number">Contact Number</label>
-                                    <input type="text" class="form-control" id="contact_number" name="contact_number"
-                                        placeholder="Contact Number" required>
+
+                                <div class="form-group" style="margin-left: 0; width: 100%;">
+                                    <label for="address">Address</label>
+                                    <input type="text" class="form-control" id="address" placeholder="Address"
+                                        name="address" required>
                                 </div>
-                            </div>
 
 
-                            <div class="form-group" style="margin-left: 0; width: 100%;">
-                                <label for="address">Address</label>
-                                <input type="text" class="form-control" id="address"
-                                    placeholder="Address" name="address" required>
-                            </div>
+                                <div class="form-group" style="margin-left: 0; width: 100%;">
+                                    <label for="email_address">Email Address</label>
+                                    <input type="text" class="form-control" id="email_address" placeholder="@"
+                                        name="email_address" autocomplete="off" required>
+                                </div>
 
+                                <div class="form-check" style="margin-bottom: 1rem ;">
+                                    <input type="checkbox" class="form-check-input" id="terms" required>
+                                    <label class="form-check-label" for="terms">Please Check to Confirm your Information;</label>
+                                </div>
 
-                            <div class="form-group" style="margin-left: 0; width: 100%;">
-                                <label for="email_address">Email Address</label>
-                                <input type="text" class="form-control" id="email_address" placeholder="@"
-                                    name="email_address" autocomplete="off" required>
-                            </div>
-
-                            <div class="form-group form-check">
-                                <input type="checkbox" class="form-check-input" id="terms" required>
-                                <label class="form-check-label" for="terms">I agree to the terms and conditions</label>
-                            </div>
-
-                            <div class="modal-footer">
-                                <!-- Register Button -->
-                                <button type="submit" class="btn-primary button">Register</button>
-                                <button type="button" id="closeModalBtnRegClient" class="btn-dark button"
-                                    data-bs-dismiss="modal">Cancel</button>
-                            </div>
-                        </form>
+                                <div class="modal-footer">
+                                    <!-- Register Button -->
+                                    <button type="submit" class="btn-primary button">Register</button>
+                                    <button type="button" class="btn btn-dark button"
+                                        data-dismiss="modal">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
+            <!-- modalregClient -->
+
+            <!-- Terms and Conditions Modal -->
+            <div class="modal fade" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="termsModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" id="termsModalLabel">Terms and Conditions</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body terms-body">
+                            <p>
+                                Welcome to our appointment scheduling system. Before proceeding with the registration
+                                for an appointment,
+                                it is crucial that you fully understand and agree to our terms and conditions.
+                            </p>
+                            <p>
+                                By continuing, you acknowledge that you have reviewed all the necessary requirements and
+                                instructions
+                                related to our services. Please make sure you have read the detailed guidelines provided
+                                on our
+                                <a href="services.php" target="_blank" class="btn btn-link">Services Page</a>.
+                            </p>
+                            <p>
+                                These terms include, but are not limited to, the following:
+                            </p>
+                            <ul>
+                                <li>Eligibility criteria for appointment scheduling.</li>
+                                <li>Required documents and information for the appointment.</li>
+                                <li>Cancellation and rescheduling policies.</li>
+                                <li>Any fees or charges associated with the services.</li>
+                            </ul>
+                            <p>
+                                It is your responsibility to ensure that you meet all requirements and follow the
+                                instructions provided.
+                                Failure to do so may result in delays or inability to proceed with the appointment
+                                registration.
+                            </p>
+                            <div class="form-check mt-3">
+                                <input class="form-check-input" type="checkbox" id="agreeCheckbox">
+                                <label class="form-check-label" for="agreeCheckbox">
+                                    I have read, understood, and agree to the terms and conditions outlined above.
+                                </label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary button" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
         </div>
     </section>
 
@@ -441,14 +531,17 @@ session_start();
     <!-- footer -->
 
 
-    <script src="js/index.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
+    <!-- Load jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Load Bootstrap JS (make sure it's after jQuery) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
         crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Custom JS (your code) -->
+    <script src="js/index.js"></script>
+
 
 
     <script>
@@ -539,27 +632,61 @@ session_start();
         });
 
         document.addEventListener('DOMContentLoaded', function () {
-            var modalRegClient = document.getElementById("myModalRegClient");
-            var openModalBtnRegClient = document.getElementById("modalRegClient");
-            var closeModalBtnRegClient = document.getElementById("closeModalBtnRegClient");
+            const patientButton = document.getElementById('patientButton');
+            const clientButton = document.getElementById('clientButton');
+            const termsModal = document.getElementById('agreeCheckBox');
 
-            // Open the modal
-            openModalBtnRegClient.onclick = function () {
-                modalRegClient.style.display = "block";
+            if (patientButton) {
+                patientButton.addEventListener('click', function () {
+                    // Hide the Terms modal
+                    $('#myModalReg').modal('hide');
+
+                    // Show the next modal
+                    $('#myModalRegPatient').modal('show');
+                });
             }
 
-            // Close the modal
-            closeModalBtnRegClient.onclick = function () {
-                modalRegClient.style.display = "none";
+            if (clientButton) {
+                clientButton.addEventListener('click', function () {
+                    // Hide the Terms modal
+                    $('#myModalReg').modal('hide');
+
+                    // Show the next modal
+                    $('#myModalRegClient').modal('show');
+                });
             }
 
-            // Close the modal when clicking outside of it
-            window.onclick = function (event) {
-                if (event.target == modalRegClient) {
-                    modalRegClient.style.display = "none";
-                }
+            if (termsModal) {
+                termsModal.addEventListener('change', function () {
+                    if (this.checked) {
+                        // Hide the Terms modal
+                        $('#termsModal').modal('hide');
+
+                        // Show the next modal
+                        $('#nextModal').modal('show');
+                    }
+
+                });
             }
         });
+
+        // When the checkbox is checked, trigger the second modal
+        document.getElementById('agreeCheckbox').addEventListener('change', function () {
+            if (this.checked) {
+                // Hide the Terms modal
+                $('#termsModal').modal('hide');
+
+                // Show the next modal
+                $('#myModalReg').modal('show');
+            }
+        });
+
+        // Reset checkbox when the terms modal is opened
+        $('#termsModal').on('shown.bs.modal', function () {
+            // Uncheck the checkbox when the modal is shown
+            document.getElementById('agreeCheckbox').checked = false;
+        });
+
 
     </script>
 
