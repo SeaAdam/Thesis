@@ -19,16 +19,16 @@ if (isset($_POST['id']) && isset($_POST['status'])) {
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            // Fetch user_id for the notification
-            $sql = "SELECT fk_client FROM appointment_system.client_booking WHERE id = ?";
+            
+            $sql = "SELECT account_id FROM appointment_system.client_booking WHERE id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param('i', $clientBookingID);
             $stmt->execute();
             $result = $stmt->get_result();
             $transaction = $result->fetch_assoc();
-            $clientID = $transaction['fk_client'];
+            $clientID = $transaction['account_id'];
 
-            // Insert a notification into the notifications table
+            
             $notificationSql = "INSERT INTO client_notification (client_id, transaction_id, status, message, created_at) 
                                 VALUES (?, ?, ?, ?, NOW())";
             $notificationStmt = $conn->prepare($notificationSql);

@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Error: " . $conn->error;
     }
 
-    // Insert a notification into the notifications table
+    // Insert a notification into the admin notification table as client
     $notificationSql = "INSERT INTO admin_notification (user_id, transaction_no, message, created_at) VALUES (?, ?, ?, NOW())";
     $notificationStmt = $conn->prepare($notificationSql);
 
