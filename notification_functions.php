@@ -55,7 +55,7 @@ function updateBookingStatus($transaction_id, $status, $user_id)
     $conn->close();
 }
 
-function fetchNotificationsAdmin() //THIS IS WHERE I LEFT
+function fetchNotificationsAdmin()
 {
     include 'includes/dbconn.php';
 
@@ -73,6 +73,27 @@ function fetchNotificationsAdmin() //THIS IS WHERE I LEFT
     $stmt->close();
     $conn->close();
     return $notificationsAdmin;
+}
+
+function fetchNotificationsClient($clientID)
+{
+    include 'includes/dbconn.php';
+
+    // Fetch notifications for the specific user, unread first
+    $sql = "SELECT transaction_id, status, created_at, read_status FROM client_notification WHERE client_id = ? ORDER BY read_status ASC, created_at DESC LIMIT 10";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $clientID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $notificationsClient= [];
+    while ($row = $result->fetch_assoc()) {
+        $notificationsClient[] = $row;
+    }
+
+    $stmt->close();
+    $conn->close();
+    return $notificationsClient;
 }
 
 function fetchNotifications($user_id)
@@ -130,6 +151,23 @@ function countUnreadNotifications($user_id)
     return $unread_count;
 }
 
+function countUnreadNotificationsClient($clientID)
+{
+    include 'includes/dbconn.php';
+
+    $sql = "SELECT COUNT(*) AS unread_count FROM client_notification WHERE client_id = ? AND read_status = 0";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $clientID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $unread_count = $row['unread_count'];
+
+    $stmt->close();
+    $conn->close();
+    return $unread_count;
+}
+
 function markNotificationAsReadAdmin($transaction_no)
 {
     include 'includes/dbconn.php';
@@ -171,6 +209,29 @@ function markAllAsRead()
     include 'includes/dbconn.php';
 
     $sql = "UPDATE notifications SET read_status = 1";
+    $conn->query($sql);
+
+    $conn->close();
+}
+
+function markNotificationAsReadClient($clientBookingID)
+{
+    include 'includes/dbconn.php';
+
+    $sql = "UPDATE client_notification SET read_status = 1 WHERE transaction_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $clientBookingID);
+    $stmt->execute();
+
+    $stmt->close();
+    $conn->close();
+}
+
+function markAllAsReadClient()
+{
+    include 'includes/dbconn.php';
+
+    $sql = "UPDATE client_notification SET read_status = 1";
     $conn->query($sql);
 
     $conn->close();

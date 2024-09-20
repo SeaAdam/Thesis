@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } elseif ($loginType === 'clients') {
                 // Regular users are redirected to 2FA page
                 $response['status'] = 'success';
-                $response['message'] = 'Redirecting to 2FA authentication...';
+                $response['message'] = 'Successfully logged in as our client!';
                 $response['redirect'] = 'clientDashboard.php';
             } else {
                 // Regular users are redirected to 2FA page

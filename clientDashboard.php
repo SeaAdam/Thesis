@@ -71,6 +71,11 @@ if (empty($contactOptions)) {
 // Close the statement and the database connection
 $stmt->close();
 $conn->close();
+
+include 'notification_functions.php'; // Create this file for the functions
+
+$notificationsClient = fetchNotificationsClient($id);
+$unread_count = countUnreadNotificationsClient($id);
 ?>
 
 <!DOCTYPE html>
@@ -200,6 +205,16 @@ $conn->close();
             /* Bootstrap primary color */
             color: white;
         }
+
+        .dropdown-item.unread {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .dropdown-item.read {
+            background-color: #ffffff;
+            font-weight: normal;
+        }
         
     </style>
 
@@ -290,11 +305,22 @@ $conn->close();
                                 <a href="javascript:;" class="dropdown-toggle info-number" id="navbarDropdown1"
                                     data-toggle="dropdown" aria-expanded="false">
                                     <i class="fa fa-envelope-o"></i>
-
+                                    <span class="badge bg-green"><?php echo count($notificationsClient); ?></span>
+                                    <span class="badge bg-green"><?php echo $unread_count; ?></span>
                                 </a>
                                 <ul class="dropdown-menu list-unstyled msg_list" role="menu"
                                     aria-labelledby="navbarDropdown1">
-
+                                    <?php foreach ($notificationsClient as $notification): ?>
+                                        <li class="nav-item">
+                                            <a class="dropdown-item <?php echo $notification['read_status'] == 0 ? 'unread' : 'read'; ?>"
+                                                href="#"
+                                                onclick="markAsRead(<?php echo $notification['transaction_id']; ?>)">
+                                                <i class="fa fa-info-circle"></i>
+                                                Booking ID: <?php echo $notification['transaction_id']; ?> - Status:
+                                                <?php echo $notification['status']; ?>
+                                            </a>
+                                        </li>
+                                    <?php endforeach; ?>
                                     <li class="nav-item">
                                         <a class="dropdown-item" href="javascript:;" onclick="markAllAsRead()">
                                             <i class="fa fa-check"></i> Mark All as Read
@@ -624,19 +650,6 @@ $conn->close();
                 }
             });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
             // Intercept form submission
             document.getElementById('bookingForm').addEventListener('submit', function (e) {
                 e.preventDefault(); // Prevent the default form submission
@@ -654,6 +667,38 @@ $conn->close();
                     }
                 });
             });
+
+            function markAsRead(transaction_id) {
+                fetch(`mark_notification_read_client.php?transaction_id=${transaction_id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update the notification's class to 'read'
+                            document.querySelector(`a[onclick='markAsRead(${transaction_id})']`).classList.remove('unread');
+                            document.querySelector(`a[onclick='markAsRead(${transaction_id})']`).classList.add('read');
+
+                            // Update the count (reload can be omitted if updating count manually)
+                            location.reload();
+                        }
+                    });
+            }
+
+            function markAllAsRead() {
+                fetch('mark_all_notifications_read_client.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update all notifications' classes to 'read'
+                            document.querySelectorAll('.dropdown-item.unread').forEach(item => {
+                                item.classList.remove('unread');
+                                item.classList.add('read');
+                            });
+
+                            // Update the count
+                            location.reload();
+                        }
+                    });
+            }
         </script>
 
 
