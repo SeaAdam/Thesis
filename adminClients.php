@@ -189,15 +189,15 @@ $unread_count = countUnreadNotificationsAdmin();
 
             <div class="right_col" role="main">
                 <?php
-                if (isset($_SESSION['AddednewPatients'])) {
+                if (isset($_SESSION['AddednewClients'])) {
                     echo "
                                     <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
                                         <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success!</h4>
-                                        <p>Added New Patient Successfully!;</p>
+                                        <p>Added New Clients Successfully!;</p>
                                     </div>
                                 ";
 
-                    unset($_SESSION['AddednewPatients']);
+                    unset($_SESSION['AddednewClients']);
                 }
 
 
@@ -213,7 +213,7 @@ $unread_count = countUnreadNotificationsAdmin();
                     unset($_SESSION['errorUserAlreadyAdded']);
                 }
 
-                if (isset($_SESSION['deletedPatients'])) {
+                if (isset($_SESSION['deletedClient'])) {
                     echo "
                                     <div class='alert alert-dark alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
                                         <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success</h4>
@@ -222,10 +222,10 @@ $unread_count = countUnreadNotificationsAdmin();
                                 ";
 
                     // Clear the alert message
-                    unset($_SESSION['deletedPatients']);
+                    unset($_SESSION['deletedClient']);
                 }
 
-                if (isset($_SESSION['successEditPatients'])) {
+                if (isset($_SESSION['successEditClient'])) {
                     echo "
                                     <div class='alert alert-dark alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
                                         <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success</h4>
@@ -234,12 +234,12 @@ $unread_count = countUnreadNotificationsAdmin();
                                 ";
 
                     // Clear the alert message
-                    unset($_SESSION['successEditPatients']);
+                    unset($_SESSION['successEditClient']);
                 }
                 ?>
                 <!-- Button trigger modal -->
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                    + New Patient
+                    + New Client
                 </button>
 
                 <!-- Modal -->
@@ -248,77 +248,69 @@ $unread_count = countUnreadNotificationsAdmin();
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Add New Patient;</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Add New Client;</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form id="registrationForm" action="add_patients.php" method="POST">
+                                <form id="registrationForm" action="add_clients.php" method="POST">
                                     <!-- First Row: First Name, Middle Initial, Last Name -->
                                     <div class="form-row">
-                                        <div class="form-group col-md-4">
-                                            <label for="FirstName">First Name</label>
-                                            <input type="text" class="form-control" id="FirstName" name="FirstName"
-                                                placeholder="First Name" required>
-                                        </div>
-                                        <div class="form-group col-md-2">
-                                            <label for="MI">M.I.</label>
-                                            <input type="text" class="form-control" id="MI" name="MI" placeholder="M.I."
-                                                maxlength="1">
+                                        <div class="form-group col-md-6">
+                                            <label for="client_name">Client Name</label>
+                                            <input type="text" class="form-control" id="ClientName" name="client_name"
+                                                placeholder="Client Name" required>
                                         </div>
                                         <div class="form-group col-md-6">
-                                            <label for="LastName">Last Name</label>
-                                            <input type="text" class="form-control" id="LastName" name="LastName"
-                                                --placeholder="Last Name" required>
+                                            <label for="CompanyName">Company Name</label>
+                                            <input type="text" class="form-control" id="CompanyName" name="company_name"
+                                                placeholder="Company Name">
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-row mb-3">
+                                        <div class="col">
+                                            <label for="position">Position</label>
+                                            <input type="text" class="form-control" id="Position" name="position"
+                                                placeholder="Position" required>
                                         </div>
                                     </div>
 
-                                    <!-- Second Row: Gender, Date of Birth, Age -->
-                                    <div class="form-row">
-                                        <div class="form-group col-md-4">
-                                            <label for="Gender">Gender</label>
-                                            <select id="Gender" class="form-control" name="Gender" required>
-                                                <option value="" disabled selected>Choose...</option>
-                                                <option>Male</option>
-                                                <option>Female</option>
-                                                <option>Other</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="DOB">Date of Birth</label>
-                                            <input type="date" class="form-control" id="DOB" name="DOB" required>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="Age">Age</label>
-                                            <input type="number" class="form-control" id="Age" placeholder="Age"
-                                                name="Age" required>
-                                        </div>
-                                    </div>
 
                                     <!-- Third Row: Contact, Address -->
                                     <div class="form-row">
-                                        <div class="form-group col-md-6">
-                                            <label for="Contact">Contact</label>
-                                            <input type="text" class="form-control" id="Contact" placeholder="Contact"
-                                                name="Contact" required>
+                                        <div class="form-group col-md-4">
+                                            <label for="contact_number">Contact Number</label>
+                                            <input type="text" class="form-control" id="ContactNumber"
+                                                placeholder="Contact Number" name="contact_number" required>
                                         </div>
-                                        <div class="form-group col-md-6">
-                                            <label for="PresentAddress">Address</label>
-                                            <input type="text" class="form-control" id="PresentAddress"
-                                                placeholder="PresentAddress" name="PresentAddress" required>
+
+                                        <div class="form-group col-md-4">
+                                            <label for="address">Address</label>
+                                            <input type="text" class="form-control" id="Address" placeholder="Address"
+                                                name="address" required>
                                         </div>
+
+                                        <div class="form-group col-md-4">
+                                            <label for="email_address">Email Address</label>
+                                            <input type="text" class="form-control" id="email_address" placeholder="@"
+                                                name="email_address" required>
+                                        </div>
+
                                     </div>
 
-                                    <!-- Fourth Row: Username -->
-                                    <div class="form-group" style="margin-left: 0; width: 100%;">
-                                        <label for="Username">Username</label>
-                                        <input type="text" class="form-control" id="Username" placeholder="Username"
-                                            name="Username" autocomplete="off" required>
-                                    </div>
 
                                     <!-- Fifth Row: Password, Confirm Password -->
                                     <div class="form-row">
+
+                                        <div class="form-group col-md-6">
+                                            <label for="Username">Username</label>
+                                            <input type="text" class="form-control" id="Username" placeholder="Username"
+                                                name="Username" autocomplete="off" required>
+                                        </div>
+
                                         <div class="form-group col-md-6">
                                             <label for="Password">Password</label>
                                             <div class="input-group">
@@ -328,20 +320,6 @@ $unread_count = countUnreadNotificationsAdmin();
                                                     title="Password must be at least 8 characters long and contain both numbers and letters">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text" id="togglePassword">
-                                                        <i class="fa fa-eye" aria-hidden="true"></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                            <label for="ConfirmPassword">Confirm Password</label>
-                                            <div class="input-group">
-                                                <input type="password" class="form-control" id="ConfirmPassword"
-                                                    name="ConfirmPassword" placeholder="Confirm Password" required
-                                                    pattern="(?=.*\d)(?=.*[a-zA-Z]).{8,}"
-                                                    title="Password must be at least 8 characters long and contain both numbers and letters">
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text" id="toggleConfirmPassword">
                                                         <i class="fa fa-eye" aria-hidden="true"></i>
                                                     </span>
                                                 </div>
@@ -475,21 +453,21 @@ $unread_count = countUnreadNotificationsAdmin();
             $(function () {
                 $('.edit').click(function (e) {
                     e.preventDefault();
-                    $('#editPatients').modal('show');
+                    $('#editClients').modal('show');
                     var id = $(this).data('id');
                     getRow(id);
                 });
 
                 $('.delete').click(function (e) {
                     e.preventDefault();
-                    $('#deletePatients').modal('show');
+                    $('#deleteClients').modal('show');
                     var id = $(this).data('id');
                     getRow(id);
                 });
 
                 $('.view').click(function (e) {
                     e.preventDefault();
-                    $('#viewPatients').modal('show');
+                    $('#viewClients').modal('show');
                     var id = $(this).data('id');
                     getRow(id);
                 });
@@ -500,34 +478,31 @@ $unread_count = countUnreadNotificationsAdmin();
             function getRow(id) {
                 $.ajax({
                     type: 'POST',
-                    url: 'booking_row_patients.php',
+                    url: 'booking_row_clients.php',
                     data: { id: id },
                     dataType: 'json',
                     success: function (response) {
-                        var fullName = response.FirstName + " " + response.MI + " " + response.LastName;
-                        $('.FullName').text(fullName);
-                        $('.ID').val(response.ID);
-                        $('.FirstName').text(response.FirstName);
-                        $('.MI').text(response.MI);
-                        $('.LastName').text(response.LastName);
-                        $('.Gender').text(response.Gender);
-                        $('.Age').text(response.Age);
-                        $('.DOB').text(response.DOB);
-                        $('.Contact').text(response.Contact);
-                        $('.PresentAddress').text(response.PresentAddress);
+                        $('.client_name').text(response.client_name);
+                        $('.ID').val(response.id);
+                        $('.company_name').text(response.company_name);
+                        $('.position').text(response.position);
+                        $('.contact_number').text(response.contact_number);
+                        $('.address').text(response.address);
+                        $('.email_address').text(response.email_address);
                         $('.Username').text(response.Username);
 
-                        $('#EFirstName').val(response.FirstName);
-                        $('#EMI').val(response.MI);
-                        $('#ELastName').val(response.LastName);
-                        $('#EGender').val(response.Gender);
-                        $('#EAge').val(response.Age);
-                        $('#EDOB').val(response.DOB);
-                        $('#EContact').val(response.Contact);
-                        $('#EPresentAddress').val(response.PresentAddress);
-                        $('#EUsername').val(response.Username);
-                        $('#EPassword').val(response.Password);
-                        $('#EConfirmPassword').val(response.ConfirmPassword);
+                        $('#Eclient_name').val(response.client_name);
+                        $('#Ecompany_name').val(response.company_name);
+                        $('#Eposition').val(response.position);
+                        $('#Econtact_number').val(response.contact_number);
+                        $('#Eaddress').val(response.address);
+                        $('#Eemail_address').val(response.email_address);
+
+                        // Populate the Username and Password fields
+                        $('#EUUsername').val(response.Username); // Set Username
+                        $('#EUPassword').val(response.Password); // Set Password (unhashed)
+
+
                     }
                 });
             }

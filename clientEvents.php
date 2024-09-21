@@ -10,6 +10,26 @@ if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'clients') {
 
 // Retrieve the admin username from the session
 $clientUsername = $_SESSION['username'];
+$sql = "SELECT client_id FROM clients_account WHERE username = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $clientUsername);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Check if a record was found
+if ($result->num_rows > 0) {
+    // Fetch the client_id from the database
+    $row = $result->fetch_assoc();
+    $id = $row['client_id'];
+} else {
+    // Handle the case where no user was found (optional)
+    echo "No client found with this username.";
+    exit();
+}
+include 'notification_functions.php'; // Create this file for the functions
+
+$notificationsClient = fetchNotificationsClient($id);
+$unread_count = countUnreadNotificationsClient($id);
 ?>
 
 <!DOCTYPE html>
@@ -177,11 +197,22 @@ $clientUsername = $_SESSION['username'];
                                 <a href="javascript:;" class="dropdown-toggle info-number" id="navbarDropdown1"
                                     data-toggle="dropdown" aria-expanded="false">
                                     <i class="fa fa-envelope-o"></i>
-
+                                    <span class="badge bg-green"><?php echo count($notificationsClient); ?></span>
+                                    <span class="badge bg-green"><?php echo $unread_count; ?></span>
                                 </a>
                                 <ul class="dropdown-menu list-unstyled msg_list" role="menu"
                                     aria-labelledby="navbarDropdown1">
-                                   
+                                    <?php foreach ($notificationsClient as $notification): ?>
+                                        <li class="nav-item">
+                                            <a class="dropdown-item <?php echo $notification['read_status'] == 0 ? 'unread' : 'read'; ?>"
+                                                href="#"
+                                                onclick="markAsRead(<?php echo $notification['transaction_id']; ?>)">
+                                                <i class="fa fa-info-circle"></i>
+                                                Booking ID: <?php echo $notification['transaction_id']; ?> - Status:
+                                                <?php echo $notification['status']; ?>
+                                            </a>
+                                        </li>
+                                    <?php endforeach; ?>
                                     <li class="nav-item">
                                         <a class="dropdown-item" href="javascript:;" onclick="markAllAsRead()">
                                             <i class="fa fa-check"></i> Mark All as Read

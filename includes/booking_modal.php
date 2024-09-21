@@ -41,6 +41,63 @@
 </div>
 
 
+<!-- FOR EDIT CLIENT SCHEDULE  -->
+<div class="modal fade" id="editClientSchedule">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Client Schedule: <span class="title"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">&times;
+                </button>
+            </div>
+            <form action="edit_ClientSchedule.php" method="POST">
+                <div class="modal-body">
+                    <input type="text" class="ID" name="ID" hidden>
+                    <div class="mb-3">
+                        <label for="schedule_date" class="form-label">Schedule Date:</label>
+                        <input type="date" class="form-control" id="Eschedule_date" name="schedule_date" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" name="submit">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- FOR DELETE CLIENT SCHEDULE -->
+<div class="modal fade" id="deleteClientSchedule">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fa fa-info-circle" aria-hidden="true"></i> Please Confirm!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form action="delete_client_schedule.php" method="POST">
+                    <input type="hidden" class="ID" name="ID">
+                    <center>
+                        <p> Are you sure to delete this record?</p><br>
+                        Schedule Date: <span class="Dschedule_date"></span>
+                    </center>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-window-close"></i>
+                    No</button>
+                <button type="submit" name="submit" class="btn btn-danger"><i class="fa fa-thrash"></i> Yes</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 <!-- FOR EDIT SCHEDULE  -->
 <div class="modal fade" id="editSchedule">
     <div class="modal-dialog modal-lg" role="document">
@@ -303,6 +360,172 @@
 </div>
 
 
+<!-- VIEW CLIENTS INFO -->
+<div class="modal fade" id="viewClients">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Clients View Record:</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">&times;
+                </button>
+            </div>
+            <form>
+                <div class="modal-body">
+                    <div>
+                        <div class="row">
+                            <!-- Profile Display Form (Left) -->
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <img src="profile.jpg" class="rounded-circle mb-3" alt="Profile Picture"
+                                            width="150" height="150">
+                                        <h4 class="client_name"></h4>
+                                        <!-- <input type="" class="ID" name="ID"> -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Information Display and Update Form (Right) -->
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">Company Name</th>
+                                                    <td>
+                                                        <p type="text" class="company_name"></p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Position</th>
+                                                    <td>
+                                                        <p type="text" class="position"></p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Contact</th>
+                                                    <td>
+                                                        <p type="text" class="contact_number"></p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Address</th>
+                                                    <td>
+                                                        <p type="text" class="address"></p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Email</th>
+                                                    <td>
+                                                        <p type="text" class="email_address"></p>
+                                                    </td>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- EDIT CLIENTS INFO  -->
+<div class="modal fade" id="editClients">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Clients Record:</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">&times;
+                </button>
+            </div>
+            <form action="edit_client.php" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" class="ID" name="ID">
+                    <div class="row" style="margin-bottom: 10px;">
+                        <div class="col-md-4">
+                            <label for="client_name" class="form-label">Client Name:</label>
+                            <input type="text" class="form-control" id="Eclient_name" name="client_name" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="company_name" class="form-label">Company Name :</label>
+                            <input type="text" class="form-control" id="Ecompany_name" name="company_name" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="position" class="form-label">Position :</label>
+                            <input type="text" class="form-control" id="Eposition" name="position" required>
+                        </div>
+                    </div>
+
+                    <div class="row " style="margin-bottom: 10px;">
+                        <div class="col-md-6">
+                            <label for="contact_number" class="form-label">Contact :</label>
+                            <input type="text" class="form-control" id="Econtact_number" name="contact_number" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="address" class="form-label">Address :</label>
+                            <input type="text" class="form-control" id="Eaddress" name="address" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email_address" class="form-label">Email Address :</label>
+                        <input type="text" class="form-control" id="Eemail_address" name="email_address" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="Username" class="form-label">Username :</label>
+                            <input type="text" class="form-control" id="EUUsername" name="Username" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="Password" class="form-label">Password :</label>
+                            <input type="password" class="form-control" id="EUPassword" name="Password" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" name="submit">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- DELETE CLIENT INFO  -->
+<div class="modal fade" id="deleteClients">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fa fa-info-circle" aria-hidden="true"></i> Please Confirm!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form action="delete_clients.php" method="POST">
+                    <input type="hidden" class="ID" name="ID">
+                    <center>
+                        <p> Are you sure to delete this record?</p><br>
+                        Client Name : <span class="client_name"></span><br>
+                        Username : <span class="Username"></span>
+                    </center>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-window-close"></i>
+                    No</button>
+                <button type="submit" name="submit" class="btn btn-danger"><i class="fa fa-thrash"></i> Yes</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <!-- VIEW PATIENTS -->
 <div class="modal fade" id="viewPatients">
@@ -324,7 +547,7 @@
                                         <img src="profile.jpg" class="rounded-circle mb-3" alt="Profile Picture"
                                             width="150" height="150">
                                         <h4 class="FullName"></h4>
-                                        <p class="text-muted">adamero.s.bsinfotech@gmail.com</p>
+                                        <p class="Email"></p>
                                     </div>
                                 </div>
                             </div>
@@ -383,7 +606,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- EDIT PATIENTS  -->
 <div class="modal fade" id="editPatients">

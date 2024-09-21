@@ -189,7 +189,7 @@ $unread_count = countUnreadNotificationsAdmin();
 
             <div class="right_col" role="main">
                 <?php
-                if (isset($_SESSION['successEditSchedule'])) {
+                if (isset($_SESSION['successEditClientSchedule'])) {
                     echo "
                         <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
                             <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success!</h4>
@@ -198,22 +198,22 @@ $unread_count = countUnreadNotificationsAdmin();
                     ";
 
                     // Clear the alert message
-                    unset($_SESSION['successEditSchedule']);
+                    unset($_SESSION['successEditClientSchedule']);
                 }
 
-                if (isset($_SESSION['save'])) {
+                if (isset($_SESSION['saveClientSchedule'])) {
                     echo "
                         <div class='alert alert-success alert-dismissable' id='alert' style='background: green;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
                             <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Success!</h4>
-                            <p>Event added successfully!;</p>
+                            <p>Schedule added successfully!;</p>
                         </div>
                     ";
 
                     // Clear the alert message
-                    unset($_SESSION['save']);
+                    unset($_SESSION['saveClientSchedule']);
                 }
 
-                if (isset($_SESSION['deleted'])) {
+                if (isset($_SESSION['deletedClientSchedule'])) {
                     echo "
                         <div class='alert alert-dark alert-dismissable' id='alert' style='background: gray;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
                             <h4><i class='fa fa-check-circle' aria-hidden='true'></i> Deleted!</h4>
@@ -222,10 +222,10 @@ $unread_count = countUnreadNotificationsAdmin();
                     ";
 
                     // Clear the alert message
-                    unset($_SESSION['deleted']);
+                    unset($_SESSION['deletedClientSchedule']);
                 }
 
-                if (isset($_SESSION['errorevent'])) {
+                if (isset($_SESSION['errorClientSchedule'])) {
                     echo "
                         <div class='alert alert-danger alert-dismissable' id='alert' style='background: red;border-radius: 5px;padding:10px;color: #fff;margin:50px 0px 10px 0px;'>
                             <h4><i class='fa fa-exclamation-triangle'></i> Error!</h4>
@@ -234,7 +234,7 @@ $unread_count = countUnreadNotificationsAdmin();
                     ";
 
                     // Clear the alert message
-                    unset($_SESSION['errorevent']);
+                    unset($_SESSION['errorClientSchedule']);
                 }
                 ?>
 
@@ -244,6 +244,33 @@ $unread_count = countUnreadNotificationsAdmin();
                 </button>
 
                 <!-- Modal -->
+                <!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Add New Schedule</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="add_client_schedule.php" method="POST">
+                                    <div class="mb-3">
+                                        <label for="schedule_date" class="form-label">Schedule Date</label>
+                                        <input type="date" class="form-control" id="schedule_date" name="schedule_date"
+                                            required>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="reset" class="btn btn-secondary"
+                                            data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
                 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog">
@@ -255,30 +282,15 @@ $unread_count = countUnreadNotificationsAdmin();
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form action="add_sched_add_timeslots.php" method="POST">
-                                    <div class="mb-3">
-                                        <label for="Slots" class="form-label">Slots</label>
-                                        <input type="text" class="form-control" id="Slots" name="Slots" required>
+                                <form action="add_client_schedule.php" method="POST">
+                                    <div class="mb-3" id="schedule_date_container">
+                                        <label for="schedule_date" class="form-label">Schedule Date(s)</label>
+                                        <!-- Multiple input fields for date -->
+                                        <input type="date" class="form-control mb-2" id="schedule_date"
+                                            name="schedule_date[]" required>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="SlotsDate" class="form-label">Slots Date</label>
-                                        <input type="date" class="form-control" id="SlotsDate" name="SlotsDate"
-                                            required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="StartTime" class="form-label">Start Time</label>
-                                        <input type="time" class="form-control" id="StartTime" name="StartTime"
-                                            required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="EndTime" class="form-label">End Time</label>
-                                        <input type="time" class="form-control" id="EndTime" name="EndTime" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="Durations" class="form-label">Durations</label>
-                                        <input type="text" class="form-control" id="Durations" name="Durations"
-                                            required>
-                                    </div>
+                                    <button type="button" id="addDateField" class="btn btn-secondary mb-3">Add another
+                                        date</button>
                                     <div class="modal-footer">
                                         <button type="reset" class="btn btn-secondary"
                                             data-dismiss="modal">Close</button>
@@ -380,14 +392,14 @@ $unread_count = countUnreadNotificationsAdmin();
             $(function () {
                 $('.edit').click(function (e) {
                     e.preventDefault();
-                    $('#editSchedule').modal('show');
+                    $('#editClientSchedule').modal('show');
                     var id = $(this).data('id');
                     getRow(id);
                 });
 
                 $('.delete').click(function (e) {
                     e.preventDefault();
-                    $('#delete').modal('show');
+                    $('#deleteClientSchedule').modal('show');
                     var id = $(this).data('id');
                     getRow(id);
                 });
@@ -399,19 +411,13 @@ $unread_count = countUnreadNotificationsAdmin();
             function getRow(id) {
                 $.ajax({
                     type: 'POST',
-                    url: 'booking_row_sched.php',
+                    url: 'booking_row.clientSched.php',
                     data: { id: id },
                     dataType: 'json',
                     success: function (response) {
-                        $('.ID').val(response.ID);
-                        $('.Slots').html(response.Slots);
-                        $('.Slots_Date').html(response.Slots_Date);
-                        $('#editSlots').val(response.Slots);
-                        $('#Slots_Date').val(response.Slots_Date);
-                        $('#Start_Time').val(response.Start_Time);
-                        $('#End_Time').val(response.End_Time);
-                        $('#editDurations').val(response.Durations);
-
+                        $('.ID').val(response.id);
+                        $('#Eschedule_date').val(response.schedule_date);
+                        $('.Dschedule_date').html(response.schedule_date);
                     }
                 });
             }
@@ -423,6 +429,16 @@ $unread_count = countUnreadNotificationsAdmin();
                         $(this).remove();
                     });
                 }, 5000);
+            });
+
+            document.getElementById('addDateField').addEventListener('click', function () {
+                const container = document.getElementById('schedule_date_container');
+                const newInput = document.createElement('input');
+                newInput.type = 'date';
+                newInput.className = 'form-control mb-2';
+                newInput.name = 'schedule_date[]';
+                newInput.required = true;
+                container.appendChild(newInput);
             });
 
             function markAsRead(transaction_no) {

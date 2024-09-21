@@ -519,6 +519,9 @@ $unread_count = countUnreadNotificationsAdmin();
                         $('.PresentAddress').text(response.PresentAddress);
                         $('.Username').text(response.Username);
 
+                        // Display email
+                        $('.Email').text(response.email); // Add this line
+
                         $('#EFirstName').val(response.FirstName);
                         $('#EMI').val(response.MI);
                         $('#ELastName').val(response.LastName);
