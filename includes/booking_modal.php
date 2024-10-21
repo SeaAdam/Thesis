@@ -817,36 +817,36 @@
             </div>
             <form action="edit_client.php" method="POST">
                 <div class="modal-body">
-                    <input type="text" class="ID" name="ID" hidden>
+                    <input type="text" class="ID" name="ID">
                     <!-- Form fields for editing user data -->
                     <div class="row" style="margin-bottom: 10px;">
                         <div class="col-md-4">
                             <label for="client_name" class="form-label">Client Name:</label>
-                            <input type="text" class="form-control" id="Eclient_name" name="client_name" required>
+                            <input type="text" class="form-control" id="ECclient_name" name="client_name" required>
                         </div>
                         <div class="col-md-4">
                             <label for="company_name" class="form-label">Company Name:</label>
-                            <input type="text" class="form-control" id="Ecompany_name" name="company_name" required>
+                            <input type="text" class="form-control" id="ECcompany_name" name="company_name" required>
                         </div>
                         <div class="col-md-4">
                             <label for="position" class="form-label">Position :</label>
-                            <input type="text" class="form-control" id="Eposition" name="position" required>
+                            <input type="text" class="form-control" id="ECposition" name="position" required>
                         </div>
                     </div>
                     <div class="row " style="margin-bottom: 10px;">
                         <div class="col-md-6">
                             <label for="address" class="form-label">Address :</label>
-                            <input type="text" class="form-control" id="Eaddress" name="address" required>
+                            <input type="text" class="form-control" id="ECaddress" name="address" required>
                         </div>
                         <div class="col-md-6">
                             <label for="contact_number" class="form-label">Contact Number:</label>
-                            <input type="number" class="form-control" id="Econtact_number" name="contact_number"
+                            <input type="number" class="form-control" id="ECcontact_number" name="contact_number"
                                 required>
                         </div>
                     </div>
                     <div>
                         <label for="email_address" class="form-label">Email :</label>
-                        <input type="text" class="form-control" id="Eemail_address" name="email_address" required>
+                        <input type="text" class="form-control" id="ECemail_address" name="email_address" required>
                     </div>
 
                 </div>

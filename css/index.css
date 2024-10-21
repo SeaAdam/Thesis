@@ -101,6 +101,18 @@ section{
     color: blue;
 }
 
+.home {
+    background-image: url('../assets/StockCake-Doctors in clinic_1721751866.jpg'); 
+    background-size: cover;
+    background-position: center;  /* Center the background image */
+    background-repeat: no-repeat;  /* Prevent repeating */
+    height: 100vh;  /* Make the section take the full viewport height */
+    display: flex;
+    justify-content: center;  /* Center content horizontally */
+    align-items: center;  /* Center content vertically */
+    color: white;  /* Text color for better readability on background */
+}
+
 .home .logo {
     max-width: 150px;
     margin-bottom: 20px;

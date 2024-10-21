@@ -360,12 +360,12 @@ $unread_count = countUnreadNotificationsClient($id);
                             console.error('Error:', response.error);
                         } else {
                             $('.ID').val(response.id);
-                            $('#Ecompany_name').val(response.company_name);
-                            $('#Eclient_name').val(response.client_name);
-                            $('#Eposition').val(response.position);
-                            $('#Eaddress').val(response.address);
-                            $('#Econtact_number').val(response.contact_number);
-                            $('#Eemail_address').val(response.email_address);
+                            $('#ECcompany_name').val(response.company_name);
+                            $('#ECclient_name').val(response.client_name);
+                            $('#ECposition').val(response.position);
+                            $('#ECaddress').val(response.address);
+                            $('#ECcontact_number').val(response.contact_number);
+                            $('#ECemail_address').val(response.email_address);
                         }
                     },
                     error: function (xhr, status, error) {
