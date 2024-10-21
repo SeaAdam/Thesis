@@ -60,20 +60,7 @@
                 <h3>Our Business Model</h3>
 
                 <div class="business-model">
-                    <div class="model-item">
-                        <div class="model-text">
-                            <h4>Value Proposition</h4>
-                            <p>We offer high-quality diagnostic services with a focus on regulatory compliance. Our
-                                expert
-                                team and advanced technology ensure accurate results and comprehensive care tailored to
-                                each
-                                patient's needs.</p>
-                        </div>
-                        <div class="model-image">
-                            <img src="assets/download1.jpg" alt="Value Proposition">
-                        </div>
-                    </div>
-
+                
                     <div class="model-item">
                         <div class="model-text">
                             <h4>Customer Segments</h4>
@@ -133,8 +120,6 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
     </section>
 
