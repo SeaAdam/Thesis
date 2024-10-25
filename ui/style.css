@@ -135,7 +135,7 @@
 }
 
 @media (max-width: 991.98px) {
-    .navbar .navbar-nav .nav-link  {
+    .navbar .navbar-nav .nav-link {
         margin-right: 0;
         padding: 10px 0;
     }
@@ -176,6 +176,7 @@
 
 /*** Header ***/
 @media (min-width: 992px) {
+
     .header-carousel,
     .page-header {
         margin-top: -34px;
@@ -212,7 +213,7 @@
         position: relative;
         min-height: 450px;
     }
-    
+
     #header-carousel .carousel-item img {
         position: absolute;
         width: 100%;
@@ -492,7 +493,7 @@
 
 /*** Testimonial ***/
 .testimonial {
-    background: linear-gradient(rgba(3, 27, 78, .3), rgba(3, 27, 78, .3)), url(../img/testimonial.jpg) left center no-repeat;
+    background: linear-gradient(rgba(3, 27, 78, .3), rgba(3, 27, 78, .3)), url(../assets/brain.webp) left center no-repeat;
     background-size: cover;
 }
 
@@ -604,4 +605,14 @@
 
 .copyright a:hover {
     color: var(--bs-primary);
+}
+
+/* Ensure that the layout adjusts properly on smaller screens */
+@media (max-width: 768px) {
+
+    .accreditation-content,
+    .protocols-content {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
 }
