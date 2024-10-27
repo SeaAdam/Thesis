@@ -97,7 +97,6 @@ session_start();
         .model-item:hover {
             transform: translateY(-5px);
         }
-
     </style>
 
 
@@ -130,7 +129,6 @@ session_start();
         </div>
     </div>
     <!-- Topbar End -->
-
 
     <!-- Brand Start -->
     <div class="container-fluid bg-primary text-white pt-4 pb-5 d-none d-lg-flex">
@@ -178,6 +176,7 @@ session_start();
             </nav>
         </div>
     </div>
+
     <!-- Navbar End -->
 
 
@@ -266,7 +265,8 @@ session_start();
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="formPatient" id="registrationForm" action="registration.php" method="POST">
+                    <form class="formPatient" id="registrationForm" action="registration.php" method="POST"
+                        onsubmit="return showSuccessAlert('Patient Registration');">
                         <!-- First Row: First Name, Middle Initial, Last Name -->
                         <div class="row">
                             <div class="col-md-4">
@@ -407,7 +407,8 @@ session_start();
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="formClient" id="registrationFormClient" action="registration_client.php" method="POST">
+                    <form class="formClient" id="registrationFormClient" action="registration_client.php" method="POST"
+                        onsubmit="return showSuccessAlert('Client Registration');">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -841,25 +842,23 @@ session_start();
 
 
         document.getElementById('registrationForm').addEventListener('submit', function (event) {
-            // Clear previous error messages
             document.getElementById('passwordError').textContent = '';
 
-            // Get password and confirm password values
             var password = document.getElementById('Password').value;
             var confirmPassword = document.getElementById('ConfirmPassword').value;
 
-            // Check if passwords match
+
             if (password !== confirmPassword) {
                 document.getElementById('passwordError').textContent = 'Passwords do not match.';
-                event.preventDefault(); // Prevent form submission
+                event.preventDefault();
             }
         });
 
         document.getElementById('loginForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent the default form submission
+            event.preventDefault();
 
             var formData = new FormData(this);
-            fetch('login.php', { // Replace with your actual PHP script
+            fetch('login.php', {
                 method: 'POST',
                 body: formData
             })
@@ -891,6 +890,23 @@ session_start();
                     });
                 });
         });
+
+        function showSuccessAlert(role) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Registration Successful',
+                text: `You have registered as ${role}.`,
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If the alert is confirmed, submit the form
+                    document.getElementById(role === 'Patient Registration' ? 'registrationForm' : 'registrationFormClient').submit();
+                }
+            });
+            return false; // Prevent the default form submission for now
+        }
+
+
 
         document.addEventListener('DOMContentLoaded', function () {
             const patientButton = document.getElementById('patientButton');
