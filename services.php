@@ -165,7 +165,8 @@ session_start();
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light bg-white py-lg-0 px-lg-3">
                 <a href="index.php" class="navbar-brand d-lg-none">
-                    <h1 class="text-primary m-0">Lab<span class="text-dark">sky</span></h1>
+                    <h1 class="text-primary m-0">Brain Master<span class="text-dark">Diagnostic
+                            Center (BMDC)</span></h1>
                 </a>
                 <button type="button" class="navbar-toggler me-0" data-bs-toggle="collapse"
                     data-bs-target="#navbarCollapse">
