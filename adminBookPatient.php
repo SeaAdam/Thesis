@@ -1,5 +1,4 @@
 <?php
-
 include 'login.php';
 
 // Check if the user is logged in and is an admin
@@ -10,9 +9,6 @@ if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'admin') {
 
 // Retrieve the admin username from the session
 $adminUsername = $_SESSION['username'];
-
-
-include 'count_Dashboard.php';
 // Fetch notifications
 include 'notification_functions.php'; // Include the file with fetchNotificationsAdmin function
 $notificationsAdmin = fetchNotificationsAdmin();
@@ -28,9 +24,8 @@ $unread_count = countUnreadNotificationsAdmin();
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="images/favicon.ico" type="image/ico" />
 
-    <title>Admin Dashboard</title>
+    <title>Admin Events</title>
 
     <!-- Bootstrap -->
     <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -39,13 +34,13 @@ $unread_count = countUnreadNotificationsAdmin();
     <!-- Custom Theme Style -->
     <link href="build/css/custom.min.css" rel="stylesheet">
 
+    <link href="vendors/nprogress/nprogress.css" rel="stylesheet">
+
     <!-- FullCalendar CSS -->
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.2/main.min.css' rel='stylesheet' />
 
     <!-- FullCalendar JS -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.2/main.min.js'></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -113,29 +108,6 @@ $unread_count = countUnreadNotificationsAdmin();
         .fc-h-event .fc-event-title {
             font-size: .8rem;
         }
-
-        .chart-container {
-            position: relative;
-            width: 100%;
-            /* Adjust width as needed */
-            height: 200px;
-            /* Adjust height as needed */
-        }
-
-        #statusDoughnutChart {
-            width: 100% !important;
-            height: 100% !important;
-        }
-
-        .read {
-            background-color: #f0f0f0;
-            /* Example styling for unread */
-        }
-
-        .unread {
-            background-color: #e0e0e0;
-            /* Example styling for read */
-        }
     </style>
 </head>
 
@@ -172,15 +144,12 @@ $unread_count = countUnreadNotificationsAdmin();
                             <ul class="nav side-menu">
                                 <li><a href="adminDashboard.php"><i class="fa fa-home"></i> Dashboard </a>
                                 </li>
-                                <li><a href="adminBookPatient.php"><i class="fa fa-home"></i> Book Appoinment - Patient </a>
-                                </li>
-                                <li><a href="adminBookClient.php"><i class="fa fa-home"></i> Book Appoinment - Client </a>
-                                </li>
                                 <li><a href="adminEvents.php"><i class="fa fa-edit"></i> Events </a>
                                 </li>
                                 <li><a href="adminClients.php"><i class="fa fa-desktop"></i> Clients </a>
                                 </li>
-                                <li><a><i class="fa fa-table"></i> Client Appointment <span class="fa fa-chevron-down"></span>
+                                <li><a><i class="fa fa-table"></i> Client Appointment <span
+                                            class="fa fa-chevron-down"></span>
                                     </a>
                                     <ul class="nav child_menu">
                                         <li><a href="apPendingClient.php">Pending</a></li>
@@ -191,7 +160,8 @@ $unread_count = countUnreadNotificationsAdmin();
                                 </li>
                                 <li><a href="adminPatients.php"><i class="fa fa-desktop"></i> Patients </a>
                                 </li>
-                                <li><a><i class="fa fa-table"></i> Patients Appointment <span class="fa fa-chevron-down"></span>
+                                <li><a><i class="fa fa-table"></i> Patients Appointment <span
+                                            class="fa fa-chevron-down"></span>
                                     </a>
                                     <ul class="nav child_menu">
                                         <li><a href="apPending.php">Pending</a></li>
@@ -279,52 +249,6 @@ $unread_count = countUnreadNotificationsAdmin();
 
 
             <div class="right_col" role="main">
-                <div class="row">
-
-                    <?php include 'status.php'; ?>
-
-                    <div class="col-sm-3 py-3">
-                        <div class="card h-100 text-white bg-primary">
-                            <div class="card-body">
-                                <h3 class="card-title"><?php echo $countPatient; ?></h3>
-                                <p class="card-text">Total Patients</p>
-                                <h1><i class="fa fa-user-md" aria-hidden="true"></i></h1>
-                            </div>
-                            <div class="card-footer bg-transparent border-light"><a href="adminPatients.php"
-                                    class="btn btn-outline-light" style="float: right;">More Info <span><i
-                                            class="fa fa-arrow-circle-right" aria-hidden="true"></i></span></a></div>
-                        </div>
-                    </div>
-
-
-                    <div class="col-sm-3 py-3">
-                        <div class="card h-100 text-white bg-success">
-                            <div class="card-body">
-                                <h3 class="card-title"><?php echo $countServices; ?></h3>
-                                <p class="card-text">Services</p>
-                                <h1><i class="fa fa-line-chart" aria-hidden="true"></i></h1>
-                            </div>
-                            <div class="card-footer bg-transparent border-light"><a href="adminServices.php"
-                                    class="btn btn-outline-light" style="float: right;">More Info <span><i
-                                            class="fa fa-arrow-circle-right" aria-hidden="true"> </i></a></div>
-
-                        </div>
-                    </div>
-                    <div class="col-sm-3 py-3">
-                        <div class="card h-100 text-white bg-dark">
-                            <div class="card-body">
-                                <h3 class="card-title"><?php echo $countSchedules; ?></h3>
-                                <p class="card-text">Schedules</p>
-                                <h1><i class="fa fa-calendar" aria-hidden="true"></i></h1>
-                            </div>
-                            <div class="card-footer bg-transparent border-light"><a href="adminSchedule.php"
-                                    class="btn btn-outline-light" style="float: right;">More Info <span><i
-                                            class="fa fa-arrow-circle-right" aria-hidden="true"> </i></a></div>
-                        </div>
-                    </div>
-                </div>
-
-
                 <div class="card">
                     <div class="card-header">
                         Booking Calendar
@@ -435,7 +359,6 @@ $unread_count = countUnreadNotificationsAdmin();
                 </div>
 
 
-
                 <!-- footer content -->
                 <footer>
                     <div class="pull-right">
@@ -447,137 +370,142 @@ $unread_count = countUnreadNotificationsAdmin();
 
             </div>
 
-
-
-
         </div>
 
-        <!-- jQuery -->
-        <script src="vendors/jquery/dist/jquery.min.js"></script>
-        <!-- Bootstrap -->
-        <script src="vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- FastClick -->
-        <script src="vendors/fastclick/lib/fastclick.js"></script>
-        <!-- NProgress -->
-        <script src="vendors/nprogress/nprogress.js"></script>
-        <!-- Chart.js -->
-        <script src="vendors/Chart.js/dist/Chart.min.js"></script>
-        <!-- gauge.js -->
-        <script src="vendors/gauge.js/dist/gauge.min.js"></script>
-        <!-- bootstrap-progressbar -->
-        <script src="vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
-        <!-- iCheck -->
-        <script src="vendors/iCheck/icheck.min.js"></script>
-        <!-- Skycons -->
-        <script src="vendors/skycons/skycons.js"></script>
-        <!-- Flot -->
-        <script src="vendors/Flot/jquery.flot.js"></script>
-        <script src="vendors/Flot/jquery.flot.pie.js"></script>
-        <script src="vendors/Flot/jquery.flot.time.js"></script>
-        <script src="vendors/Flot/jquery.flot.stack.js"></script>
-        <script src="vendors/Flot/jquery.flot.resize.js"></script>
-        <!-- Flot plugins -->
-        <script src="vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
-        <script src="vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
-        <script src="vendors/flot.curvedlines/curvedLines.js"></script>
-        <!-- DateJS -->
-        <script src="vendors/DateJS/build/date.js"></script>
-        <!-- JQVMap -->
-        <script src="vendors/jqvmap/dist/jquery.vmap.js"></script>
-        <script src="vendors/jqvmap/dist/maps/jquery.vmap.world.js"></script>
-        <script src="vendors/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
-        <!-- bootstrap-daterangepicker -->
-        <script src="vendors/moment/min/moment.min.js"></script>
-        <script src="vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
 
-        <!-- Custom Theme Scripts -->
-        <script src="build/js/custom.min.js"></script>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                var dashboardCalendarEl = document.getElementById('calendar');
-                var eventModal = document.getElementById('eventModal');
-                var toggleButton = document.getElementById('toggleSlotsButton');
-                var modalSlots = document.getElementById('modalSlots');
-                var bookingForm = document.getElementById('bookingForm');
-                var modalTitle = document.getElementById('modalTitle');
-                var modalDate = document.getElementById('modalDate');
-                var selectedTimeSlot = document.getElementById('selectedTimeSlot');
-                var scheduleIdField = document.getElementById('scheduleId');
-                var timeSlotIdField = document.getElementById('timeSlotId');
-                var serviceTypeSelect = document.getElementById('serviceType');
 
-                // Initialize FullCalendar
-                var dashboardCalendar = new FullCalendar.Calendar(dashboardCalendarEl, {
-                    initialView: 'dayGridMonth',
-                    selectable: true,
-                    events: function (info, successCallback, failureCallback) {
-                        var sources = ['schedule.php', 'fetch_events.php'];
-                        var combinedEvents = [];
+    </div>
 
-                        var fetchNext = function (index) {
-                            if (index >= sources.length) {
-                                successCallback(combinedEvents);
-                                return;
-                            }
+    <!-- jQuery -->
+    <script src="vendors/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- FastClick -->
+    <script src="vendors/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="vendors/nprogress/nprogress.js"></script>
+    <!-- Chart.js -->
+    <script src="vendors/Chart.js/dist/Chart.min.js"></script>
+    <!-- gauge.js -->
+    <script src="vendors/gauge.js/dist/gauge.min.js"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <!-- iCheck -->
+    <script src="vendors/iCheck/icheck.min.js"></script>
+    <!-- Skycons -->
+    <script src="vendors/skycons/skycons.js"></script>
+    <!-- Flot -->
+    <script src="vendors/Flot/jquery.flot.js"></script>
+    <script src="vendors/Flot/jquery.flot.pie.js"></script>
+    <script src="vendors/Flot/jquery.flot.time.js"></script>
+    <script src="vendors/Flot/jquery.flot.stack.js"></script>
+    <script src="vendors/Flot/jquery.flot.resize.js"></script>
+    <!-- Flot plugins -->
+    <script src="vendors/flot.orderbars/js/jquery.flot.orderBars.js"></script>
+    <script src="vendors/flot-spline/js/jquery.flot.spline.min.js"></script>
+    <script src="vendors/flot.curvedlines/curvedLines.js"></script>
+    <!-- DateJS -->
+    <script src="vendors/DateJS/build/date.js"></script>
+    <!-- JQVMap -->
+    <script src="vendors/jqvmap/dist/jquery.vmap.js"></script>
+    <script src="vendors/jqvmap/dist/maps/jquery.vmap.world.js"></script>
+    <script src="vendors/jqvmap/examples/js/jquery.vmap.sampledata.js"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="vendors/moment/min/moment.min.js"></script>
+    <script src="vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
 
-                            fetch(sources[index])
+    <!-- Custom Theme Scripts -->
+    <script src="build/js/custom.min.js"></script>
+
+
+    <?php include "includes/booking_modal.php"; ?>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var dashboardCalendarEl = document.getElementById('calendar');
+            var eventModal = document.getElementById('eventModal');
+            var toggleButton = document.getElementById('toggleSlotsButton');
+            var modalSlots = document.getElementById('modalSlots');
+            var bookingForm = document.getElementById('bookingForm');
+            var modalTitle = document.getElementById('modalTitle');
+            var modalDate = document.getElementById('modalDate');
+            var selectedTimeSlot = document.getElementById('selectedTimeSlot');
+            var scheduleIdField = document.getElementById('scheduleId');
+            var timeSlotIdField = document.getElementById('timeSlotId');
+            var serviceTypeSelect = document.getElementById('serviceType');
+
+            // Initialize FullCalendar
+            var dashboardCalendar = new FullCalendar.Calendar(dashboardCalendarEl, {
+                initialView: 'dayGridMonth',
+                selectable: true,
+                events: function (info, successCallback, failureCallback) {
+                    var sources = ['schedule.php', 'fetch_events.php'];
+                    var combinedEvents = [];
+
+                    var fetchNext = function (index) {
+                        if (index >= sources.length) {
+                            successCallback(combinedEvents);
+                            return;
+                        }
+
+                        fetch(sources[index])
+                            .then(response => response.json())
+                            .then(data => {
+                                // Add a source identifier to each event
+                                data.forEach(event => {
+                                    event.source = sources[index]; // Assign the source filename
+                                });
+
+                                combinedEvents = combinedEvents.concat(data);
+                                fetchNext(index + 1);
+                            })
+                            .catch(error => {
+                                console.error('Error fetching events:', error);
+                                fetchNext(index + 1);
+                            });
+                    };
+
+                    fetchNext(0);
+                },
+                eventDidMount: function (info) {
+                    // Check if the event is from 'schedule.php'
+                    if (info.event.extendedProps && info.event.extendedProps.source === 'schedule.php') {
+                        const slotsRemaining = parseInt(info.el.querySelector('.fc-event-title').textContent, 10);
+
+                        // Apply background color based on slot availability
+                        if (slotsRemaining === undefined) {
+                            console.error('slots_remaining is undefined for event:', info.event);
+                        } else if (slotsRemaining === 0) {
+                            // Change background color of the event to red
+                            info.el.style.backgroundColor = 'red';
+                            info.el.classList.add('event-unavailable');
+                        } else {
+                            // Change background color of the event to green
+                            info.el.style.backgroundColor = 'green';
+                            info.el.classList.add('event-available');
+                        }
+
+                        // Add the button for slot viewing
+                        let button = document.createElement('button');
+                        button.textContent = info.event.extendedProps.buttonText || 'View Slots';
+                        button.className = 'btn btn-warning btn-sm';
+                        button.onclick = function () {
+                            modalTitle.textContent = `BOOK FOR: ${info.event.start.toLocaleDateString()}`;
+                            modalDate.textContent = `SLOTS: ${info.event.title}`;
+
+                            let scheduleId = info.event.extendedProps.schedule_id;
+                            scheduleIdField.value = scheduleId; // Set the scheduleId field
+
+                            fetch(`fetch_time_slots.php?schedule_id=${scheduleId}`)
                                 .then(response => response.json())
                                 .then(data => {
-                                    // Add a source identifier to each event
-                                    data.forEach(event => {
-                                        event.source = sources[index]; // Assign the source filename
-                                    });
+                                    if (Array.isArray(data) && data.length > 0) {
+                                        let slotsHtml = data.map(slot => {
+                                            let buttonClass = slot.is_booked ? 'btn btn-outline-secondary disabled' : 'btn btn-outline-primary slot-button';
+                                            let buttonText = slot.is_booked ? 'Unavailable' : `${slot.start_time} - ${slot.end_time}`;
 
-                                    combinedEvents = combinedEvents.concat(data);
-                                    fetchNext(index + 1);
-                                })
-                                .catch(error => {
-                                    console.error('Error fetching events:', error);
-                                    fetchNext(index + 1);
-                                });
-                        };
-
-                        fetchNext(0);
-                    },
-                    eventDidMount: function (info) {
-                        // Check if the event is from 'schedule.php'
-                        if (info.event.extendedProps && info.event.extendedProps.source === 'schedule.php') {
-                            const slotsRemaining = parseInt(info.el.querySelector('.fc-event-title').textContent, 10);
-
-                            // Apply background color based on slot availability
-                            if (slotsRemaining === undefined) {
-                                console.error('slots_remaining is undefined for event:', info.event);
-                            } else if (slotsRemaining === 0) {
-                                // Change background color of the event to red
-                                info.el.style.backgroundColor = 'red';
-                                info.el.classList.add('event-unavailable');
-                            } else {
-                                // Change background color of the event to green
-                                info.el.style.backgroundColor = 'green';
-                                info.el.classList.add('event-available');
-                            }
-
-                            // Add the button for slot viewing
-                            let button = document.createElement('button');
-                            button.textContent = info.event.extendedProps.buttonText || 'View Slots';
-                            button.className = 'btn btn-warning btn-sm';
-                            button.onclick = function () {
-                                modalTitle.textContent = `BOOK FOR: ${info.event.start.toLocaleDateString()}`;
-                                modalDate.textContent = `SLOTS: ${info.event.title}`;
-
-                                let scheduleId = info.event.extendedProps.schedule_id;
-                                scheduleIdField.value = scheduleId; // Set the scheduleId field
-
-                                fetch(`fetch_time_slots.php?schedule_id=${scheduleId}`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (Array.isArray(data) && data.length > 0) {
-                                            let slotsHtml = data.map(slot => {
-                                                let buttonClass = slot.is_booked ? 'btn btn-outline-secondary disabled' : 'btn btn-outline-primary slot-button';
-                                                let buttonText = slot.is_booked ? 'Unavailable' : `${slot.start_time} - ${slot.end_time}`;
-
-                                                return `
+                                            return `
                                         <li>
                                             <button class="${buttonClass}" 
                                                     data-id="${slot.id}" 
@@ -587,129 +515,131 @@ $unread_count = countUnreadNotificationsAdmin();
                                                 ${buttonText}
                                             </button>
                                         </li>`;
-                                            }).join('');
-                                            modalSlots.innerHTML = `Available Time Slots:<ul>${slotsHtml}</ul>`;
+                                        }).join('');
+                                        modalSlots.innerHTML = `Available Time Slots:<ul>${slotsHtml}</ul>`;
 
-                                            document.querySelectorAll('.slot-button:not(.disabled)').forEach(button => {
-                                                button.addEventListener('click', function () {
-                                                    selectedTimeSlot.value = `${this.dataset.start} - ${this.dataset.end}`;
-                                                    timeSlotIdField.value = this.dataset.id; // Set the timeSlotId field
-                                                    bookingForm.style.display = 'block';
-                                                    modalSlots.style.display = 'none';
-                                                    toggleButton.style.display = 'inline-block';
-                                                });
+                                        document.querySelectorAll('.slot-button:not(.disabled)').forEach(button => {
+                                            button.addEventListener('click', function () {
+                                                selectedTimeSlot.value = `${this.dataset.start} - ${this.dataset.end}`;
+                                                timeSlotIdField.value = this.dataset.id; // Set the timeSlotId field
+                                                bookingForm.style.display = 'block';
+                                                modalSlots.style.display = 'none';
+                                                toggleButton.style.display = 'inline-block';
                                             });
-                                        } else {
-                                            modalSlots.innerHTML = 'No available time slots.';
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error fetching time slots:', error);
-                                        modalSlots.textContent = 'Failed to load time slots.';
-                                    });
+                                        });
+                                    } else {
+                                        modalSlots.innerHTML = 'No available time slots.';
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching time slots:', error);
+                                    modalSlots.textContent = 'Failed to load time slots.';
+                                });
 
-                                // Show the modal
-                                $(eventModal).modal('show');
-                            };
+                            // Show the modal
+                            $(eventModal).modal('show');
+                        };
 
-                            info.el.appendChild(button);
-                        } else {
-                            // Reset background color for events not from 'schedule.php' (e.g., holidays)
-                            info.el.style.backgroundColor = 'gray'; // Reset to default background color
-                        }
-                    }
-                });
-
-                dashboardCalendar.render();
-
-                // Initially hide the toggle button and the booking form
-                toggleButton.style.display = 'none';
-                bookingForm.style.display = 'none';
-
-                // Event listener for the toggle button
-                toggleButton.addEventListener('click', function () {
-                    if (modalSlots.style.display === 'none') {
-                        // Show the time slots
-                        modalSlots.style.display = 'block';
-                        // Hide the booking form
-                        bookingForm.style.display = 'none';
-                        // Hide the toggle button again
-                        toggleButton.style.display = 'none';
+                        info.el.appendChild(button);
                     } else {
-                        // Hide the time slots
-                        modalSlots.style.display = 'none';
-                        // Show the booking form
-                        bookingForm.style.display = 'block';
-                        // Show the toggle button
-                        toggleButton.style.display = 'inline-block';
+                        // Reset background color for events not from 'schedule.php' (e.g., holidays)
+                        info.el.style.backgroundColor = 'gray'; // Reset to default background color
                     }
-                });
-
-                // Refresh page when the modal is closed
-                $(eventModal).on('hidden.bs.modal', function () {
-                    location.reload();
-                });
+                }
             });
 
-            // Intercept form submission
-            document.getElementById('bookingForm').addEventListener('submit', function (e) {
-                e.preventDefault(); // Prevent the default form submission
+            dashboardCalendar.render();
 
-                // Display the SweetAlert confirmation
-                Swal.fire({
-                    title: 'Appointment Booked!',
-                    text: 'Your appointment has been successfully booked.',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // If the user clicks 'OK', submit the form
-                        this.submit();
-                    }
-                });
+            // Initially hide the toggle button and the booking form
+            toggleButton.style.display = 'none';
+            bookingForm.style.display = 'none';
+
+            // Event listener for the toggle button
+            toggleButton.addEventListener('click', function () {
+                if (modalSlots.style.display === 'none') {
+                    // Show the time slots
+                    modalSlots.style.display = 'block';
+                    // Hide the booking form
+                    bookingForm.style.display = 'none';
+                    // Hide the toggle button again
+                    toggleButton.style.display = 'none';
+                } else {
+                    // Hide the time slots
+                    modalSlots.style.display = 'none';
+                    // Show the booking form
+                    bookingForm.style.display = 'block';
+                    // Show the toggle button
+                    toggleButton.style.display = 'inline-block';
+                }
             });
 
-            function markAsRead(transaction_no) {
-                fetch(`mark_notification_read_admin.php?transaction_no=${encodeURIComponent(transaction_no)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Find the notification link
-                            const notificationLink = document.querySelector(`a[onclick*='markAsRead("${transaction_no}")']`);
-                            if (notificationLink) {
-                                // Update the notification's class to 'read'
-                                notificationLink.classList.remove('unread');
-                                notificationLink.classList.add('read');
+            // Refresh page when the modal is closed
+            $(eventModal).on('hidden.bs.modal', function () {
+                location.reload();
+            });
+        });
 
-                            }
-                            location.reload();
-                        } else {
-                            console.error('Failed to mark notification as read.');
+        // Intercept form submission
+        document.getElementById('bookingForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Display the SweetAlert confirmation
+            Swal.fire({
+                title: 'Appointment Booked!',
+                text: 'Your appointment has been successfully booked.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If the user clicks 'OK', submit the form
+                    this.submit();
+                }
+            });
+        });
+
+        function markAsRead(transaction_no) {
+            fetch(`mark_notification_read_admin.php?transaction_no=${encodeURIComponent(transaction_no)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Find the notification link
+                        const notificationLink = document.querySelector(`a[onclick*='markAsRead("${transaction_no}")']`);
+                        if (notificationLink) {
+                            // Update the notification's class to 'read'
+                            notificationLink.classList.remove('unread');
+                            notificationLink.classList.add('read');
+
                         }
-                    })
-                    .catch(error => console.error('Error:', error));
-            }
+                        location.reload();
+                    } else {
+                        console.error('Failed to mark notification as read.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
 
 
 
-            function markAllAsRead() {
-                fetch('mark_all_notification_read_admin.php')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Update all notifications' classes to 'read'
-                            document.querySelectorAll('.dropdown-item.unread').forEach(item => {
-                                item.classList.remove('unread');
-                                item.classList.add('read');
-                            });
+        function markAllAsRead() {
+            fetch('mark_all_notification_read_admin.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update all notifications' classes to 'read'
+                        document.querySelectorAll('.dropdown-item.unread').forEach(item => {
+                            item.classList.remove('unread');
+                            item.classList.add('read');
+                        });
 
-                            // Update the count
-                            location.reload();
-                        }
-                    });
-            }
-        </script>
+                        // Update the count
+                        location.reload();
+                    }
+                });
+        }
+    </script>
 
+
+    </script>
 </body>
 
 </html>
