@@ -817,7 +817,7 @@
             </div>
             <form action="edit_client.php" method="POST">
                 <div class="modal-body">
-                    <input type="text" class="ID" name="ID">
+                    <input type="text" class="ID" name="ID" hidden>
                     <!-- Form fields for editing user data -->
                     <div class="row" style="margin-bottom: 10px;">
                         <div class="col-md-4">
