@@ -108,7 +108,7 @@ $unread_count = countUnreadNotifications($user_id);
                     </div>
                     <!-- /sidebar menu -->
 
-                    
+
                 </div>
             </div>
 
@@ -197,20 +197,20 @@ $unread_count = countUnreadNotifications($user_id);
 
                             if ($user_id !== null) {
                                 $sql = "SELECT 
-                            t.ID AS transaction_id,
-                            t.status,
-                            t.transaction_no,
-                            s.Services AS service_id,
-                            sr.Slots_Date AS schedule_id,
-                            CONCAT(ts.start_time, ' - ', ts.end_time) AS time_slot_id,
-                            t.date_seen
-                        FROM 
-                            appointment_system.transactions t
-                            LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
-                            LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
-                            LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
-                        WHERE 
-                            t.user_id = ?";
+                    t.ID AS transaction_id,
+                    t.status,
+                    t.transaction_no,
+                    s.Services AS service_id,
+                    sr.Slots_Date AS schedule_id,
+                    CONCAT(ts.start_time, ' - ', ts.end_time) AS time_slot_id,
+                    t.date_seen
+                FROM 
+                    appointment_system.transactions t
+                    LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
+                    LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
+                    LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
+                WHERE 
+                    t.user_id = ?";
 
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bind_param('i', $user_id);
@@ -224,26 +224,42 @@ $unread_count = countUnreadNotifications($user_id);
                                 if ($result->num_rows > 0) {
                                     while ($row = $result->fetch_assoc()) {
                                         $statusClass = '';
+                                        $buttonText = '';
+                                        $buttonClass = '';
+                                        $buttonAction = '';
+
                                         if ($row['status'] == 'Approved') {
                                             $statusClass = 'bg-success text-white';
+                                            $buttonText = 'View Receipt';
+                                            $buttonClass = 'btn btn-primary btn-sm';
+                                            $buttonAction = "href='receipt.php?transaction_id={$row['transaction_id']}'";
                                         } elseif ($row['status'] == 'Completed') {
                                             $statusClass = 'bg-info text-white';
+                                            $buttonText = 'View Receipt';
+                                            $buttonClass = 'btn btn-primary btn-sm';
+                                            $buttonAction = "href='receipt.php?transaction_id={$row['transaction_id']}'";
                                         } elseif ($row['status'] == 'Rejected') {
                                             $statusClass = 'bg-danger text-white';
-                                        } else {
-                                            $statusClass = 'bg-dark text-white'; // Default case
+                                            $buttonText = 'View Receipt';
+                                            $buttonClass = 'btn btn-primary btn-sm';
+                                            $buttonAction = "href='receipt.php?transaction_id={$row['transaction_id']}'";
+                                        } elseif ($row['status'] == 'Pending') {
+                                            $statusClass = 'bg-dark text-white';
+                                            $buttonText = 'Cancel Booking';
+                                            $buttonClass = 'btn btn-danger btn-sm';
+                                            $buttonAction = "onclick='confirmCancellation({$row['transaction_id']})'";
                                         }
 
                                         echo "<tr>
-                                        <td>{$row['transaction_id']}</td>
-                                        <td><span class='{$statusClass}'>{$row['status']}</span></td>
-                                        <td>{$row['transaction_no']}</td>
-                                        <td>{$row['service_id']}</td>
-                                        <td>{$row['schedule_id']}</td>
-                                        <td>{$row['time_slot_id']}</td>
-                                        <td>{$row['date_seen']}</td>
-                                        <td><a href='receipt.php?transaction_id={$row['transaction_id']}' class='btn btn-primary btn-sm'>View Receipt</a></td>
-                                    </tr>";
+                    <td>{$row['transaction_id']}</td>
+                    <td><span class='{$statusClass}'>{$row['status']}</span></td>
+                    <td>{$row['transaction_no']}</td>
+                    <td>{$row['service_id']}</td>
+                    <td>{$row['schedule_id']}</td>
+                    <td>{$row['time_slot_id']}</td>
+                    <td>{$row['date_seen']}</td>
+                    <td><a class='{$buttonClass}' {$buttonAction}>{$buttonText}</a></td>
+                </tr>";
                                     }
                                 } else {
                                     echo "<p>No transactions found for User $username.</p>";
@@ -257,6 +273,7 @@ $unread_count = countUnreadNotifications($user_id);
                             $conn->close();
                             ?>
                         </tbody>
+
                     </table>
 
                 </div>
@@ -308,6 +325,9 @@ $unread_count = countUnreadNotifications($user_id);
 
         <!-- Custom Theme Scripts -->
         <script src="build/js/custom.min.js"></script>
+        <!-- SweetAlert CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
         <script>
             function markAsRead(transaction_id) {
@@ -341,6 +361,60 @@ $unread_count = countUnreadNotifications($user_id);
                         }
                     });
             }
+
+
+            // Function to cancel the booking
+            function cancelBooking(transactionId) {
+                // Make an AJAX request to a PHP script to cancel the booking
+                $.ajax({
+                    url: 'cancel_booking.php',  // Create this PHP file to handle cancellation
+                    type: 'POST',
+                    data: { transaction_id: transactionId },
+                    success: function (response) {
+                        if (response === 'success') {
+                            Swal.fire(
+                                'Cancelled!',
+                                'Your booking has been cancelled.',
+                                'success'
+                            ).then(() => {
+                                location.reload();  // Reload the page to reflect the changes
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'There was an issue cancelling your booking.',
+                                'error'
+                            );
+                        }
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Error!',
+                            'Something went wrong. Please try again.',
+                            'error'
+                        );
+                    }
+                });
+            }
+
+            function confirmCancellation(transactionId) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you really want to cancel this booking?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, cancel it!',
+                    cancelButtonText: 'No, keep it'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        cancelBooking(transactionId);
+                    }
+                });
+            }
+
+
         </script>
 
 </body>
