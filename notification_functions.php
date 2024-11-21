@@ -14,13 +14,13 @@ function sendEmailNotification($to, $subject, $message)
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com'; // Set the SMTP server to send through
         $mail->SMTPAuth = true; // Enable SMTP authentication
-        $mail->Username = 'adamerodagat@gmail.com'; // SMTP username
-        $mail->Password = 'gnxh erjw yxfo jtdr'; // SMTP password
+        $mail->Username = 'brainmasterdc@gmail.com'; // SMTP username
+        $mail->Password = 'xmpu aewf sozv wibb'; // SMTP password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Enable TLS encryption
         $mail->Port = 587; // TCP port to connect to
 
         // Recipients
-        $mail->setFrom('adamerodagat@gmail.com', 'adameroemailer');
+        $mail->setFrom('brainmasterdc@gmail.com', 'Brain Master Diagnostic Center');
         $mail->addAddress($to); // Add a recipient
 
         // Content
