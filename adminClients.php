@@ -35,6 +35,8 @@ $unread_count = countUnreadNotificationsAdmin();
     <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="build/css/custom.min.css" rel="stylesheet">
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         .read {
@@ -345,43 +347,212 @@ $unread_count = countUnreadNotificationsAdmin();
                         </div>
                     </div>
                 </div>
+                <?php
+                require 'autoloader.php'; 
+
+                use PHPMailer\PHPMailer\PHPMailer;
+                use PHPMailer\PHPMailer\Exception as PHPMailerException;
+
+                function notifyClientByEmail($to, $subject, $message)
+                {
+                    // Use PHPMailer for email sending
+                    $mail = new PHPMailer(true);
+                    try {
+                        // Server settings
+                        $mail->isSMTP();
+                        $mail->Host = 'smtp.gmail.com'; // Set the SMTP server to send through
+                        $mail->SMTPAuth = true; // Enable SMTP authentication
+                        $mail->Username = 'brainmasterdc@gmail.com'; // SMTP username
+                        $mail->Password = 'xmpu aewf sozv wibb'; // SMTP password
+                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Enable TLS encryption
+                        $mail->Port = 587; // TCP port to connect to
+                
+                        // Recipients
+                        $mail->setFrom('brainmasterdc@gmail.com', 'Brain Master Diagnostic Center');
+                        $mail->addAddress($to); // Add a recipient
+                
+                        // Content
+                        $mail->isHTML(true); // Set email format to HTML
+                        $mail->Subject = $subject;
+                        $mail->Body = $message;
+
+                        // Send the email
+                        $mail->send();
+                        return true;
+                    } catch (Exception $e) {
+                        // Handle error
+                        error_log("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+                        return false;
+                    }
+                }
+
+                // Your existing code for approval/rejection
+                include 'includes/dbconn.php';
+
+                if (isset($_GET['action']) && isset($_GET['id'])) {
+                    $action = $_GET['action'];
+                    $client_id = $_GET['id'];
+
+                    if ($action == 'approve') {
+                        // Fetch client details
+                        $sql = "SELECT * FROM clients_info WHERE id = $client_id";
+                        $result = $conn->query($sql);
+
+                        if ($result->num_rows > 0) {
+                            $row = $result->fetch_assoc();
+
+                            // Generate a username (avoid spaces)
+                            $username = strtolower(preg_replace("/[^a-zA-Z0-9]/", "", $row['client_name'])) . rand(1000, 9999);
+                            $password = bin2hex(random_bytes(4)); // Create a random password
+                
+                            // Insert into clients_account table
+                            $insert_sql = "INSERT INTO clients_account (client_id, Username, Password) 
+                           VALUES ('$client_id', '$username', '$password')";
+
+                            if ($conn->query($insert_sql) === TRUE) {
+                                // Update client status to approved
+                                $update_sql = "UPDATE clients_info SET status = 'approved' WHERE id = $client_id";
+                                if ($conn->query($update_sql) === TRUE) {
+                                    // Send approval email
+                                    $client_email = $row['email_address']; // Assuming the client's email is in the database
+                                    $subject = "Your Client Account has been Approved!";
+                                    $message = "Your account has been approved. Your login credentials are:<br>Username: $username<br>Password: $password";
+                                    notifyClientByEmail($client_email, $subject, $message);
+
+                                    // SweetAlert success with username and password
+                                    echo "<script>
+                        Swal.fire({
+                            title: 'Client Approved!',
+                            text: 'Client username: $username\\nPassword: $password',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = 'adminClients.php'; // Reload the page
+                            }
+                        });
+                    </script>";
+                                } else {
+                                    // Error updating client status
+                                    echo "<script>
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Failed to update client status.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    </script>";
+                                }
+                            } else {
+                                // Error inserting into clients_account
+                                echo "<script>
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to create client account.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                </script>";
+                            }
+                        }
+                    } elseif ($action == 'reject') {
+                        // Update client status to rejected
+                        $update_sql = "UPDATE clients_info SET status = 'rejected' WHERE id = $client_id";
+                        if ($conn->query($update_sql) === TRUE) {
+                            // Send rejection email
+                            $client_email = $row['client_email']; // Assuming the client's email is in the database
+                            $subject = "Your Client Account has been Rejected";
+                            $message = "We regret to inform you that your account application has been rejected.";
+                            notifyClientByEmail($client_email, $subject, $message);
+
+                            // SweetAlert rejection
+                            echo "<script>
+                Swal.fire({
+                    title: 'Client Rejected!',
+                    text: 'The client has been rejected.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'adminClients.php'; // Reload the page
+                    }
+                });
+            </script>";
+                        } else {
+                            // Error rejecting client
+                            echo "<script>
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to reject client.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            </script>";
+                        }
+                    }
+                }
+                ?>
+
+
+                <!-- Your table structure starts here -->
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">ID</th>
                             <th scope="col">Client Name</th>
-                            <th scope="col">Company Name</tPatienth>
+                            <th scope="col">Company Name</th>
                             <th scope="col">Position</th>
                             <th scope="col">Address</th>
                             <th scope="col">Contact</th>
                             <th scope="col">Email</th>
+                            <th scope="col">Status</th>
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        include 'includes/dbconn.php';
-
                         $sql = "SELECT * FROM clients_info";
                         $query = $conn->query($sql);
                         while ($row = $query->fetch_assoc()) {
                             ?>
                             <tr>
                                 <td><?php echo $row['id']; ?></td>
-                                <td> <?php echo $row['client_name']; ?></td>
+                                <td><?php echo $row['client_name']; ?></td>
                                 <td><?php echo $row['company_name']; ?></td>
                                 <td><?php echo $row['position']; ?></td>
                                 <td><?php echo $row['address']; ?></td>
                                 <td><?php echo $row['contact_number']; ?></td>
                                 <td><?php echo $row['email_address']; ?></td>
 
+                                <!-- Display the status -->
+                                <td>
+                                    <?php
+                                    if ($row['status'] == 'approved') {
+                                        echo '<span class="badge badge-success">Approved</span>';
+                                    } elseif ($row['status'] == 'pending') {
+                                        echo '<span class="badge badge-warning">Pending</span>';
+                                    } elseif ($row['status'] == 'rejected') {
+                                        echo '<span class="badge badge-danger">Rejected</span>';
+                                    }
+                                    ?>
+
+                                    <!-- Show Approve and Reject buttons only if status is 'pending' -->
+                                    <?php if ($row['status'] == 'pending') { ?>
+                                        <a href="adminClients.php?action=approve&id=<?php echo $row['id']; ?>"
+                                            class="btn btn-success btn-sm">Approve</a>
+                                        <a href="adminClients.php?action=reject&id=<?php echo $row['id']; ?>"
+                                            class="btn btn-danger btn-sm">Reject</a>
+                                    <?php } else { ?>
+                                        <span class="text-muted">Action Completed</span>
+                                    <?php } ?>
+                                </td>
+
+                                <!-- Actions (view, edit, delete) -->
                                 <td>
                                     <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-info btn-sm view"><i
-                                            class="fa fa-edit" aria-hidden="true"></i>
-                                        View</a>
+                                            class="fa fa-edit" aria-hidden="true"></i> View</a>
                                     <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-success btn-sm edit"><i
-                                            class="fa fa-edit" aria-hidden="true"></i>
-                                        Edit</a>
+                                            class="fa fa-edit" aria-hidden="true"></i> Edit</a>
                                     <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-danger btn-sm delete"><i
                                             class="fa fa-trash" aria-hidden="true"></i> Delete</a>
                                 </td>
@@ -391,13 +562,15 @@ $unread_count = countUnreadNotificationsAdmin();
                         ?>
                     </tbody>
                 </table>
+
+
+
             </div>
 
 
 
 
         </div>
-
         <!-- jQuery -->
         <script src="vendors/jquery/dist/jquery.min.js"></script>
         <!-- Bootstrap -->
