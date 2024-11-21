@@ -673,10 +673,10 @@ session_start();
                                 <div class="experience mb-4 wow fadeIn" data-wow-delay="0.3s">
                                     <div class="d-flex justify-content-between mb-2">
                                         <span class="text-white">Diagnostic Accuracy</span>
-                                        <span class="text-white">98%</span>
+                                        <span class="text-white">85%</span>
                                     </div>
                                     <div class="progress">
-                                        <div class="progress-bar bg-dark" role="progressbar" aria-valuenow="98"
+                                        <div class="progress-bar bg-dark" role="progressbar" aria-valuenow="85"
                                             aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                 </div>
