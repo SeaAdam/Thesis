@@ -188,12 +188,15 @@ $unread_count = countUnreadNotificationsAdmin();
                             <ul class="nav side-menu">
                                 <li><a href="adminDashboard.php"><i class="fa fa-home"></i> Dashboard </a>
                                 </li>
+                                <li><a href="adminBookPatient.php"><i class="fa fa-home"></i> Book Appoinment - Patient </a>
+                                </li>
+                                <li><a href="adminBookClient.php"><i class="fa fa-home"></i> Book Appoinment - Client </a>
+                                </li>
                                 <li><a href="adminEvents.php"><i class="fa fa-edit"></i> Events </a>
                                 </li>
                                 <li><a href="adminClients.php"><i class="fa fa-desktop"></i> Clients </a>
                                 </li>
-                                <li><a><i class="fa fa-table"></i> Client Appointment <span
-                                            class="fa fa-chevron-down"></span>
+                                <li><a><i class="fa fa-table"></i> Client Appointment <span class="fa fa-chevron-down"></span>
                                     </a>
                                     <ul class="nav child_menu">
                                         <li><a href="apPendingClient.php">Pending</a></li>
@@ -204,8 +207,7 @@ $unread_count = countUnreadNotificationsAdmin();
                                 </li>
                                 <li><a href="adminPatients.php"><i class="fa fa-desktop"></i> Patients </a>
                                 </li>
-                                <li><a><i class="fa fa-table"></i> Patients Appointment <span
-                                            class="fa fa-chevron-down"></span>
+                                <li><a><i class="fa fa-table"></i> Patients Appointment <span class="fa fa-chevron-down"></span>
                                     </a>
                                     <ul class="nav child_menu">
                                         <li><a href="apPending.php">Pending</a></li>

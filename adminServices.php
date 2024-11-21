@@ -81,6 +81,10 @@ $unread_count = countUnreadNotificationsAdmin();
                             <ul class="nav side-menu">
                                 <li><a href="adminDashboard.php"><i class="fa fa-home"></i> Dashboard </a>
                                 </li>
+                                <li><a href="adminBookPatient.php"><i class="fa fa-home"></i> Book Appoinment - Patient </a>
+                                </li>
+                                <li><a href="adminBookClient.php"><i class="fa fa-home"></i> Book Appoinment - Client </a>
+                                </li>
                                 <li><a href="adminEvents.php"><i class="fa fa-edit"></i> Events </a>
                                 </li>
                                 <li><a href="adminClients.php"><i class="fa fa-desktop"></i> Clients </a>

@@ -55,7 +55,8 @@ $unread_count = countUnreadNotificationsAdmin();
             <div class="col-md-3 left_col">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-                    <a href="adminDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain Master DC</span></a>
+                        <a href="adminDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain
+                                Master DC</span></a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -81,11 +82,18 @@ $unread_count = countUnreadNotificationsAdmin();
                             <ul class="nav side-menu">
                                 <li><a href="adminDashboard.php"><i class="fa fa-home"></i> Dashboard </a>
                                 </li>
+                                <li><a href="adminBookPatient.php"><i class="fa fa-home"></i> Book Appoinment - Patient
+                                    </a>
+                                </li>
+                                <li><a href="adminBookClient.php"><i class="fa fa-home"></i> Book Appoinment - Client
+                                    </a>
+                                </li>
                                 <li><a href="adminEvents.php"><i class="fa fa-edit"></i> Events </a>
                                 </li>
                                 <li><a href="adminClients.php"><i class="fa fa-desktop"></i> Clients </a>
                                 </li>
-                                <li><a><i class="fa fa-table"></i> Client Appointment <span class="fa fa-chevron-down"></span>
+                                <li><a><i class="fa fa-table"></i> Client Appointment <span
+                                            class="fa fa-chevron-down"></span>
                                     </a>
                                     <ul class="nav child_menu">
                                         <li><a href="apPendingClient.php">Pending</a></li>
@@ -96,7 +104,8 @@ $unread_count = countUnreadNotificationsAdmin();
                                 </li>
                                 <li><a href="adminPatients.php"><i class="fa fa-desktop"></i> Patients </a>
                                 </li>
-                                <li><a><i class="fa fa-table"></i> Patients Appointment <span class="fa fa-chevron-down"></span>
+                                <li><a><i class="fa fa-table"></i> Patients Appointment <span
+                                            class="fa fa-chevron-down"></span>
                                     </a>
                                     <ul class="nav child_menu">
                                         <li><a href="apPending.php">Pending</a></li>
@@ -122,12 +131,12 @@ $unread_count = countUnreadNotificationsAdmin();
                     </div>
                     <!-- /sidebar menu -->
 
-                    
+
                 </div>
             </div>
 
             <!-- top navigation -->
-           <div class="top_nav">
+            <div class="top_nav">
                 <div class="nav_menu">
                     <div class="nav toggle">
                         <a id="menu_toggle"><i class="fa fa-bars"></i></a>

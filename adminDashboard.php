@@ -325,42 +325,6 @@ $unread_count = countUnreadNotificationsAdmin();
                 </div>
 
 
-                <div class="card">
-                    <div class="card-header">
-                        Booking Calendar
-                    </div>
-                    <div class="card-body">
-                        <div id="calendar"></div>
-                        <div id="legend">
-                            <h3>Legend</h3>
-                            <ul>
-                                <li><span style="background-color: green;"></span> Available</li>
-                                <li><span style="background-color: red;"></span> Fully Booked</li>
-                                <li><span style="background-color: gray;"></span> Holidays</li>
-                            </ul>
-                        </div>
-                        <div id="holidays">
-                            <h3>Holidays</h3>
-                            <ul id="holidays-list">
-                                <?php
-                                include 'includes/dbconn.php';
-
-                                $sql = "SELECT holiday, dateHolidays FROM holidays";
-                                $result = $conn->query($sql);
-
-                                if ($result->num_rows > 0) {
-                                    while ($row = $result->fetch_assoc()) {
-                                        echo "<li>{$row['holiday']} - {$row['dateHolidays']}</li>";
-                                    }
-                                } else {
-                                    echo "No holidays found.";
-                                }
-                                ?>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog">
@@ -434,16 +398,6 @@ $unread_count = countUnreadNotificationsAdmin();
                     </div>
                 </div>
 
-
-
-                <!-- footer content -->
-                <footer>
-                    <div class="pull-right">
-                        Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
-                    </div>
-                    <div class="clearfix"></div>
-                </footer>
-                <!-- /footer content -->
 
             </div>
 
