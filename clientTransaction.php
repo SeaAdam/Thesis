@@ -3,7 +3,7 @@ include 'includes/dbconn.php';
 include 'login.php';
 
 if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'clients') {
-    header('Location: index.php'); 
+    header('Location: index.php');
     exit();
 }
 
@@ -121,7 +121,7 @@ $unread_count = countUnreadNotificationsClient($id);
                     </div>
                     <!-- /sidebar menu -->
 
-                    
+
                 </div>
             </div>
 
@@ -195,7 +195,6 @@ $unread_count = countUnreadNotificationsClient($id);
                         </thead>
                         <tbody>
                             <?php
-                            
                             $sqlClientId = "SELECT client_id FROM clients_account WHERE username = ?";
                             $stmt = $conn->prepare($sqlClientId);
                             $stmt->bind_param('s', $clientUsername);
@@ -205,19 +204,19 @@ $unread_count = countUnreadNotificationsClient($id);
                             $stmt->close();
 
                             $sql = "
-                                SELECT 
-                                    cb.id, 
-                                    cb.status, 
-                                    cb.booking_no, 
-                                    st.Services AS service_name, 
-                                    cb.date_appointment, 
-                                    cb.date_seen
-                                FROM 
-                                    client_booking cb
-                                LEFT JOIN 
-                                    services_table st ON cb.services = st.ID
-                                WHERE 
-                                    cb.account_id = ?";
+            SELECT 
+                cb.id, 
+                cb.status, 
+                cb.booking_no, 
+                st.Services AS service_name, 
+                cb.date_appointment, 
+                cb.date_seen
+            FROM 
+                client_booking cb
+            LEFT JOIN 
+                services_table st ON cb.services = st.ID
+            WHERE 
+                cb.account_id = ?";
 
                             $query = $conn->prepare($sql);
                             $query->bind_param('i', $clientId);
@@ -233,22 +232,38 @@ $unread_count = countUnreadNotificationsClient($id);
                                         $statusClass = 'bg-info text-white';
                                     } elseif ($row['status'] == 'Rejected') {
                                         $statusClass = 'bg-danger text-white';
-                                    } else {
-                                        $statusClass = 'bg-dark text-white'; // Default case
+                                    } elseif ($row['status'] == 'Pending') {
+                                        $statusClass = 'bg-dark text-white';
+                                    } elseif ($row['status'] == 'Canceled') {
+                                        $statusClass = 'bg-secondary text-white';
                                     }
                                     ?>
                                     <tr>
                                         <th scope="row"><?php echo htmlspecialchars($row['id']); ?></th>
-                                        <td><span class="<?php echo htmlspecialchars($statusClass); ?>"><?php echo htmlspecialchars($row['status']); ?></span></td>
+                                        <td><span class="<?php echo htmlspecialchars($statusClass); ?>">
+                                                <?php echo htmlspecialchars($row['status']); ?>
+                                            </span>
+                                        </td>
                                         <td><?php echo htmlspecialchars($row['booking_no']); ?></td>
                                         <td><?php echo htmlspecialchars($row['service_name']); ?></td>
                                         <td><?php echo htmlspecialchars($row['date_appointment']); ?></td>
                                         <td><?php echo htmlspecialchars($row['date_seen']); ?></td>
                                         <td>
-                                            <a href="#" data-id="<?php echo htmlspecialchars($row['id']); ?>"
-                                                class="btn btn-success btn-sm edit"><i class="fa fa-info"
-                                                    aria-hidden="true"></i>
-                                                View Receipt</a>
+                                            <!-- View Receipt Button (Not shown for Pending or Canceled) -->
+                                            <?php if ($row['status'] != 'Pending' && $row['status'] != 'Canceled') { ?>
+                                                <a href="viewReceipt.php?transaction_id=<?php echo htmlspecialchars($row['id']); ?>"
+                                                    class="btn btn-success btn-sm">
+                                                    <i class="fa fa-info" aria-hidden="true"></i> View Receipt
+                                                </a>
+                                            <?php } ?>
+
+                                            <!-- Cancel Button for Pending Status Only -->
+                                            <?php if ($row['status'] == 'Pending') { ?>
+                                                <button class="btn btn-danger btn-sm"
+                                                    onclick="cancelTransaction('<?php echo htmlspecialchars($row['id']); ?>')">
+                                                    <i class="fa fa-times" aria-hidden="true"></i> Cancel
+                                                </button>
+                                            <?php } ?>
                                         </td>
                                     </tr>
                                     <?php
@@ -312,8 +327,53 @@ $unread_count = countUnreadNotificationsClient($id);
         <!-- Custom Theme Scripts -->
         <script src="build/js/custom.min.js"></script>
 
-        <script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+        <script>
+            function cancelTransaction(transactionId) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, cancel it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        $.ajax({
+                            url: 'cancelTransaction.php',
+                            type: 'POST',
+                            data: { transaction_id: transactionId },
+                            success: function (response) {
+                                if (response == 'success') {
+                                    Swal.fire(
+                                        'Canceled!',
+                                        'The transaction has been canceled.',
+                                        'success'
+                                    ).then(() => {
+                                        location.reload(); // Reload the page
+                                    });
+                                } else {
+                                    Swal.fire(
+                                        'Error!',
+                                        'There was an issue canceling the transaction. Please try again.',
+                                        'error'
+                                    );
+                                }
+                            },
+                            error: function () {
+                                Swal.fire(
+                                    'Error!',
+                                    'Could not communicate with the server. Please try again.',
+                                    'error'
+                                );
+                            }
+                        });
+                    }
+                });
+            }
         </script>
 
 </body>
