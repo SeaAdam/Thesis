@@ -483,13 +483,26 @@ $unread_count = countUnreadNotificationsAdmin();
                         if (slotsRemaining === undefined) {
                             console.error('slots_remaining is undefined for event:', info.event);
                         } else if (slotsRemaining === 0) {
-                            // Change background color of the event to red
+                            // Change background color of the event to red (Unavailable)
                             info.el.style.backgroundColor = 'red';
                             info.el.classList.add('event-unavailable');
                         } else {
-                            // Change background color of the event to green
+                            // Change background color of the event to green (Available)
                             info.el.style.backgroundColor = 'green';
                             info.el.classList.add('event-available');
+                        }
+
+                        // Check if the event date is in the past
+                        const eventDate = new Date(info.event.start);
+                        const currentDate = new Date();
+                        if (eventDate < currentDate) {
+                            // Disable the button if the event is in the past
+                            let button = document.createElement('button');
+                            button.textContent = 'Unavailable';
+                            button.className = 'btn btn-secondary btn-sm disabled';
+                            button.disabled = true;
+                            info.el.appendChild(button);
+                            return; // Do not add the "View Slots" button for past dates
                         }
 
                         // Add the button for slot viewing
@@ -508,19 +521,19 @@ $unread_count = countUnreadNotificationsAdmin();
                                 .then(data => {
                                     if (Array.isArray(data) && data.length > 0) {
                                         let slotsHtml = data.map(slot => {
-                                            let buttonClass = slot.is_booked ? 'btn btn-outline-secondary disabled' : 'btn btn-outline-primary slot-button';
-                                            let buttonText = slot.is_booked ? 'Unavailable' : `${slot.start_time} - ${slot.end_time}`;
+                                            let buttonClass = slot.is_booked || new Date(slot.start_time) < currentDate ? 'btn btn-outline-secondary disabled' : 'btn btn-outline-primary slot-button';
+                                            let buttonText = slot.is_booked || new Date(slot.start_time) < currentDate ? 'Unavailable' : `${slot.start_time} - ${slot.end_time}`;
 
                                             return `
-                                        <li>
-                                            <button class="${buttonClass}" 
-                                                    data-id="${slot.id}" 
-                                                    data-start="${slot.start_time}" 
-                                                    data-end="${slot.end_time}"
-                                                    data-slots="${slot.slots_remaining}">
-                                                ${buttonText}
-                                            </button>
-                                        </li>`;
+                                <li>
+                                    <button class="${buttonClass}" 
+                                            data-id="${slot.id}" 
+                                            data-start="${slot.start_time}" 
+                                            data-end="${slot.end_time}"
+                                            data-slots="${slot.slots_remaining}">
+                                    ${buttonText}
+                                    </button>
+                                </li>`;
                                         }).join('');
                                         modalSlots.innerHTML = `Available Time Slots:<ul>${slotsHtml}</ul>`;
 
