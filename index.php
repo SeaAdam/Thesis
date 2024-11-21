@@ -149,7 +149,7 @@ session_start();
             <nav class="navbar navbar-expand-lg navbar-light bg-white py-lg-0 px-lg-3">
                 <a href="index.php" class="navbar-brand d-lg-none">
                     <h1 class="text-primary m-0">Brain Master<span class="text-dark">Diagnostic
-                    Center (BMDC)</span></h1>
+                            Center (BMDC)</span></h1>
                 </a>
                 <button type="button" class="navbar-toggler me-0" data-bs-toggle="collapse"
                     data-bs-target="#navbarCollapse">
@@ -217,7 +217,8 @@ session_start();
                             </select>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <a href="#">Forgot Password?</a>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot
+                                Password?</a>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Login</button>
@@ -522,6 +523,33 @@ session_start();
             </div>
         </div>
     </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal fade" id="forgotPasswordModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="forgotPasswordModalLabel">Forgot Password</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>Enter your username to reset your password:</p>
+                    <form id="forgotPasswordForm" method="POST" action="forgot_password.php">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" name="username" placeholder="Enter your username"
+                                required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Send Reset Link</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Forgot Password Modal -->
 
 
     <!-- Page Header Start -->
@@ -964,6 +992,38 @@ session_start();
             // Uncheck the checkbox when the modal is shown
             document.getElementById('agreeCheckbox').checked = false;
         });
+
+        document.getElementById('forgotPasswordForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const form = this;
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...';
+            submitButton.disabled = true;
+
+            const formData = new FormData(form);
+
+            fetch('forgot_password.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert(data.message);
+                        form.reset();
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
+                        modal.hide();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(() => alert('An error occurred. Please try again.'))
+                .finally(() => {
+                    submitButton.innerHTML = 'Send Reset Link';
+                    submitButton.disabled = false;
+                });
+        });
+
     </script>
 
 
