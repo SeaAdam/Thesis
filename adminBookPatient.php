@@ -492,9 +492,12 @@ $unread_count = countUnreadNotificationsAdmin();
                             info.el.classList.add('event-available');
                         }
 
-                        // Check if the event date is in the past
                         const eventDate = new Date(info.event.start);
                         const currentDate = new Date();
+
+                        // Reset currentDate time to midnight for an accurate date comparison
+                        currentDate.setHours(0, 0, 0, 0);
+
                         if (eventDate < currentDate) {
                             // Disable the button if the event is in the past
                             let button = document.createElement('button');

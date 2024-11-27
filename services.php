@@ -32,6 +32,8 @@ session_start();
     <!-- Template Stylesheet -->
     <link href="./ui/style.css" rel="stylesheet">
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         input {
             text-transform: none;
