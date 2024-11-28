@@ -296,6 +296,73 @@
     </div>
 </div>
 
+<!-- FOR EDIT ADD ADMIN USER -->
+<div class="modal fade" id="editAdminUser">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Admin Account:</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">&times;
+                </button>
+            </div>
+            <form action="edit_adminAccount.php" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" class="ID" name="ID">
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">Name :</label>
+                        <input type="text" class="form-control" id="editName" name="Name"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Username" class="form-label">Username :</label>
+                        <input type="text" class="form-control" id="editUsername" name="Username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Password" class="form-label">Password :</label>
+                        <input type="text" class="form-control" id="editPassword" name="Password" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" name="submit">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- FOR DELETE admin user -->
+<div class="modal fade" id="deleteAdminUser">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fa fa-info-circle" aria-hidden="true"></i> Please Confirm!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form action="delete_adminUser.php" method="POST">
+                    <input type="hidden" class="ID" name="ID">
+                    <center>
+                        <p> Are you sure to delete this record?</p><br>
+                        Name : <span class="Name"></span><br>
+                        Username : <span class="Username"></span>
+                    </center>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-window-close"></i>
+                    No</button>
+                <button type="submit" name="submit" class="btn btn-danger"><i class="fa fa-thrash"></i> Yes</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 <!-- FOR EDIT CONTACTS -->
 <div class="modal fade" id="editContacts">
     <div class="modal-dialog modal-lg" role="document">

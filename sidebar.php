@@ -1,3 +1,9 @@
+<?php
+
+if (isset($_SESSION['unlocked_pages']['adminAccount.php'])) {
+    unset($_SESSION['unlocked_pages']['adminAccount.php']);
+}
+?>
 <!-- sidebar menu -->
 <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
     <div class="menu_section">
@@ -45,6 +51,8 @@
                 </ul>
             </li>
             <li><a href="adminContacts.php"><i class="fa fa-phone"></i> Contacts </a>
+            </li>
+            <li><a href="adminAccount.php"><i class="fa fa-user"></i> Admin Accounts </a>
             </li>
         </ul>
     </div>
