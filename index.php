@@ -822,7 +822,6 @@ session_start();
 
     <!-- JavaScript Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
@@ -867,6 +866,54 @@ session_start();
             });
 
         });
+
+        document.getElementById('registrationForm').addEventListener('submit', function (event) {
+            event.preventDefault();  // Prevent the form from submitting immediately
+
+            var formData = new FormData(this);
+
+            // Perform AJAX call to submit the form
+            fetch('registration.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(result => {
+                    console.log(result);  // Check what is being returned from the server
+                    if (result.status === 'success') {
+                        showSuccessAlert(result.role);  // Show success alert and redirect to index.php
+                    } else {
+                        showErrorAlert(result.message);  // Show error alert if registration fails
+                    }
+                })
+                .catch(error => {
+                    showErrorAlert('An error occurred. Please try again later.');
+                });
+        });
+
+        function showSuccessAlert(role) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Registration Successful',
+                text: `You have registered as ${role}.`,
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirect to index.php after success
+                    window.location.href = 'index.php';  // This will redirect the user to the index page
+                }
+            });
+        }
+
+        function showErrorAlert(message) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Registration Failed',
+                text: message,
+                confirmButtonText: 'OK'
+            });
+        }
+
 
 
 
@@ -920,6 +967,30 @@ session_start();
                 });
         });
 
+        document.getElementById('registrationFormClient').addEventListener('submit', function (event) {
+            event.preventDefault();  // Prevent the form from submitting immediately
+
+            var formData = new FormData(this);
+
+            // Perform AJAX call to submit the form
+            fetch('registration_client.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(result => {
+                    console.log(result);  // Check what is being returned from the server
+                    if (result.status === 'success') {
+                        showSuccessAlert(result.role);  // Show success alert and redirect to index.php
+                    } else {
+                        showErrorAlert(result.message);  // Show error alert if registration fails
+                    }
+                })
+                .catch(error => {
+                    showErrorAlert('An error occurred. Please try again later.');
+                });
+        });
+
         function showSuccessAlert(role) {
             Swal.fire({
                 icon: 'success',
@@ -928,12 +999,25 @@ session_start();
                 confirmButtonText: 'OK'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // If the alert is confirmed, submit the form
-                    document.getElementById(role === 'Patient Registration' ? 'registrationForm' : 'registrationFormClient').submit();
+                    // Redirect to index.php after success
+                    window.location.href = 'index.php';  // This will redirect the user to the index page
                 }
             });
-            return false; // Prevent the default form submission for now
         }
+
+        function showErrorAlert(message) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Registration Failed',
+                text: message,
+                confirmButtonText: 'OK'
+            });
+        }
+
+
+
+
+
 
 
 
