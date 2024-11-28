@@ -112,7 +112,7 @@
                     <input type="text" class="ID" name="ID" hidden>
                     <div class="mb-3">
                         <label for="Slots" class="form-label">Slots:</label>
-                        <input type="text" class="form-control" id="editSlots" name="Slots" required>
+                        <input type="text" class="form-control" id="editSlots" name="Slots" readonly>
                     </div>
                     <div class="mb-3">
                         <label for="Slots_Date" class="form-label">Slots Date:</label>
