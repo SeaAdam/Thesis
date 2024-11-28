@@ -3,23 +3,23 @@ include 'includes/dbconn.php';
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Retrieve form data
+
     $clientName = $_POST['clientName'];
     $companyName = $_POST['companyName'];
     $address = $_POST['address'];
     $contact = $_POST['contact'];
     $email = $_POST['email'];
     $serviceType = $_POST['serviceType'];
-    $selectedDate = $_POST['selectedDate']; // Retrieve the selected date
+    $selectedDate = $_POST['selectedDate'];
 
-    // Generate a unique booking number in the format BOOK-XXX
+
     $booking_no = 'CLT-' . str_pad(rand(0, 999), 3, '0', STR_PAD_LEFT);
 
-    // Retrieve the client ID from the session
+
     if (isset($_SESSION['username'])) {
         $clientUsername = $_SESSION['username'];
 
-        // Fetch the client_id from the clients_account table
+
         $sql = "SELECT client_id FROM clients_account WHERE username = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param('s', $clientUsername);
@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
-            $account_id = $row['client_id']; // Get the client ID
+            $account_id = $row['client_id'];
         } else {
             echo "Client ID not found.";
             exit();
@@ -39,11 +39,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Insert data into the client_booking table including account_id
+
     $sql = "INSERT INTO client_booking (status, booking_no, services, date_appointment, date_seen, account_id)
             VALUES (?, ?, ?, ?, NOW(), ?)";
 
-    // Prepare and bind
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('ssssi', $status, $booking_no, $serviceType, $selectedDate, $account_id); 
 
@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Error: " . $conn->error;
     }
 
-    // Insert a notification into the admin notification table as client
+
     $notificationSql = "INSERT INTO admin_notification (user_id, transaction_no, message, created_at) VALUES (?, ?, ?, NOW())";
     $notificationStmt = $conn->prepare($notificationSql);
 
@@ -72,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $notificationStmt->close();
 
-    // Close the statement and connection
+
     $stmt->close();
     $conn->close();
 } else {

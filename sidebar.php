@@ -54,6 +54,8 @@ if (isset($_SESSION['unlocked_pages']['adminAccount.php'])) {
             </li>
             <li><a href="adminAccount.php"><i class="fa fa-user"></i> Admin Accounts </a>
             </li>
+            <li><a href="adminLogs.php"><i class="fa fa-cogs" ></i> Logs </a>
+            </li>
         </ul>
     </div>
 

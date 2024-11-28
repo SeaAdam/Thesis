@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'includes/dbconn.php';
+include_once('includes/logFunction.php');
 
 $response = array('status' => '', 'message' => '');
 
@@ -10,12 +11,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $loginType = $_POST['loginType'];
 
     if ($loginType === 'admin') {
-        // Fetch admin details including ID
+
         $query = "SELECT ID, Username, Password FROM admin_table WHERE Username = ?";
     } elseif ($loginType === 'clients') {
         $query = "SELECT ID, Username, Password FROM clients_account WHERE Username = ?";
     } else {
-        // Fetch user details including ID
+
         $query = "SELECT ID, Username, Password FROM registration_table WHERE Username = ?";
     }
 
@@ -27,25 +28,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
 
-        // Check if the password matches
+
         if ($password === $user['Password']) {
-            // Store user details in session
+
             $_SESSION['user_id'] = $user['ID'];
             $_SESSION['username'] = $user['Username'];
             $_SESSION['loginType'] = $loginType;
 
             if ($loginType === 'admin') {
-                // Admins are redirected to admin dashboard
+
                 $response['status'] = 'success';
                 $response['message'] = 'Successfully logged in as admin!';
                 $response['redirect'] = 'adminDashboard.php';
             } elseif ($loginType === 'clients') {
-                // Regular users are redirected to 2FA page
+
                 $response['status'] = 'success';
                 $response['message'] = 'Successfully logged in as our client!';
                 $response['redirect'] = 'clientDashboard.php';
             } else {
-                // Regular users are redirected to 2FA page
+
                 $response['status'] = 'success';
                 $response['message'] = 'Redirecting to 2FA authentication...';
                 $response['redirect'] = 'enter_email.php';
