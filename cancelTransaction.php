@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($status === 'Pending') {
             // Update the status to 'Canceled'
-            $sqlUpdate = "UPDATE client_booking SET status = 'Canceled' WHERE id = ?";
+            $sqlUpdate = "UPDATE client_booking SET status = 'Rejected' WHERE id = ?";
             $stmtUpdate = $conn->prepare($sqlUpdate);
             $stmtUpdate->bind_param('i', $transactionId);
 

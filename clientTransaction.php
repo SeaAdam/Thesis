@@ -240,8 +240,16 @@ $unread_count = countUnreadNotificationsClient($id);
                                     ?>
                                     <tr>
                                         <th scope="row"><?php echo htmlspecialchars($row['id']); ?></th>
-                                        <td><span class="<?php echo htmlspecialchars($statusClass); ?>">
-                                                <?php echo htmlspecialchars($row['status']); ?>
+                                        <td>
+                                            <span class="<?php echo htmlspecialchars($statusClass); ?>">
+                                                <?php
+                                                $status = htmlspecialchars($row['status']);
+                                                if ($status === "Rejected") {
+                                                    echo $status . " / Canceled";
+                                                } else {
+                                                    echo $status;
+                                                }
+                                                ?>
                                             </span>
                                         </td>
                                         <td><?php echo htmlspecialchars($row['booking_no']); ?></td>

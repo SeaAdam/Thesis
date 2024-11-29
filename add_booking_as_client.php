@@ -58,7 +58,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Insert the booking record into the database
+    // Delete any rejected or canceled bookings before proceeding
+    $deleteSql = "DELETE FROM client_booking WHERE account_id = ? AND date_appointment = ? AND status IN ('Rejected', 'Canceled')";
+    $deleteStmt = $conn->prepare($deleteSql);
+    $deleteStmt->bind_param('is', $account_id, $selectedDate);
+
+    if (!$deleteStmt->execute()) {
+        logToDatabase("Error executing delete query: " . $deleteStmt->error, $conn);
+        echo "Error deleting previous booking.";
+        exit();
+    }
+
+    logToDatabase("Successfully deleted previous rejected/canceled booking for client ID: $account_id on date: $selectedDate", $conn);
+    $deleteStmt->close();
+
+    // Insert the new booking record into the database
     $sql = "INSERT INTO client_booking (status, booking_no, services, date_appointment, date_seen, account_id)
             VALUES (?, ?, ?, ?, NOW(), ?)";
     $stmt = $conn->prepare($sql);
