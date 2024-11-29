@@ -215,7 +215,6 @@ $unread_count = countUnreadNotificationsClient($id);
             background-color: #ffffff;
             font-weight: normal;
         }
-        
     </style>
 
 
@@ -581,19 +580,24 @@ $unread_count = countUnreadNotificationsClient($id);
                             var isPast = isPastDate(info.event.startStr); // Check if the date is in the past
 
                             // Set button text and state based on booking status and date
-                            if (info.event.extendedProps.status === 'Completed' || info.event.extendedProps.status === 'Rejected') {
+                            if (info.event.extendedProps.status === 'Completed') {
                                 bookButton.innerText = 'Appointment Completed';
-                                bookButton.classList.add('btn-success'); // Use Bootstrap's success button style for completed or rejected
-                                bookButton.disabled = true; // Ensure button is disabled
+                                bookButton.classList.add('btn-success'); // Use Bootstrap's success button style for completed
+                                bookButton.disabled = true; // Disable the button for completed appointments
+                            } else if (info.event.extendedProps.status === 'Rejected' || info.event.extendedProps.status === 'Canceled') {
+                                bookButton.innerText = 'Book Appointment';
+                                bookButton.classList.add('btn-primary'); // Use Bootstrap's primary button style for rebooking
+                                bookButton.disabled = isPast; // Disable the button only if the date is in the past
                             } else if (isBooked) {
                                 bookButton.innerText = 'Already Booked';
                                 bookButton.classList.add('btn-danger'); // Use Bootstrap's danger button style for booked
-                                // No need to disable the button, keep it interactive
+                                bookButton.disabled = false; // Allow interaction for already booked
                             } else {
                                 bookButton.innerText = 'Book Appointment';
                                 bookButton.classList.add('btn-primary'); // Use Bootstrap's primary button style
                                 bookButton.disabled = isPast; // Disable the button if the date is past
                             }
+
 
                             bookButton.addEventListener('click', function () {
                                 if (!isBooked && !isPast) {
