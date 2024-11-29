@@ -599,10 +599,6 @@ $unread_count = countUnreadNotificationsClient($id);
                             // Append the button to a parent element (for example, the event's container)
                             info.el.appendChild(bookButton);
 
-
-
-
-
                             bookButton.addEventListener('click', function () {
                                 if (!isBooked && !isPast) {
                                     var dateStr = info.event.startStr;

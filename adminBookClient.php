@@ -486,28 +486,33 @@ $unread_count = countUnreadNotificationsAdmin();
                     if (info.event.extendedProps.source === 'fetch_client_schedule.php') {
                         console.log('Adding button to event:', info.event);
 
-                        // Create the "Book Appointment" button
-                        var bookButton = document.createElement('button');
-                        bookButton.classList.add('btn', 'book-appointment-btn');
-
                         // Check if the date is already booked
                         var isBooked = info.event.extendedProps.isBooked; // Check the 'isBooked' property
                         var isPast = isPastDate(info.event.startStr); // Check if the date is in the past
 
+                        // Create the "Book Appointment" button
+                        var bookButton = document.createElement('button');
+                        bookButton.classList.add('btn', 'book-appointment-btn');
+
                         // Set button text and state based on booking status and date
-                        if (info.event.extendedProps.status === 'Completed' || info.event.extendedProps.status === 'Rejected') {
+                        if (info.event.extendedProps.status === 'Completed') {
                             bookButton.innerText = 'Appointment Completed';
-                            bookButton.classList.add('btn-success'); // Use Bootstrap's success button style for completed or rejected
-                            bookButton.disabled = true; // Ensure button is disabled
-                        } else if (isBooked) {
+                            bookButton.classList.add('btn-success'); // Use Bootstrap's success button style for completed
+                            bookButton.disabled = true; // Disable the button for completed appointments
+                        } else if (info.event.extendedProps.status === 'Pending' || info.event.extendedProps.status === 'Approved') {
+                            // If status is Pending or Approved, show "Already Booked"
                             bookButton.innerText = 'Already Booked';
                             bookButton.classList.add('btn-danger'); // Use Bootstrap's danger button style for booked
-                            // No need to disable the button, keep it interactive
+                            bookButton.disabled = false; // Allow interaction for already booked
                         } else {
+                            // For Rejected, Canceled, and any other scenario, show "Book Appointment" again
                             bookButton.innerText = 'Book Appointment';
                             bookButton.classList.add('btn-primary'); // Use Bootstrap's primary button style
                             bookButton.disabled = isPast; // Disable the button if the date is past
                         }
+
+                        // Append the button to a parent element (for example, the event's container)
+                        info.el.appendChild(bookButton);
 
                         bookButton.addEventListener('click', function () {
                             if (!isBooked && !isPast) {
@@ -529,34 +534,6 @@ $unread_count = countUnreadNotificationsAdmin();
             });
 
             calendar.render();
-
-            // Handle booking submission and update the calendar
-            document.getElementById('bookAppointmentBtn').addEventListener('click', function () {
-                var dateStr = document.getElementById('selectedDate').value;
-
-                fetch('book_appointment.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({
-                        date_appointment: dateStr
-                    })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Appointment booked successfully.');
-                            // Refresh the calendar to reflect changes
-                            calendar.refetchEvents();
-                        } else {
-                            alert('Failed to book appointment.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error booking appointment:', error);
-                    });
-            });
 
             // Optional: Refresh the calendar periodically or on specific actions
             function refreshCalendar() {
@@ -581,6 +558,7 @@ $unread_count = countUnreadNotificationsAdmin();
                 }
             });
         });
+
 
         function markAsRead(transaction_no) {
             fetch(`mark_notification_read_admin.php?transaction_no=${encodeURIComponent(transaction_no)}`)

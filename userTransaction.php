@@ -251,15 +251,24 @@ $unread_count = countUnreadNotifications($user_id);
                                         }
 
                                         echo "<tr>
-                    <td>{$row['transaction_id']}</td>
-                    <td><span class='{$statusClass}'>{$row['status']}</span></td>
-                    <td>{$row['transaction_no']}</td>
-                    <td>{$row['service_id']}</td>
-                    <td>{$row['schedule_id']}</td>
-                    <td>{$row['time_slot_id']}</td>
-                    <td>{$row['date_seen']}</td>
-                    <td><a class='{$buttonClass}' {$buttonAction}>{$buttonText}</a></td>
-                </tr>";
+                                        <td>{$row['transaction_id']}</td>
+                                        <td><span class='{$statusClass}'>{$row['status']}</span></td>
+                                        <td>{$row['transaction_no']}</td>
+                                        <td>{$row['service_id']}</td>
+                                        <td>{$row['schedule_id']}</td>
+                                        <td>{$row['time_slot_id']}</td>
+                                        <td>{$row['date_seen']}</td>
+                                        <td>";
+
+                                        if ($row['status'] == 'Pending') {
+                                            echo "<button class='btn btn-danger btn-sm' onclick='cancelBooking({$row['transaction_id']})'>Cancel Booking</button>";
+                                        } else {
+                                            echo "<a class='{$buttonClass}' {$buttonAction}>{$buttonText}</a>";
+                                        }
+
+                                        echo "</td></tr>";
+
+
                                     }
                                 } else {
                                     echo "<p>No transactions found for User $username.</p>";
@@ -362,57 +371,45 @@ $unread_count = countUnreadNotifications($user_id);
                     });
             }
 
-
-            // Function to cancel the booking
             function cancelBooking(transactionId) {
-                // Make an AJAX request to a PHP script to cancel the booking
-                $.ajax({
-                    url: 'cancel_booking.php',  // Create this PHP file to handle cancellation
-                    type: 'POST',
-                    data: { transaction_id: transactionId },
-                    success: function (response) {
-                        if (response === 'success') {
-                            Swal.fire(
-                                'Cancelled!',
-                                'Your booking has been cancelled.',
-                                'success'
-                            ).then(() => {
-                                location.reload();  // Reload the page to reflect the changes
-                            });
-                        } else {
-                            Swal.fire(
-                                'Error!',
-                                'There was an issue cancelling your booking.',
-                                'error'
-                            );
-                        }
-                    },
-                    error: function () {
-                        Swal.fire(
-                            'Error!',
-                            'Something went wrong. Please try again.',
-                            'error'
-                        );
-                    }
-                });
-            }
-
-            function confirmCancellation(transactionId) {
                 Swal.fire({
                     title: 'Are you sure?',
-                    text: "Do you really want to cancel this booking?",
+                    text: "You won't be able to revert this action!",
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
                     confirmButtonText: 'Yes, cancel it!',
                     cancelButtonText: 'No, keep it'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        cancelBooking(transactionId);
+                        // Use AJAX to send POST request
+                        $.ajax({
+                            url: 'cancel_booking_user.php',
+                            method: 'POST',
+                            data: { transaction_id: transactionId },
+                            success: function (response) {
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: response,
+                                    icon: 'success',
+                                    timer: 2000, // Time in milliseconds (2 seconds)
+                                    showConfirmButton: false // Hide the button
+                                }).then(() => {
+                                    // Reload the page after the SweetAlert closes
+                                    location.reload(); // This will refresh the page
+                                });
+                            },
+                            error: function (xhr, status, error) {
+                                Swal.fire('Error', 'There was a problem with the request.', 'error');
+                            }
+                        });
                     }
                 });
             }
+
+
+
+
+
 
 
         </script>
