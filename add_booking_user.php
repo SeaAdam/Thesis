@@ -47,6 +47,26 @@ $username = $userRow['username'];
 // Log user information retrieval
 logToDatabase("User details retrieved for: $firstName $mi $lastName, Username: $username");
 
+// Check if the user already has a pending or approved booking
+$sql = "SELECT ID FROM transactions WHERE user_id = ? AND status IN ('Pending', 'Approved')";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $patientId);
+$stmt->execute();
+$result = $stmt->get_result();
+$existingBooking = $result->fetch_assoc();
+$stmt->close();
+
+if ($existingBooking) {
+    // User has a pending or approved booking, restrict new booking
+    session_start();
+    $_SESSION['errorMessage'] = "Error: You already have a pending or approved booking. Please complete your current booking first.";
+    logToDatabase($_SESSION['errorMessage']);
+    header('Location: userDashboard.php'); // Redirect to the user dashboard
+    exit; // Ensure no further code is executed
+}
+
+
+// Fetch user ID based on username
 $sql = "SELECT ID FROM registration_table WHERE username = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('s', $username);
@@ -78,7 +98,7 @@ try {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('sssssi', $status, $transactionNo, $serviceType, $scheduleId, $timeSlotId, $user_id);
 
-    $status = 'Pending';
+    $status = 'Pending'; // Initial status for new transaction
 
     if (!$stmt->execute()) {
         throw new Exception('Error inserting transaction: ' . $stmt->error);

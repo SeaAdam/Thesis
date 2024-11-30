@@ -47,9 +47,6 @@ include 'notification_functions.php'; // Create this file for the functions
 
 $notifications = fetchNotifications($user_id);
 $unread_count = countUnreadNotifications($user_id);
-
-
-
 ?>
 
 
@@ -166,12 +163,30 @@ $unread_count = countUnreadNotifications($user_id);
             background-color: #ffffff;
             font-weight: normal;
         }
+
+        .alert {
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            display: none; /* Initially hidden */
+        }
     </style>
 
 
 </head>
 
 <body class="nav-md">
+    <?php
+    if (isset($_SESSION['errorMessage'])) {
+        $errorMessage = $_SESSION['errorMessage'];
+        unset($_SESSION['errorMessage']); // Remove it immediately after setting
+        echo "<div class='alert' id='error-alert'>$errorMessage</div>";
+    }
+    ?>
     <div class="container body">
         <div class="main_container">
             <div class="col-md-3 left_col">
@@ -624,11 +639,9 @@ $unread_count = countUnreadNotifications($user_id);
                 });
             });
 
-            // Intercept form submission
             document.getElementById('bookingForm').addEventListener('submit', function (e) {
-                e.preventDefault(); // Prevent the default form submission
+                e.preventDefault();
 
-                // Display the SweetAlert confirmation
                 Swal.fire({
                     title: 'Appointment Booked!',
                     text: 'Your appointment has been successfully booked.',
@@ -636,7 +649,7 @@ $unread_count = countUnreadNotifications($user_id);
                     confirmButtonText: 'OK'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // If the user clicks 'OK', submit the form
+
                         this.submit();
                     }
                 });
@@ -673,6 +686,17 @@ $unread_count = countUnreadNotifications($user_id);
                         }
                     });
             }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const errorAlert = document.getElementById('error-alert');
+                if (errorAlert) {
+                    errorAlert.style.display = 'block'; // Show the alert
+                    setTimeout(() => {
+                        errorAlert.style.display = 'none'; // Hide it after 5 seconds
+                    }, 5000);
+                }
+            });
+
         </script>
 
 
