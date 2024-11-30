@@ -159,7 +159,7 @@ $unread_count = countUnreadNotificationsClient($id);
                     </div>
                     <!-- /sidebar menu -->
 
-                    
+
                 </div>
             </div>
 
@@ -225,7 +225,7 @@ $unread_count = countUnreadNotificationsClient($id);
                                     <img src="images\profile-pic.jpg" class="mb-3" alt="Profile Picture" width="150"
                                         height="150">
                                     <h4>
-                                    <?php echo htmlspecialchars($user['client_name']); ?>
+                                        <?php echo htmlspecialchars($user['client_name']); ?>
                                     </h4>
                                 </div>
                             </div>
@@ -240,37 +240,37 @@ $unread_count = countUnreadNotificationsClient($id);
                                             <tr>
                                                 <th scope="row">Company Name</th>
                                                 <td>
-                                                <?php echo htmlspecialchars($user['company_name']); ?>
+                                                    <?php echo htmlspecialchars($user['company_name']); ?>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Position</th>
                                                 <td>
-                                                <?php echo htmlspecialchars($user['position']); ?>
+                                                    <?php echo htmlspecialchars($user['position']); ?>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Address</th>
                                                 <td>
-                                                <?php echo htmlspecialchars($user['address']); ?>
+                                                    <?php echo htmlspecialchars($user['address']); ?>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Contact Number</th>
                                                 <td>
-                                                <?php echo htmlspecialchars($user['contact_number']); ?>
+                                                    <?php echo htmlspecialchars($user['contact_number']); ?>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Email Address</th>
                                                 <td>
-                                                <?php echo htmlspecialchars($user['email_address']); ?>
+                                                    <?php echo htmlspecialchars($user['email_address']); ?>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Username</th>
                                                 <td>
-                                                <?php echo htmlspecialchars($clientUsername); ?>
+                                                    <?php echo htmlspecialchars($clientUsername); ?>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -280,6 +280,20 @@ $unread_count = countUnreadNotificationsClient($id);
                                                         class="btn btn-success btn-sm edit"><i class="fa fa-edit"
                                                             aria-hidden="true"></i>
                                                         Edit</a>
+                                                    <a href="#" data-id="<?php echo $user['id']; ?>"
+                                                        class="btn btn-success btn-sm remove"><i class="fa fa-remove"
+                                                            aria-hidden="true"></i>
+                                                        Force Remove as a Client</a>
+                                                </td>
+                                                <td>
+                                                    <a href="#" data-id="<?php echo $user['id']; ?>"
+                                                        data-name="<?php echo htmlspecialchars($user['client_name']); ?>"
+                                                        data-company="<?php echo htmlspecialchars($user['company_name']); ?>"
+                                                        data-position="<?php echo htmlspecialchars($user['position']); ?>"
+                                                        class="btn btn-success btn-sm remove">
+                                                        <i class="fa fa-remove" aria-hidden="true"></i> Force Remove as
+                                                        a Client
+                                                    </a>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -290,6 +304,60 @@ $unread_count = countUnreadNotificationsClient($id);
                     </div>
                 </div>
             </div>
+            <!-- Sorry Message Modal -->
+            <div class="modal fade" id="sorryModal" tabindex="-1" role="dialog" aria-labelledby="sorryModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="sorryModalLabel">We're Sorry</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>We're sorry to hear that we were not able to provide you with excellent service. </p>
+                            <p>Would you like to proceed with the removal process?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="button" id="proceedToRemoval" class="btn btn-danger">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirm Removal Modal -->
+            <div class="modal fade" id="removeModal" tabindex="-1" role="dialog" aria-labelledby="removeModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="removeModalLabel">Confirm Removal</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Name:</strong> <span id="modalName"></span></p>
+                            <p><strong>Company:</strong> <span id="modalCompany"></span></p>
+                            <p><strong>Position:</strong> <span id="modalPosition"></span></p>
+                            <form id="removalForm">
+                                <div class="form-group">
+                                    <label for="reason">Reason for Removal:</label>
+                                    <textarea class="form-control" id="reason" name="reason" rows="3"
+                                        required></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="button" id="confirmRemoval" class="btn btn-danger">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
 
 
@@ -417,6 +485,95 @@ $unread_count = countUnreadNotificationsClient($id);
                     }
                 });
             });
+
+            $(document).ready(function () {
+                // Show the sorry modal first
+                $('.remove').on('click', function () {
+                    // Retrieve user data
+                    var name = $(this).data('name');
+                    var company = $(this).data('company');
+                    var position = $(this).data('position');
+                    var id = $(this).data('id');
+
+                    // Store user data in the sorry modal
+                    $('#sorryModal').data('userInfo', { id, name, company, position }).modal('show');
+                });
+
+                // Proceed to the removal modal
+                $('#proceedToRemoval').on('click', function () {
+                    var userInfo = $('#sorryModal').data('userInfo');
+
+                    // Populate user details in the removal modal
+                    $('#modalName').text(userInfo.name);
+                    $('#modalCompany').text(userInfo.company);
+                    $('#modalPosition').text(userInfo.position);
+
+                    // Hide the sorry modal and show the removal modal
+                    $('#sorryModal').modal('hide'); // Close the sorry modal
+                    $('#removeModal').modal('show'); // Open the removal modal
+                });
+
+                $('#confirmRemoval').on('click', function () {
+                    var reason = $('#reason').val();
+                    if (reason.trim() === '') {
+                        alert('Please provide a reason.');
+                        return;
+                    }
+
+                    var userInfo = $('#sorryModal').data('userInfo');
+
+                    // Send AJAX request to remove the client
+                    $.ajax({
+                        url: 'remove_client.php',
+                        type: 'POST',
+                        data: {
+                            id: userInfo.id,
+                            reason: reason
+                        },
+                        success: function (response) {
+                            var res = JSON.parse(response);
+                            if (res.status === 'success') {
+                                // Show SweetAlert for success
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Client Removed',
+                                    text: res.message,
+                                    background: '#dff0d8', // Light green background
+                                    confirmButtonColor: '#5cb85c', // Green confirm button
+                                    confirmButtonText: 'OK'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        // Redirect to index.php after confirmation
+                                        window.location.href = 'index.php';
+                                    }
+                                });
+                            } else {
+                                // Show SweetAlert for error
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: res.message,
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        },
+                        error: function () {
+                            // Show SweetAlert for AJAX error
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'An error occurred',
+                                text: 'There was an issue with the removal process.',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+
+                    // Close the removal modal
+                    $('#removeModal').modal('hide');
+                });
+            });
+
+
 
 
             document.addEventListener('DOMContentLoaded', function () {

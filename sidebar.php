@@ -19,7 +19,12 @@ if (isset($_SESSION['unlocked_pages']['adminAccount.php'])) {
             </li>
             <li><a href="adminEvents.php"><i class="fa fa-edit"></i> Events </a>
             </li>
-            <li><a href="adminClients.php"><i class="fa fa-desktop"></i> Clients </a>
+            <li><a><i class="fa fa-desktop"></i> Clients <span class="fa fa-chevron-down"></span>
+                </a>
+                <ul class="nav child_menu">
+                <li><a href="adminClients.php">Active Clients</a></li>
+                    <li><a href="removeClients.php">Force Remove Clients</a></li>
+                </ul>
             </li>
             <li><a><i class="fa fa-table"></i> Client Appointment <span class="fa fa-chevron-down"></span>
                 </a>
