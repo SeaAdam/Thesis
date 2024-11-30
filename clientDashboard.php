@@ -76,6 +76,8 @@ include 'notification_functions.php'; // Create this file for the functions
 
 $notificationsClient = fetchNotificationsClient($id);
 $unread_count = countUnreadNotificationsClient($id);
+
+
 ?>
 
 <!DOCTYPE html>
@@ -221,6 +223,22 @@ $unread_count = countUnreadNotificationsClient($id);
 </head>
 
 <body class="nav-md">
+
+    <?php
+    // Check if there's an error message set in the session
+    if (isset($_SESSION['error_message'])) {
+        // Display the SweetAlert with the error message
+        echo "<script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Booking Error',
+                text: '" . $_SESSION['error_message'] . "'
+            });
+          </script>";
+
+        // Clear the error message after showing the SweetAlert
+        unset($_SESSION['error_message']);
+    } ?>
     <div class="container body">
         <div class="main_container">
             <div class="col-md-3 left_col">

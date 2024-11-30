@@ -3,7 +3,8 @@ include 'includes/dbconn.php';
 session_start();
 
 // Helper function to log messages to the database
-function logToDatabase($message, $conn) {
+function logToDatabase($message, $conn)
+{
     $sql = "INSERT INTO booking_logs (message) VALUES (?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('s', $message);
@@ -56,6 +57,125 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         logToDatabase("Error: User not logged in. Session 'username' not found.", $conn);
         echo "User not logged in.";
         exit();
+    }
+
+    // Check the total number of rejections for the user
+    $rejectionSql = "SELECT COUNT(*) AS rejection_count FROM deleted_bookings 
+    WHERE account_id = ? AND status = 'Rejected'";
+    $rejectionStmt = $conn->prepare($rejectionSql);
+    $rejectionStmt->bind_param('i', $account_id);
+    $rejectionStmt->execute();
+    $rejectionResult = $rejectionStmt->get_result();
+    $row = $rejectionResult->fetch_assoc();
+
+    // Check if there are 3 or more rejections
+    if ($row['rejection_count'] >= 3) {
+        logToDatabase("Booking for client ID: $account_id is disabled due to 3 or more rejections.", $conn);
+
+        // Fetch user information to store in blocked_users
+        $userSql = "SELECT username FROM clients_account WHERE client_id = ?";
+        $userStmt = $conn->prepare($userSql);
+        $userStmt->bind_param('i', $account_id);
+        $userStmt->execute();
+        $userResult = $userStmt->get_result();
+        $userRow = $userResult->fetch_assoc();
+
+        // Check if the user is already in the blocked_users table
+        $checkBlockedSql = "SELECT blocked_until FROM blocked_users WHERE account_id = ? AND username = ?";
+        $checkBlockedStmt = $conn->prepare($checkBlockedSql);
+        $checkBlockedStmt->bind_param('is', $account_id, $userRow['username']);
+        $checkBlockedStmt->execute();
+        $checkBlockedResult = $checkBlockedStmt->get_result();
+
+        // If the user is already blocked
+        if ($checkBlockedResult->num_rows > 0) {
+            $row = $checkBlockedResult->fetch_assoc();
+            $blockedUntil = $row['blocked_until'];
+
+            // Convert the 'blocked_until' value to a timestamp
+            $blockedUntilTimestamp = strtotime($blockedUntil);
+
+            // Check if the block period has expired
+            if ($blockedUntilTimestamp > time()) {
+                // Block is still active, calculate the time left
+                $timeLeft = $blockedUntilTimestamp - time(); // Difference in seconds
+                $minutesLeft = floor($timeLeft / 60);  // Convert to minutes
+                $secondsLeft = $timeLeft % 60;         // Remaining seconds
+
+                // Format the error message with the time left
+                $_SESSION['error_message'] = "You are temporarily blocked from making bookings. Please try again in $minutesLeft minutes and $secondsLeft seconds.";
+                header("Location: clientDashboard.php");
+                exit();
+            } else {
+                // Block period expired, unblock user and delete data from deleted_bookings
+                // Delete user's data from deleted_bookings
+                $deleteDataSql = "DELETE FROM deleted_bookings WHERE account_id = ?";
+                $deleteDataStmt = $conn->prepare($deleteDataSql);
+                $deleteDataStmt->bind_param('i', $account_id);
+
+                if ($deleteDataStmt->execute()) {
+                    logToDatabase("Deleted data for unblocked user ID: $account_id from deleted_bookings.", $conn);
+                } else {
+                    logToDatabase("Error deleting data from deleted_bookings for user ID: $account_id.", $conn);
+                }
+                $deleteDataStmt->close();
+
+                // Remove the user from the blocked_users table (unblock the user)
+                $unblockSql = "DELETE FROM blocked_users WHERE account_id = ? AND username = ?";
+                $unblockStmt = $conn->prepare($unblockSql);
+                $unblockStmt->bind_param('is', $account_id, $userRow['username']);
+                $unblockStmt->execute();
+                $unblockStmt->close();
+            }
+        } else {
+            $blockSql = "INSERT INTO blocked_users (account_id, username, reason, blocked_at, blocked_until) 
+             VALUES (?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 1 MINUTE))";
+
+            $blockStmt = $conn->prepare($blockSql);
+            $reason = "Blocked due to 3 rejections";
+            $blockStmt->bind_param('iss', $account_id, $userRow['username'], $reason);
+
+            if (!$blockStmt->execute()) {
+                logToDatabase("Error inserting into blocked_users table: " . $blockStmt->error, $conn);
+            } else {
+                logToDatabase("Successfully inserted blocked user with ID: $account_id and username: " . $userRow['username'], $conn);
+            }
+
+            $blockStmt->close();
+
+            // Set the error message and redirect to the client dashboard with a message
+            $_SESSION['error_message'] = "You have reached the maximum number of rejections. You are temporarily blocked from making further bookings.";
+            header("Location: clientDashboard.php");
+            exit();
+        }
+
+        $checkBlockedStmt->close();
+    }
+
+    $rejectionStmt->close();
+
+
+    // Delete any rejected or canceled bookings before proceeding
+    $deleteSql = "SELECT * FROM client_booking WHERE account_id = ? AND date_appointment = ? AND status IN ('Rejected', 'Canceled')";
+    $deleteStmt = $conn->prepare($deleteSql);
+    $deleteStmt->bind_param('is', $account_id, $selectedDate);
+
+    $deleteStmt->execute();
+    $result = $deleteStmt->get_result();
+
+    while ($row = $result->fetch_assoc()) {
+        // Insert the record into the backup table before deleting it
+        $backupSql = "INSERT INTO deleted_bookings (status, booking_no, services, date_appointment, date_seen, account_id, deleted_at) 
+                  VALUES (?, ?, ?, ?, ?, ?, NOW())";
+        $backupStmt = $conn->prepare($backupSql);
+        $backupStmt->bind_param('sssssi', $row['status'], $row['booking_no'], $row['services'], $row['date_appointment'], $row['date_seen'], $row['account_id']);
+
+        if (!$backupStmt->execute()) {
+            logToDatabase("Error inserting into deleted_bookings: " . $backupStmt->error, $conn);
+            echo "Error inserting deleted booking into backup table.";
+            exit();
+        }
+        $backupStmt->close();
     }
 
     // Delete any rejected or canceled bookings before proceeding
