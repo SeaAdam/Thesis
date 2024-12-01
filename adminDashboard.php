@@ -189,8 +189,6 @@ $unread_count = countUnreadNotificationsAdmin();
                                             class="fa fa-arrow-circle-right" aria-hidden="true"></i></span></a></div>
                         </div>
                     </div>
-
-
                     <div class="col-sm-3 py-3">
                         <div class="card h-100 text-white bg-success">
                             <div class="card-body">
