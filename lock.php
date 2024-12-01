@@ -49,5 +49,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if (isset($error)): ?>
         <p style="color: red;"><?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?></p>
     <?php endif; ?>
+
+     <!-- Go Back Button -->
+     <form action="adminDashboard.php" method="get">
+        <button type="submit">Go Back</button>
+    </form>
 </body>
 </html>
