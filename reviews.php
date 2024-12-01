@@ -1,5 +1,11 @@
 <?php
 session_start();
+// Include the database connection
+include 'includes/dbconn.php';
+
+// Fetch reviews from the database
+$sql = "SELECT * FROM reviews ORDER BY created_at DESC";
+$result = $conn->query($sql);
 
 
 ?>
@@ -45,6 +51,30 @@ session_start();
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .star {
+            font-size: 1.5em;
+            cursor: pointer;
+            color: gray;
+        }
+
+        .star.selected {
+            color: gold;
+        }
+
+        .stars {
+            display: inline-block;
+        }
+
+        .review-item {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .review-item h5 {
+            font-size: 1.2em;
         }
     </style>
 
@@ -492,38 +522,35 @@ session_start();
                 <div class="col-lg-6 mb-n5 wow fadeIn" data-wow-delay="0.5s">
                     <div class="bg-white p-5">
                         <div class="owl-carousel testimonial-carousel wow fadeIn" data-wow-delay="0.1s">
-                            <div class="testimonial-item">
-                                <div class="icon-box-primary mb-4">
-                                    <i class="bi bi-chat-left-quote text-dark"></i>
-                                </div>
-                                <p class="fs-5 mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
-                                    tellus augue, iaculis id elit eget, ultrices pulvinar tortor. Quisque vel lorem
-                                    porttitor, malesuada arcu quis, fringilla risus. Pellentesque eu consequat augue.
-                                </p>
-                                <div class="d-flex align-items-center">
-                                    <img class="flex-shrink-0" src="assets/download2.png" alt="">
-                                    <div class="ps-3">
-                                        <h5 class="mb-1">Client Name</h5>
-                                        <span class="text-primary">Profession</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="testimonial-item">
-                                <div class="icon-box-primary mb-4">
-                                    <i class="bi bi-chat-left-quote text-dark"></i>
-                                </div>
-                                <p class="fs-5 mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
-                                    tellus augue, iaculis id elit eget, ultrices pulvinar tortor. Quisque vel lorem
-                                    porttitor, malesuada arcu quis, fringilla risus. Pellentesque eu consequat augue.
-                                </p>
-                                <div class="d-flex align-items-center">
-                                    <img class="flex-shrink-0" src="assets/download1.jpg" alt="">
-                                    <div class="ps-3">
-                                        <h5 class="mb-1">Client Name</h5>
-                                        <span class="text-primary">Profession</span>
-                                    </div>
-                                </div>
-                            </div>
+                            <?php
+                            // Fetch and display reviews from database
+                            while ($row = $result->fetch_assoc()) {
+                                $rating = $row['rating'];
+                                echo '<div class="testimonial-item">';
+                                echo '<div class="icon-box-primary mb-4">';
+                                echo '<i class="bi bi-chat-left-quote text-dark"></i>';
+                                echo '</div>';
+                                echo '<p class="fs-5 mb-4">' . $row['review'] . '</p>';
+                                echo '<div class="d-flex align-items-center">';
+                                echo '<img class="flex-shrink-0" src="assets/download2.png" alt="">'; // You can change the image if needed
+                                echo '<div class="ps-3">';
+                                echo '<h5 class="mb-1">' . $row['name'] . '</h5>';
+                                echo '<span class="text-primary">' . $row['profession'] . '</span>';
+                                echo '</div>';
+                                echo '</div>';
+                                echo '<div class="stars">';
+                                // Display stars based on rating
+                                for ($i = 1; $i <= 5; $i++) {
+                                    if ($i <= $rating) {
+                                        echo '<span class="star">&#9733;</span>';
+                                    } else {
+                                        echo '<span class="star">&#9734;</span>';
+                                    }
+                                }
+                                echo '</div>';
+                                echo '</div>';
+                            }
+                            ?>
                         </div>
                     </div>
                 </div>
@@ -532,10 +559,11 @@ session_start();
     </div>
     <!-- Testimonial End -->
 
+
     <!-- Review Submission Start -->
     <div class="container py-5">
         <h2 class="text-center mb-4">Share Your Review</h2>
-        <form id="reviewForm" action="submit_review.php" method="POST">
+        <form id="reviewForm" method="POST">
             <div class="mb-3">
                 <label for="name" class="form-label">Your Name</label>
                 <input type="text" class="form-control" id="name" name="name" required>
@@ -547,6 +575,12 @@ session_start();
             <div class="mb-3">
                 <label for="review" class="form-label">Your Review</label>
                 <textarea class="form-control" id="review" name="review" rows="5" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="rating">Your Rating (0-5):</label>
+                <input type="number" id="ratingInput" name="rating" class="form-control" min="0" max="5" step="0.1"
+                    value="0" required>
+                <small>Rate between 0 to 5 with decimal points allowed (e.g., 4.5)</small>
             </div>
             <button type="submit" class="btn btn-primary">Submit Review</button>
         </form>
@@ -794,6 +828,44 @@ session_start();
             // Uncheck the checkbox when the modal is shown
             document.getElementById('agreeCheckbox').checked = false;
         });
+
+        const ratingInput = document.getElementById('ratingInput');
+        ratingInput.addEventListener('input', function () {
+            let rating = parseFloat(ratingInput.value);
+            if (rating < 0) rating = 0;  // Restrict to a minimum of 0
+            if (rating > 5) rating = 5;  // Restrict to a maximum of 5
+            ratingInput.value = rating.toFixed(1); // Show one decimal place
+        });
+
+
+        // AJAX to submit the review without reloading the page
+        $('#reviewForm').submit(function (e) {
+            e.preventDefault(); // Prevent the form from submitting normally
+
+            $.ajax({
+                type: 'POST',
+                url: 'submit_review.php',
+                data: $(this).serialize(),
+                success: function (response) {
+                    // Display a SweetAlert success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Review Submitted!',
+                        text: 'Thank you for your feedback.',
+                        confirmButtonText: 'Close'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // After confirming the success message, reload the page
+                            location.reload(); // This will reload the page
+                        }
+                    });
+                },
+                error: function () {
+                    alert('Something went wrong. Please try again.');
+                }
+            });
+        });
+
     </script>
 </body>
 
