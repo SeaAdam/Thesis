@@ -546,11 +546,9 @@ $unread_count = countUnreadNotificationsAdmin();
             });
         });
 
-        // Intercept form submission
         document.getElementById('bookingForm').addEventListener('submit', function (e) {
-            e.preventDefault(); // Prevent the default form submission
+            e.preventDefault();
 
-            // Display the SweetAlert confirmation
             Swal.fire({
                 title: 'Appointment Booked!',
                 text: 'Your appointment has been successfully booked.',
@@ -558,7 +556,7 @@ $unread_count = countUnreadNotificationsAdmin();
                 confirmButtonText: 'OK'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // If the user clicks 'OK', submit the form
+
                     this.submit();
                 }
             });
