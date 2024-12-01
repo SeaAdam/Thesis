@@ -170,7 +170,7 @@ $result = $conn->query($sql);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <img src="assets/download1.jpg" alt="Logo" class="login-logo mb-3">
+                    <img src="assets/brainn.png" alt="Logo" class="login-logo mb-3" style="width: 150px; height: auto;">
                     <form id="loginForm" action="login.php" method="POST">
                         <div class="mb-3">
                             <input type="text" class="form-control" id="usernameLogin" name="usernameLogin"
@@ -516,8 +516,10 @@ $result = $conn->query($sql);
             <div class="row gy-5 gx-0">
                 <div class="col-lg-6 pe-lg-5 wow fadeIn" data-wow-delay="0.3s">
                     <h1 class="display-6 text-white mb-4">What Clients Say About Our Diagnostic Services!</h1>
-                    <p class="text-white mb-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur tellus
-                        augue, iaculis id elit eget, ultrices pulvinar tortor.</p>
+                    <p class="text-white mb-5">"At our Clinic, we prioritize accurate results and compassionate care.
+                        Our patients consistently appreciate the thoroughness of our diagnostic testing and the
+                        expertise of our medical professionals. We are committed to providing timely, reliable results
+                        to ensure that each patient receives the best possible care."</p>
                 </div>
                 <div class="col-lg-6 mb-n5 wow fadeIn" data-wow-delay="0.5s">
                     <div class="bg-white p-5">
@@ -532,7 +534,7 @@ $result = $conn->query($sql);
                                 echo '</div>';
                                 echo '<p class="fs-5 mb-4">' . $row['review'] . '</p>';
                                 echo '<div class="d-flex align-items-center">';
-                                echo '<img class="flex-shrink-0" src="assets/download2.png" alt="">'; // You can change the image if needed
+                                echo '<img class="flex-shrink-0" src="images/icon-profile-user.png" alt="">'; // You can change the image if needed
                                 echo '<div class="ps-3">';
                                 echo '<h5 class="mb-1">' . $row['name'] . '</h5>';
                                 echo '<span class="text-primary">' . $row['profession'] . '</span>';

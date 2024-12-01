@@ -193,7 +193,7 @@ session_start();
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <img src="assets/download1.jpg" alt="Logo" class="login-logo mb-3">
+                    <img src="assets/brainn.png" alt="Logo" class="login-logo mb-3" style="width: 150px; height: auto;">
                     <form id="loginForm" action="login.php" method="POST">
                         <div class="mb-3">
                             <input type="text" class="form-control" id="usernameLogin" name="usernameLogin"
