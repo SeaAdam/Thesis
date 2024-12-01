@@ -19,6 +19,8 @@ if (isset($_SESSION['unlocked_pages']['adminAccount.php'])) {
             </li>
             <li><a href="adminEvents.php"><i class="fa fa-edit"></i> Events </a>
             </li>
+            <li><a href="adminReviews.php"><i class="fa fa-comment"></i> Reviews </a>
+            </li>
             <li><a><i class="fa fa-desktop"></i> Clients <span class="fa fa-chevron-down"></span>
                 </a>
                 <ul class="nav child_menu">
