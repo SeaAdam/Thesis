@@ -281,12 +281,6 @@ $unread_count = countUnreadNotificationsClient($id);
                                                             aria-hidden="true"></i>
                                                         Edit</a>
                                                     <a href="#" data-id="<?php echo $user['id']; ?>"
-                                                        class="btn btn-success btn-sm remove"><i class="fa fa-remove"
-                                                            aria-hidden="true"></i>
-                                                        Force Remove as a Client</a>
-                                                </td>
-                                                <td>
-                                                    <a href="#" data-id="<?php echo $user['id']; ?>"
                                                         data-name="<?php echo htmlspecialchars($user['client_name']); ?>"
                                                         data-company="<?php echo htmlspecialchars($user['company_name']); ?>"
                                                         data-position="<?php echo htmlspecialchars($user['position']); ?>"

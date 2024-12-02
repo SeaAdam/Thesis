@@ -40,7 +40,7 @@ $unread_count = countUnreadNotificationsClient($id);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="images/favicon.ico" type="image/ico" />
-
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <title>User Transactions</title>
 
     <!-- Bootstrap -->
@@ -337,6 +337,8 @@ $unread_count = countUnreadNotificationsClient($id);
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
         <script>
             function cancelTransaction(transactionId) {
                 Swal.fire({
@@ -382,6 +384,21 @@ $unread_count = countUnreadNotificationsClient($id);
                     }
                 });
             }
+
+            $(document).ready(function () {
+                $('#transactionTable').DataTable({
+                    "paging": true,         // Enable pagination
+                    "searching": true,      // Enable searching
+                    "ordering": true,       // Enable sorting
+                    "info": true,           // Show info like "Showing 1 to 10 of 50 entries"
+                    "pageLength": 10,       // Set the default page length
+                    "order": [[0, 'desc']], // Sort by transaction ID (or modify as needed)
+                    "columnDefs": [
+                        { "orderable": false, "targets": [7] } // Disable sorting for the Action column
+                    ]
+                });
+            });
+
         </script>
 
 </body>

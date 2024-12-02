@@ -27,7 +27,7 @@ $unread_count = countUnreadNotifications($user_id);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="images/favicon.ico" type="image/ico" />
-
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <title>User Transactions</title>
 
     <!-- Bootstrap -->
@@ -197,20 +197,20 @@ $unread_count = countUnreadNotifications($user_id);
 
                             if ($user_id !== null) {
                                 $sql = "SELECT 
-                    t.ID AS transaction_id,
-                    t.status,
-                    t.transaction_no,
-                    s.Services AS service_id,
-                    sr.Slots_Date AS schedule_id,
-                    CONCAT(ts.start_time, ' - ', ts.end_time) AS time_slot_id,
-                    t.date_seen
-                FROM 
-                    appointment_system.transactions t
-                    LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
-                    LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
-                    LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
-                WHERE 
-                    t.user_id = ?";
+                        t.ID AS transaction_id,
+                        t.status,
+                        t.transaction_no,
+                        s.Services AS service_id,
+                        sr.Slots_Date AS schedule_id,
+                        CONCAT(ts.start_time, ' - ', ts.end_time) AS time_slot_id,
+                        t.date_seen
+                    FROM 
+                        appointment_system.transactions t
+                        LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
+                        LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
+                        LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
+                    WHERE 
+                        t.user_id = ?";
 
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bind_param('i', $user_id);
@@ -251,14 +251,14 @@ $unread_count = countUnreadNotifications($user_id);
                                         }
 
                                         echo "<tr>
-                                        <td>{$row['transaction_id']}</td>
-                                        <td><span class='{$statusClass}'>{$row['status']}</span></td>
-                                        <td>{$row['transaction_no']}</td>
-                                        <td>{$row['service_id']}</td>
-                                        <td>{$row['schedule_id']}</td>
-                                        <td>{$row['time_slot_id']}</td>
-                                        <td>{$row['date_seen']}</td>
-                                        <td>";
+                        <td>{$row['transaction_id']}</td>
+                        <td><span class='{$statusClass}'>{$row['status']}</span></td>
+                        <td>{$row['transaction_no']}</td>
+                        <td>{$row['service_id']}</td>
+                        <td>{$row['schedule_id']}</td>
+                        <td>{$row['time_slot_id']}</td>
+                        <td>{$row['date_seen']}</td>
+                        <td>";
 
                                         if ($row['status'] == 'Pending') {
                                             echo "<button class='btn btn-danger btn-sm' onclick='cancelBooking({$row['transaction_id']})'>Cancel Booking</button>";
@@ -267,8 +267,6 @@ $unread_count = countUnreadNotifications($user_id);
                                         }
 
                                         echo "</td></tr>";
-
-
                                     }
                                 } else {
                                     echo "<p>No transactions found for User $username.</p>";
@@ -282,8 +280,8 @@ $unread_count = countUnreadNotifications($user_id);
                             $conn->close();
                             ?>
                         </tbody>
-
                     </table>
+
 
                 </div>
 
@@ -336,6 +334,8 @@ $unread_count = countUnreadNotifications($user_id);
         <script src="build/js/custom.min.js"></script>
         <!-- SweetAlert CDN -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 
         <script>
@@ -405,6 +405,21 @@ $unread_count = countUnreadNotifications($user_id);
                     }
                 });
             }
+
+            $(document).ready(function () {
+                $('#transactionTable').DataTable({
+                    "paging": true,         // Enable pagination
+                    "searching": true,      // Enable searching
+                    "ordering": true,       // Enable sorting
+                    "info": true,           // Show info like "Showing 1 to 10 of 50 entries"
+                    "pageLength": 10,       // Set the default page length
+                    "order": [[0, 'desc']], // Sort by transaction ID (or modify as needed)
+                    "columnDefs": [
+                        { "orderable": false, "targets": [7] } // Disable sorting for the Action column
+                    ]
+                });
+            });
+
 
 
 
