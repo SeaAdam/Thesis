@@ -22,10 +22,8 @@ session_start();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-            integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous"> -->
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Include SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.9/dist/sweetalert2.min.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
     <link href="./ui/animate.min.css" rel="stylesheet">
@@ -830,6 +828,7 @@ session_start();
     <script src="./ui/waypoints.min.js"></script>
     <script src="./ui/counterup.min.js"></script>
     <script src="./ui/owl.carousel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Template Javascript -->
     <script src="./ui/main.js"></script>
@@ -1015,12 +1014,6 @@ session_start();
         }
 
 
-
-
-
-
-
-
         document.addEventListener('DOMContentLoaded', function () {
             const patientButton = document.getElementById('patientButton');
             const clientButton = document.getElementById('clientButton');
@@ -1093,20 +1086,38 @@ session_start();
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        alert(data.message);
+                        Swal.fire({
+                            title: 'Success!',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
                         form.reset();
                         const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
                         modal.hide();
                     } else {
-                        alert(data.message);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
                     }
                 })
-                .catch(() => alert('An error occurred. Please try again.'))
+                .catch(() => {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                })
                 .finally(() => {
                     submitButton.innerHTML = 'Send Reset Link';
                     submitButton.disabled = false;
                 });
         });
+
 
     </script>
 
