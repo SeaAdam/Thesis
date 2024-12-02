@@ -41,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all'])) {
     <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link href="build/css/custom.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
     <style>
         .read {
@@ -91,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all'])) {
                     <button class="btn btn-danger" id="deleteData">Delete All Data</button>
                 </div>
 
-                <table class="table table-striped table-bordered">
+                <table id="logTable" class="table table-striped table-bordered">
                     <thead class="table-dark">
                         <tr>
                             <th>User ID</th>
@@ -121,6 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all'])) {
                         <?php endif; ?>
                     </tbody>
                 </table>
+
             </div>
         </div>
     </div>
@@ -130,6 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all'])) {
     <script src="vendors/fastclick/lib/fastclick.js"></script>
     <script src="build/js/custom.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
     <script>
         // Print All Data
@@ -173,6 +176,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all'])) {
                 }
             });
         });
+
+        $(document).ready(function () {
+            $('#logTable').DataTable({
+                "paging": true,       // Enable pagination
+                "searching": true,    // Enable searching
+                "ordering": true,     // Enable sorting
+                "info": true,         // Display info like "Showing 1 to 10 of 50 entries"
+                "pageLength": 10,     // Set the default page length
+                "order": [[3, 'desc']] // Sort by the "Timestamp" column in descending order
+            });
+        });
+
     </script>
 
 </body>

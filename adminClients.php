@@ -26,6 +26,7 @@ $unread_count = countUnreadNotificationsAdmin();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="images/favicon.ico" type="image/ico" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
     <title>Admin Patients</title>
 
@@ -244,7 +245,7 @@ $unread_count = countUnreadNotificationsAdmin();
                     </div>
                 </div>
                 <?php
-                require 'autoloader.php'; 
+                require 'autoloader.php';
 
                 use PHPMailer\PHPMailer\PHPMailer;
                 use PHPMailer\PHPMailer\Exception as PHPMailerException;
@@ -391,8 +392,8 @@ $unread_count = countUnreadNotificationsAdmin();
 
 
                 <!-- Your table structure starts here -->
-                <table class="table table-striped">
-                    <thead>
+                <table id="clientsTable" class="table table-striped table-bordered">
+                    <thead class="table-dark">
                         <tr>
                             <th scope="col">ID</th>
                             <th scope="col">Client Name</th>
@@ -412,15 +413,13 @@ $unread_count = countUnreadNotificationsAdmin();
                         while ($row = $query->fetch_assoc()) {
                             ?>
                             <tr>
-                                <td><?php echo $row['id']; ?></td>
-                                <td><?php echo $row['client_name']; ?></td>
-                                <td><?php echo $row['company_name']; ?></td>
-                                <td><?php echo $row['position']; ?></td>
-                                <td><?php echo $row['address']; ?></td>
-                                <td><?php echo $row['contact_number']; ?></td>
-                                <td><?php echo $row['email_address']; ?></td>
-
-                                <!-- Display the status -->
+                                <td><?php echo htmlspecialchars($row['id']); ?></td>
+                                <td><?php echo htmlspecialchars($row['client_name']); ?></td>
+                                <td><?php echo htmlspecialchars($row['company_name']); ?></td>
+                                <td><?php echo htmlspecialchars($row['position']); ?></td>
+                                <td><?php echo htmlspecialchars($row['address']); ?></td>
+                                <td><?php echo htmlspecialchars($row['contact_number']); ?></td>
+                                <td><?php echo htmlspecialchars($row['email_address']); ?></td>
                                 <td>
                                     <?php
                                     if ($row['status'] == 'approved') {
@@ -432,7 +431,6 @@ $unread_count = countUnreadNotificationsAdmin();
                                     }
                                     ?>
 
-                                    <!-- Show Approve and Reject buttons only if status is 'pending' -->
                                     <?php if ($row['status'] == 'pending') { ?>
                                         <a href="adminClients.php?action=approve&id=<?php echo $row['id']; ?>"
                                             class="btn btn-success btn-sm">Approve</a>
@@ -442,15 +440,13 @@ $unread_count = countUnreadNotificationsAdmin();
                                         <span class="text-muted">Action Completed</span>
                                     <?php } ?>
                                 </td>
-
-                                <!-- Actions (view, edit, delete) -->
                                 <td>
                                     <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-info btn-sm view"><i
-                                            class="fa fa-edit" aria-hidden="true"></i> View</a>
+                                            class="fa fa-eye"></i> View</a>
                                     <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-success btn-sm edit"><i
-                                            class="fa fa-edit" aria-hidden="true"></i> Edit</a>
+                                            class="fa fa-edit"></i> Edit</a>
                                     <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-danger btn-sm delete"><i
-                                            class="fa fa-trash" aria-hidden="true"></i> Delete</a>
+                                            class="fa fa-trash"></i> Delete</a>
                                 </td>
                             </tr>
                             <?php
@@ -508,9 +504,12 @@ $unread_count = countUnreadNotificationsAdmin();
         <!-- Custom Theme Scripts -->
         <script src="build/js/custom.min.js"></script>
 
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
         <?php include "includes/booking_modal.php"; ?>
 
         <script>
+
             $(document).ready(function () {
                 window.setTimeout(function () {
                     $("#alert").fadeTo(1000, 0).slideUp(1000, function () {
@@ -654,6 +653,18 @@ $unread_count = countUnreadNotificationsAdmin();
                         }
                     });
             }
+
+            $(document).ready(function () {
+                $('#clientsTable').DataTable({
+                    "paging": true,
+                    "searching": true,
+                    "ordering": true,
+                    "info": true,
+                    "pageLength": 10,
+                    "order": [[0, "asc"]] // Default sort by "ID" column ascending
+                });
+            });
+
         </script>
 
 </body>

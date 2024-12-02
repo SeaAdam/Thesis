@@ -41,6 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all'])) {
     <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link href="build/css/custom.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
 
     <style>
         .read {
@@ -91,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all'])) {
                     <button class="btn btn-danger" id="deleteData">Delete All Data</button>
                 </div>
 
-                <table class="table table-striped table-bordered">
+                <table id="reviewsTable" class="table table-striped table-bordered">
                     <thead class="table-dark">
                         <tr>
                             <th>Name</th>
@@ -123,6 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all'])) {
                         <?php endif; ?>
                     </tbody>
                 </table>
+
             </div>
         </div>
     </div>
@@ -132,6 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all'])) {
     <script src="vendors/fastclick/lib/fastclick.js"></script>
     <script src="build/js/custom.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
     <script>
         // Print All Data
@@ -175,6 +179,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all'])) {
                 }
             });
         });
+
+        $(document).ready(function () {
+            $('#reviewsTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "pageLength": 10,
+                "order": [[4, "desc"]] // Default sort by "Created At" column descending
+            });
+        });
+
+
+
     </script>
 
 </body>

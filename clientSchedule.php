@@ -24,6 +24,7 @@ $unread_count = countUnreadNotificationsAdmin();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="images/favicon.ico" type="image/ico" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
     <title>Admin Client Schedule</title>
 
@@ -139,34 +140,6 @@ $unread_count = countUnreadNotificationsAdmin();
                     New Schedule
                 </button>
 
-                <!-- Modal -->
-                <!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Add New Schedule</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <form action="add_client_schedule.php" method="POST">
-                                    <div class="mb-3">
-                                        <label for="schedule_date" class="form-label">Schedule Date</label>
-                                        <input type="date" class="form-control" id="schedule_date" name="schedule_date"
-                                            required>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="reset" class="btn btn-secondary"
-                                            data-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Save</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
                 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog">
@@ -198,7 +171,7 @@ $unread_count = countUnreadNotificationsAdmin();
                     </div>
                 </div>
 
-                <table class="table table-striped">
+                <table id="scheduleTable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -218,21 +191,18 @@ $unread_count = countUnreadNotificationsAdmin();
                                 <th scope="row"><?php echo $row['id']; ?></th>
                                 <td><?php echo $row['schedule_date']; ?></td>
                                 <td>
-
                                     <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-success btn-sm edit"><i
-                                            class="fa fa-edit" aria-hidden="true"></i>
-                                        Edit</a>
+                                            class="fa fa-edit" aria-hidden="true"></i> Edit</a>
                                     <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-danger btn-sm delete"><i
                                             class="fa fa-trash" aria-hidden="true"></i> Delete</a>
                                 </td>
                             </tr>
-
                             <?php
                         }
                         ?>
-                        <!-- More rows as needed -->
                     </tbody>
                 </table>
+
             </div>
 
 
@@ -280,6 +250,7 @@ $unread_count = countUnreadNotificationsAdmin();
 
         <!-- Custom Theme Scripts -->
         <script src="build/js/custom.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 
         <?php include "includes/booking_modal.php"; ?>
@@ -376,6 +347,18 @@ $unread_count = countUnreadNotificationsAdmin();
                         }
                     });
             }
+
+            $(document).ready(function () {
+                $('#scheduleTable').DataTable({
+                    "paging": true,       // Enable pagination
+                    "searching": true,    // Enable searching
+                    "ordering": true,     // Enable sorting
+                    "info": true,         // Display info like "Showing 1 to 10 of 50 entries"
+                    "pageLength": 10,     // Set the default page length
+                    "order": [[0, 'asc']] // Set default sorting by the first column (ID) in ascending order
+                });
+            });
+
         </script>
 
 </body>

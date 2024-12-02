@@ -29,6 +29,7 @@ $unread_count = countUnreadNotificationsAdmin();
     <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link href="build/css/custom.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
     <style>
         .read {
@@ -48,7 +49,8 @@ $unread_count = countUnreadNotificationsAdmin();
             <div class="col-md-3 left_col">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-                        <a href="adminDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain Master DC</span></a>
+                        <a href="adminDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain
+                                Master DC</span></a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -73,8 +75,8 @@ $unread_count = countUnreadNotificationsAdmin();
 
             <div class="right_col" role="main">
 
-                <table class="table table-striped">
-                    <thead>
+                <table id="removedClientsTable" class="table table-striped table-bordered">
+                    <thead class="table-dark">
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Name</th>
@@ -87,16 +89,17 @@ $unread_count = countUnreadNotificationsAdmin();
                     <tbody>
                         <?php
                         include('includes/dbconn.php');
-                        $query = "SELECT * FROM removed_clients"; // Update to fetch from removed_clients table
+                        $query = "SELECT * FROM removed_clients";
                         $result = mysqli_query($conn, $query);
                         while ($row = mysqli_fetch_assoc($result)) {
                             echo "<tr>";
-                            echo "<td>" . $row['id'] . "</td>";
+                            echo "<td>" . htmlspecialchars($row['id']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['name']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['company']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['position']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['reason']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['removed_at']) . "</td>";
+                            echo "</tr>";
                         }
                         ?>
                     </tbody>
@@ -109,6 +112,19 @@ $unread_count = countUnreadNotificationsAdmin();
     <script src="vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="vendors/fastclick/lib/fastclick.js"></script>
     <script src="build/js/custom.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#removedClientsTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "pageLength": 10,
+                "order": [[0, "asc"]] // Default sort by "#" column ascending
+            });
+        });
+    </script>
 </body>
 
 </html>

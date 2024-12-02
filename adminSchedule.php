@@ -25,6 +25,7 @@ $unread_count = countUnreadNotificationsAdmin();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="images/favicon.ico" type="image/ico" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
     <title>Admin Patient Schedule</title>
 
@@ -198,15 +199,11 @@ $unread_count = countUnreadNotificationsAdmin();
                 </div>
 
 
-                <table class="table table-striped">
+                <table id="scheduleTable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Slots</th>
-                            <th scope="col">Slots Date</th>
-                            <th scope="col">Start Time</th>
-                            <th scope="col">End Time</th>
-                            <th scope="col">Duration</th>
+                            <th scope="col">Date</th>
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -214,33 +211,26 @@ $unread_count = countUnreadNotificationsAdmin();
                         <?php
                         include 'includes/dbconn.php';
 
-                        $sql = "SELECT * FROM schedule_record_table";
+                        $sql = "SELECT * FROM client_schedule";
                         $query = $conn->query($sql);
                         while ($row = $query->fetch_assoc()) {
                             ?>
                             <tr>
-                                <th scope="row"><?php echo $row['ID']; ?></th>
-                                <td><?php echo $row['Slots']; ?></td>
-                                <td><?php echo $row['Slots_Date']; ?></td>
-                                <td><?php echo $row['Start_Time']; ?></td>
-                                <td><?php echo $row['End_Time']; ?></td>
-                                <td><?php echo $row['Durations']; ?></td>
+                                <th scope="row"><?php echo $row['id']; ?></th>
+                                <td><?php echo $row['schedule_date']; ?></td>
                                 <td>
-
-                                    <a href="#" data-id="<?php echo $row['ID']; ?>" class="btn btn-success btn-sm edit"><i
-                                            class="fa fa-edit" aria-hidden="true"></i>
-                                        Edit</a>
-                                    <a href="#" data-id="<?php echo $row['ID']; ?>" class="btn btn-danger btn-sm delete"><i
+                                    <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-success btn-sm edit"><i
+                                            class="fa fa-edit" aria-hidden="true"></i> Edit</a>
+                                    <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-danger btn-sm delete"><i
                                             class="fa fa-trash" aria-hidden="true"></i> Delete</a>
                                 </td>
                             </tr>
-
                             <?php
                         }
                         ?>
-                        <!-- More rows as needed -->
                     </tbody>
                 </table>
+
             </div>
 
 
@@ -288,6 +278,7 @@ $unread_count = countUnreadNotificationsAdmin();
 
         <!-- Custom Theme Scripts -->
         <script src="build/js/custom.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 
         <?php include "includes/booking_modal.php"; ?>
@@ -413,6 +404,18 @@ $unread_count = countUnreadNotificationsAdmin();
                 endTimeInput.addEventListener('input', calculateSlots);
                 durationsInput.addEventListener('input', calculateSlots);
             });
+
+            $(document).ready(function () {
+                $('#scheduleTable').DataTable({
+                    "paging": true,       // Enable pagination
+                    "searching": true,    // Enable searching
+                    "ordering": true,     // Enable sorting
+                    "info": true,         // Display info like "Showing 1 to 10 of 50 entries"
+                    "pageLength": 10,     // Set the default page length
+                    "order": [[0, 'asc']] // Set default sorting by the first column (ID) in ascending order
+                });
+            });
+
 
         </script>
 

@@ -27,6 +27,7 @@ $unread_count = countUnreadNotificationsAdmin();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="images/favicon.ico" type="image/ico" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <title>Admin Booking Logs</title>
 
     <link href="vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -85,7 +86,7 @@ $unread_count = countUnreadNotificationsAdmin();
                     <button class="btn btn-danger" id="deleteLogs">Delete All Logs</button>
                 </div>
 
-                <table class="table table-striped table-bordered">
+                <table id="logMessageTable" class="table table-striped table-bordered">
                     <thead class="table-dark">
                         <tr>
                             <th>Timestamp</th>
@@ -111,6 +112,7 @@ $unread_count = countUnreadNotificationsAdmin();
                         <?php endif; ?>
                     </tbody>
                 </table>
+
             </div>
         </div>
     </div>
@@ -119,6 +121,7 @@ $unread_count = countUnreadNotificationsAdmin();
     <script src="vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="vendors/fastclick/lib/fastclick.js"></script>
     <script src="build/js/custom.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
     <script>
         // Print All Data
@@ -163,6 +166,18 @@ $unread_count = countUnreadNotificationsAdmin();
                 }
             });
         });
+
+        $(document).ready(function () {
+            $('#logMessageTable').DataTable({
+                "paging": true,       // Enable pagination
+                "searching": true,    // Enable searching
+                "ordering": true,     // Enable sorting
+                "info": true,         // Display info like "Showing 1 to 10 of 50 entries"
+                "pageLength": 10,     // Set the default page length
+                "order": [[0, 'desc']] // Sort by the "Timestamp" column in descending order
+            });
+        });
+
     </script>
 </body>
 
