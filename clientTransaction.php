@@ -394,7 +394,7 @@ $unread_count = countUnreadNotificationsClient($id);
                     "pageLength": 10,       // Set the default page length
                     "order": [[0, 'desc']], // Sort by transaction ID (or modify as needed)
                     "columnDefs": [
-                        { "orderable": false, "targets": [7] } // Disable sorting for the Action column
+                        { "orderable": false, "targets": [6] } // Disable sorting for the Action column
                     ]
                 });
             });
