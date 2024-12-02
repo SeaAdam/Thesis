@@ -452,7 +452,7 @@ $unread_count = countUnreadNotificationsClient($id);
 
                                     <div class="mb-3">
                                         <label for="serviceType" class="form-label">Service Type</label>
-                                        <select class="form-control" id="serviceType" name="serviceType">
+                                        <select class="form-control" id="serviceType" name="serviceType" required>
                                             <option>--SELECT--</option>
                                             <?php
                                             include 'includes/dbconn.php';

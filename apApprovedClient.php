@@ -84,7 +84,7 @@ $unread_count = countUnreadNotificationsAdmin();
                 </div>
             </div>
 
-            <?php include 'top_nav_admin.php'; ?>
+            <?php include 'top_nav_admin.php'; ?>   
 
             <div class="right_col" role="main">
                 <h2>Approved Transactions</h2>

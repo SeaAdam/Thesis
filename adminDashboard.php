@@ -1,5 +1,4 @@
 <?php
-
 include 'login.php';
 
 // Check if the user is logged in and is an admin
@@ -554,6 +553,7 @@ $unread_count = countUnreadNotificationsAdmin();
                         }
                     });
             }
+
         </script>
 
 </body>
