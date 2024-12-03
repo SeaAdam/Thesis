@@ -3,10 +3,10 @@ header('Content-Type: application/json');
 
 include 'includes/dbconn.php';
 
-// Create connection
+
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check connection
+
 if ($conn->connect_error) {
     die(json_encode(['error' => 'Connection failed: ' . $conn->connect_error]));
 }
@@ -19,7 +19,7 @@ if (!isset($_GET['schedule_id']) || empty($_GET['schedule_id'])) {
 $schedule_id = $_GET['schedule_id'];
 
 if ($schedule_id > 0) {
-    // Fetch time slots based on the schedule_id
+
     $sql = "
         SELECT ts.ID, ts.start_time, ts.end_time, sr.Slots,
                IFNULL(b.count, 0) AS booked_count
@@ -40,7 +40,7 @@ if ($schedule_id > 0) {
 
     $time_slots = [];
     while ($row = $result->fetch_assoc()) {
-        // Determine if the slot is booked
+
         $is_booked = ($row['booked_count'] > 0 || $row['Slots'] <= 0) ? true : false;
 
         $time_slots[] = [
@@ -52,7 +52,7 @@ if ($schedule_id > 0) {
         ];
     }
 
-    // Output the time slots in JSON format
+
     echo json_encode($time_slots);
 
     $stmt->close();

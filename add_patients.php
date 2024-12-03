@@ -21,21 +21,21 @@ $Username = $_POST['Username'];
 $Password = $_POST['Password'];
 $ConfirmPassword = $_POST['ConfirmPassword'];
 
-// Check if passwords match
+
 if ($Password !== $ConfirmPassword) {
     $_SESSION['errorPasswordMatch'] = "Passwords do not match.";
     header('Location: index.php');
     exit();
 }
 
-// Validate password strength (at least 8 characters, including numbers and letters)
+
 if (!preg_match('/^(?=.*\d)(?=.*[a-zA-Z]).{8,}$/', $Password)) {
     $_SESSION['errorPassword'] = "Password must be at least 8 characters long and contain both numbers and letters.";
     header('Location: adminPatients.php');
     exit();
 }
 
-// Check if username already exists
+
 $check_query = "SELECT * FROM registration_table WHERE Username = ? OR (FirstName = ? AND LastName = ?)";
 $check_stmt = $mysqli->prepare($check_query);
 $check_stmt->bind_param("sss", $Username, $FirstName, $LastName);
@@ -52,10 +52,10 @@ if ($check_stmt->num_rows > 0) {
 
 $check_stmt->close();
 
-// // Hash the password
-// $hashedPassword = password_hash($Password, PASSWORD_DEFAULT);
 
-// Insert new user into database
+
+
+
 $query = "INSERT INTO registration_table (FirstName, MI, LastName, Gender, DOB, Age, Contact, PresentAddress, Username, Password, ConfirmPassword) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 $stmt = $mysqli->prepare($query);
 $stmt->bind_param("sssssssssss", $FirstName, $MI, $LastName, $Gender, $DOB, $Age, $Contact, $PresentAddress, $Username, $Password, $ConfirmPassword);

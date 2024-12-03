@@ -9,14 +9,14 @@ if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
 }
 
-// Get form data
+
 $slots = $_POST['Slots'];
 $slots_Date = $_POST['SlotsDate'];
 $start_Time = $_POST['StartTime'];
 $end_Time = $_POST['EndTime'];
 $durations = $_POST['Durations'];   
 
-// Check if the date is occupied by another event
+
 $check_query = "SELECT * FROM schedule_record_table WHERE Slots_Date = ?";
 $check_stmt = $mysqli->prepare($check_query);
 $check_stmt->bind_param("s", $slots_Date);
@@ -33,17 +33,17 @@ if ($check_stmt->num_rows > 0) {
 
 $check_stmt->close();
 
-// Insert new schedule
+
 $query = "INSERT INTO schedule_record_table (Slots, Slots_Date, Start_Time, End_Time, Durations) VALUES (?, ?, ?, ?, ?)";
 $stmt = $mysqli->prepare($query);
 $stmt->bind_param("sssss", $slots, $slots_Date, $start_Time, $end_Time, $durations);
 
 if ($stmt->execute()) {
-    // Get the ID of the newly inserted schedule
+
     $schedule_id = $stmt->insert_id;
     $_SESSION['save'] = "Event added successfully.";
     
-    // Insert new time slots
+
     $start = new DateTime($start_Time);
     $end = new DateTime($end_Time);
     $interval = new DateInterval('PT' . $durations . 'M');
@@ -59,7 +59,7 @@ if ($stmt->execute()) {
         $start_time_str = $start->format('H:i:s');
         $end_time_str = $slot_end->format('H:i:s');
         
-        // Insert new time slot
+
         $insert_query = "INSERT INTO time_slots (start_time, end_time, schedule_id) VALUES (?, ?, ?)";
         $insert_stmt = $mysqli->prepare($insert_query);
         $insert_stmt->bind_param('ssi', $start_time_str, $end_time_str, $schedule_id);

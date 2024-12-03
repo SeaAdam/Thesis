@@ -1,7 +1,7 @@
 <?php
 include 'includes/dbconn.php';
 
-// Set content type to JSON
+
 header('Content-Type: application/json');
 
 if (isset($_GET['id'])) {

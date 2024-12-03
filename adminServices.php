@@ -1,16 +1,15 @@
 <?php
 include 'login.php';
 
-// Check if the user is logged in and is an admin
 if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'admin') {
-    header('Location: index.php'); // Redirect to login page if not logged in as admin
+    header('Location: index.php'); 
     exit();
 }
 
-// Retrieve the admin username from the session
+
 $adminUsername = $_SESSION['username'];
-// Fetch notifications
-include 'notification_functions.php'; // Include the file with fetchNotificationsAdmin function
+
+include 'notification_functions.php'; 
 $notificationsAdmin = fetchNotificationsAdmin();
 $unread_count = countUnreadNotificationsAdmin();
 ?>

@@ -11,14 +11,14 @@ if (isset($_POST['submit'])) {
     $End_Time = $_POST['End_Time'];
     $Durations = $_POST['Durations'];
 
-    // Update the schedule record
+
     $sql = "UPDATE schedule_record_table SET Slots=?, Slots_Date=?, Start_Time=?, End_Time=?, Durations=? WHERE ID=?";
     if ($stmt = $conn->prepare($sql)) {
         $stmt->bind_param('sssssi', $Slots, $Slots_Date, $Start_Time, $End_Time, $Durations, $ID);
         if ($stmt->execute()) {
             $_SESSION['successEditSchedule'] = "Schedule information successfully updated!";
 
-            // Delete existing time slots for this schedule
+
             $delete_time_slots_query = "DELETE FROM time_slots WHERE schedule_id=?";
             if ($delete_stmt = $conn->prepare($delete_time_slots_query)) {
                 $delete_stmt->bind_param('i', $ID);
@@ -30,7 +30,7 @@ if (isset($_POST['submit'])) {
                 exit();
             }
 
-            // Insert updated time slots
+
             $start = new DateTime($Start_Time);
             $end = new DateTime($End_Time);
             $interval = new DateInterval('PT' . $Durations . 'M');
@@ -46,7 +46,7 @@ if (isset($_POST['submit'])) {
                 $start_time_str = $start->format('H:i:s');
                 $end_time_str = $slot_end->format('H:i:s');
 
-                // Insert new time slot
+
                 $insert_query = "INSERT INTO time_slots (start_time, end_time, schedule_id) VALUES (?, ?, ?)";
                 if ($insert_stmt = $conn->prepare($insert_query)) {
                     $insert_stmt->bind_param('ssi', $start_time_str, $end_time_str, $ID);
