@@ -60,6 +60,26 @@ if (isset($_POST['id']) && isset($_POST['status'])) {
                 throw new Exception("Error sending email notification.");
             }
 
+            // Insert reminder logic
+            $sql = "SELECT date_seen FROM appointment_system.transactions WHERE ID = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('i', $transactionId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $transaction = $result->fetch_assoc();
+            $dateSeen = $transaction['date_seen'];
+
+            // Calculate reminder_time (1 minute after date_seen)
+            $reminderTime = date('Y-m-d H:i:s', strtotime($dateSeen . ' +1 minute'));
+
+            // Insert into user_appointment_reminders table
+            $reminderSql = "INSERT INTO user_appointment_reminders (transaction_id, user_id, reminder_time) 
+                            VALUES (?, ?, ?)";
+            $reminderStmt = $conn->prepare($reminderSql);
+            $reminderStmt->bind_param('iis', $transactionId, $userId, $reminderTime);
+            $reminderStmt->execute();
+
+            // Additional logic if status is 'Completed' or 'Rejected'
             if ($status === 'Completed' || $status === 'Rejected') {
                 
                 $sql = "SELECT schedule_id FROM appointment_system.transactions WHERE ID = ?";
@@ -82,15 +102,19 @@ if (isset($_POST['id']) && isset($_POST['status'])) {
                 }
             }
 
+            // Commit the transaction
             $conn->commit();
             echo 'Success';
         } else {
             echo 'No changes made';
         }
 
+        // Close all statements
         $stmt->close();
         $notificationStmt->close();
+        $reminderStmt->close();
     } catch (Exception $e) {
+        // Rollback transaction in case of errors
         $conn->rollback();
         error_log("Exception: " . $e->getMessage());
         echo 'Error: ' . $e->getMessage();
@@ -99,6 +123,7 @@ if (isset($_POST['id']) && isset($_POST['status'])) {
     echo 'No ID or status provided';
 }
 
+// Close the database connection
 $conn->close();
 
 ?>

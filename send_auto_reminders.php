@@ -35,7 +35,16 @@ function sendEmailNotification($to, $subject, $message)
     }
 }
 
-// Query to fetch reminders that haven't been sent yet and where reminder time has passed
+function logToDatabase($message, $conn)
+{
+    $sql = "INSERT INTO booking_logs (message) VALUES (?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('s', $message);
+    $stmt->execute();
+    $stmt->close();
+}
+
+// Query to fetch appointment reminders for client-specific reminders that haven't been sent yet and where reminder time has passed
 $sql = "SELECT ar.id, ar.client_booking_id, ar.reminder_time, cb.account_id
         FROM appointment_reminders ar
         JOIN client_booking cb ON ar.client_booking_id = cb.id
@@ -44,7 +53,7 @@ $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     while ($reminder = $result->fetch_assoc()) {
-        // Get client's email address
+        // Get client's email address for appointment reminders
         $sql = "SELECT email_address FROM clients_info WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param('i', $reminder['account_id']);
@@ -57,23 +66,73 @@ if ($result->num_rows > 0) {
             $subject = "Reminder: Appointment Reminder";
             $message = "This is a reminder for your appointment with ID " . $reminder['client_booking_id'];
 
-            // Send email notification
+            // Send email notification for appointment reminder
             if (sendEmailNotification($userEmail, $subject, $message)) {
                 // Update appointment_reminders table to mark reminder as sent
                 $sql = "UPDATE appointment_reminders SET sent = 1 WHERE id = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param('i', $reminder['id']);
                 $stmt->execute();
+
+                // Log success
+                logToDatabase("Successfully sent reminder for booking ID " . $reminder['client_booking_id'], $conn);
             } else {
-                error_log('Failed to send reminder for booking ID ' . $reminder['client_booking_id']);
+                // Log failure
+                logToDatabase("Failed to send reminder for booking ID " . $reminder['client_booking_id'], $conn);
             }
         } else {
-            error_log('Invalid email address for booking ID ' . $reminder['client_booking_id']);
+            // Log invalid email for appointment reminder
+            logToDatabase("Invalid email address for booking ID " . $reminder['client_booking_id'], $conn);
         }
     }
-    echo 'Reminders sent successfully';
+    echo 'Appointment reminders sent successfully';
 } else {
-    echo 'No reminders to send.';
+    echo 'No appointment reminders to send.';
+}
+
+// Now handle user-specific reminders (the section for user reminders using the user_2fa table)
+$sql = "SELECT id, user_id, reminder_time 
+        FROM user_appointment_reminders 
+        WHERE sent = 0 AND reminder_time <= NOW()";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    while ($reminder = $result->fetch_assoc()) {
+        // Get user's email address for user-specific reminders
+        $sql = "SELECT email FROM user_2fa WHERE userID = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('i', $reminder['user_id']);  // Use 'user_id' from the reminder table
+        $stmt->execute();
+        $userResult = $stmt->get_result();
+        $user = $userResult->fetch_assoc();
+        $userEmail = $user['email'];
+
+        if ($userEmail && filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
+            $subject = "Reminder: Your Upcoming Appointment";
+            $message = "This is a reminder for your upcoming appointment with ID " . $reminder['id'];
+
+            // Send email notification for user reminder
+            if (sendEmailNotification($userEmail, $subject, $message)) {
+                // Update user_appointment_reminders table to mark reminder as sent
+                $sql = "UPDATE user_appointment_reminders SET sent = 1 WHERE id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('i', $reminder['id']);
+                $stmt->execute();
+
+                // Log success
+                logToDatabase("Successfully sent user reminder for appointment ID " . $reminder['id'], $conn);
+            } else {
+                // Log failure
+                logToDatabase("Failed to send user reminder for appointment ID " . $reminder['id'], $conn);
+            }
+        } else {
+            // Log invalid email for user reminder
+            logToDatabase("Invalid email address for user reminder for appointment ID " . $reminder['id'], $conn);
+        }
+    }
+    echo 'User reminders sent successfully';
+} else {
+    echo 'No user reminders to send.';
 }
 
 $conn->close();
