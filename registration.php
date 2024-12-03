@@ -61,7 +61,7 @@ $stmt->bind_param("sssssssssss", $FirstName, $MI, $LastName, $Gender, $DOB, $Age
 
 if ($stmt->execute()) {
     $response['status'] = 'success';
-    $response['role'] = 'Client';
+    $response['role'] = 'Patient';
     logAction(0, 'Successful registration', "Username: $Username, FirstName: $FirstName, LastName: $LastName, Registered successfully.");
 } else {
     $response['status'] = 'error';
