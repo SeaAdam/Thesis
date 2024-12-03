@@ -16,6 +16,21 @@ include 'count_Dashboard.php';
 include 'notification_functions.php'; // Include the file with fetchNotificationsAdmin function
 $notificationsAdmin = fetchNotificationsAdmin();
 $unread_count = countUnreadNotificationsAdmin();
+
+$maxValue = 100; // Assuming 100 as the maximum value for percentage
+
+// Calculate percentage for each count
+$percentPatient = ($countPatient / $maxValue) * 100;
+$percentServices = ($countServices / $maxValue) * 100;
+$percentSchedules = ($countSchedules / $maxValue) * 100;
+$percentAdmin = ($countAdmin / $maxValue) * 100;
+$percentBlocked = ($countBlocked / $maxValue) * 100;
+$percentClients = ($countClients / $maxValue) * 100;
+$percentClientSchedules = ($countClientSchedules / $maxValue) * 100;
+$percentEvents = ($countEvents / $maxValue) * 100;
+$percentHolidays = ($countHolidays / $maxValue) * 100;
+$percentRemovedClients = ($countRemovedClients / $maxValue) * 100;
+$percentReviews = ($countReviews / $maxValue) * 100;
 ?>
 
 <!DOCTYPE html>
@@ -170,127 +185,8 @@ $unread_count = countUnreadNotificationsAdmin();
 
             <?php include 'top_nav_admin.php'; ?>
 
-
-            <div class="right_col" role="main">
-                <div class="row">
-
-                    <?php include 'status.php'; ?>
-
-                    <div class="col-sm-3 py-3">
-                        <div class="card h-100 text-white bg-primary">
-                            <div class="card-body">
-                                <h3 class="card-title"><?php echo $countPatient; ?></h3>
-                                <p class="card-text">Total Patients</p>
-                                <h1><i class="fa fa-user-md" aria-hidden="true"></i></h1>
-                            </div>
-                            <div class="card-footer bg-transparent border-light"><a href="adminPatients.php"
-                                    class="btn btn-outline-light" style="float: right;">More Info <span><i
-                                            class="fa fa-arrow-circle-right" aria-hidden="true"></i></span></a></div>
-                        </div>
-                    </div>
-                    <div class="col-sm-3 py-3">
-                        <div class="card h-100 text-white bg-success">
-                            <div class="card-body">
-                                <h3 class="card-title"><?php echo $countServices; ?></h3>
-                                <p class="card-text">Services</p>
-                                <h1><i class="fa fa-line-chart" aria-hidden="true"></i></h1>
-                            </div>
-                            <div class="card-footer bg-transparent border-light"><a href="adminServices.php"
-                                    class="btn btn-outline-light" style="float: right;">More Info <span><i
-                                            class="fa fa-arrow-circle-right" aria-hidden="true"> </i></a></div>
-
-                        </div>
-                    </div>
-                    <div class="col-sm-3 py-3">
-                        <div class="card h-100 text-white bg-dark">
-                            <div class="card-body">
-                                <h3 class="card-title"><?php echo $countSchedules; ?></h3>
-                                <p class="card-text">Schedules</p>
-                                <h1><i class="fa fa-calendar" aria-hidden="true"></i></h1>
-                            </div>
-                            <div class="card-footer bg-transparent border-light"><a href="adminSchedule.php"
-                                    class="btn btn-outline-light" style="float: right;">More Info <span><i
-                                            class="fa fa-arrow-circle-right" aria-hidden="true"> </i></a></div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modalTitle">Book for:</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <p id="modalDate">Select a time slot:</p>
-                                <div id="modalSlots"></div>
-
-                                <button id="toggleSlotsButton" class="btn btn-secondary" style="margin-top: 15px;">Show
-                                    Time Slots</button>
-
-                                <form id="bookingForm" method="POST" action="add_booking.php"
-                                    style="display: none; margin-top: 15px;">
-                                    <div class="mb-3">
-                                        <label for="selectedTimeSlot" class="form-label">Selected Time Slot</label>
-                                        <input type="text" class="form-control" id="selectedTimeSlot"
-                                            name="selectedTimeSlot" readonly>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="patientName" class="form-label">Patient Name</label>
-                                        <select class="form-control" id="patientName" name="patientName">
-                                            <option>--SELECT--</option>
-                                            <?php
-                                            include 'includes/dbconn.php';
-                                            $sql = "SELECT ID, CONCAT(FirstName, ' ', MI, ' ', LastName) AS fullName FROM registration_table";
-                                            $query = $conn->query($sql);
-                                            while ($row = $query->fetch_assoc()) {
-                                                ?>
-                                                <option value="<?php echo $row['ID']; ?>">
-                                                    <?php echo $row['fullName']; ?>
-                                                </option>
-                                                <?php
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="serviceType" class="form-label">Service Type</label>
-                                        <select class="form-control" id="serviceType" name="serviceType">
-                                            <option>--SELECT--</option>
-                                            <?php
-                                            include 'includes/dbconn.php';
-                                            $sql = "SELECT * FROM services_table";
-                                            $query = $conn->query($sql);
-                                            while ($row = $query->fetch_assoc()) {
-                                                ?>
-                                                <option value="<?php echo $row['ID']; ?>">
-                                                    <?php echo $row['Services']; ?>
-                                                </option>
-                                                <?php
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-
-                                    <input type="hidden" id="scheduleId" name="scheduleId">
-                                    <input type="hidden" id="timeSlotId" name="timeSlotId">
-
-                                    <button type="submit" class="btn btn-primary">Submit Booking</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-            </div>
+            <?php include 'admin_dashboard_content.php'; ?>
+            
 
 
 
@@ -339,181 +235,6 @@ $unread_count = countUnreadNotificationsAdmin();
         <script src="build/js/custom.min.js"></script>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                var dashboardCalendarEl = document.getElementById('calendar');
-                var eventModal = document.getElementById('eventModal');
-                var toggleButton = document.getElementById('toggleSlotsButton');
-                var modalSlots = document.getElementById('modalSlots');
-                var bookingForm = document.getElementById('bookingForm');
-                var modalTitle = document.getElementById('modalTitle');
-                var modalDate = document.getElementById('modalDate');
-                var selectedTimeSlot = document.getElementById('selectedTimeSlot');
-                var scheduleIdField = document.getElementById('scheduleId');
-                var timeSlotIdField = document.getElementById('timeSlotId');
-                var serviceTypeSelect = document.getElementById('serviceType');
-
-                // Initialize FullCalendar
-                var dashboardCalendar = new FullCalendar.Calendar(dashboardCalendarEl, {
-                    initialView: 'dayGridMonth',
-                    selectable: true,
-                    events: function (info, successCallback, failureCallback) {
-                        var sources = ['schedule.php', 'fetch_events.php'];
-                        var combinedEvents = [];
-
-                        var fetchNext = function (index) {
-                            if (index >= sources.length) {
-                                successCallback(combinedEvents);
-                                return;
-                            }
-
-                            fetch(sources[index])
-                                .then(response => response.json())
-                                .then(data => {
-                                    // Add a source identifier to each event
-                                    data.forEach(event => {
-                                        event.source = sources[index]; // Assign the source filename
-                                    });
-
-                                    combinedEvents = combinedEvents.concat(data);
-                                    fetchNext(index + 1);
-                                })
-                                .catch(error => {
-                                    console.error('Error fetching events:', error);
-                                    fetchNext(index + 1);
-                                });
-                        };
-
-                        fetchNext(0);
-                    },
-                    eventDidMount: function (info) {
-                        // Check if the event is from 'schedule.php'
-                        if (info.event.extendedProps && info.event.extendedProps.source === 'schedule.php') {
-                            const slotsRemaining = parseInt(info.el.querySelector('.fc-event-title').textContent, 10);
-
-                            // Apply background color based on slot availability
-                            if (slotsRemaining === undefined) {
-                                console.error('slots_remaining is undefined for event:', info.event);
-                            } else if (slotsRemaining === 0) {
-                                // Change background color of the event to red
-                                info.el.style.backgroundColor = 'red';
-                                info.el.classList.add('event-unavailable');
-                            } else {
-                                // Change background color of the event to green
-                                info.el.style.backgroundColor = 'green';
-                                info.el.classList.add('event-available');
-                            }
-
-                            // Add the button for slot viewing
-                            let button = document.createElement('button');
-                            button.textContent = info.event.extendedProps.buttonText || 'View Slots';
-                            button.className = 'btn btn-warning btn-sm';
-                            button.onclick = function () {
-                                modalTitle.textContent = `BOOK FOR: ${info.event.start.toLocaleDateString()}`;
-                                modalDate.textContent = `SLOTS: ${info.event.title}`;
-
-                                let scheduleId = info.event.extendedProps.schedule_id;
-                                scheduleIdField.value = scheduleId; // Set the scheduleId field
-
-                                fetch(`fetch_time_slots.php?schedule_id=${scheduleId}`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (Array.isArray(data) && data.length > 0) {
-                                            let slotsHtml = data.map(slot => {
-                                                let buttonClass = slot.is_booked ? 'btn btn-outline-secondary disabled' : 'btn btn-outline-primary slot-button';
-                                                let buttonText = slot.is_booked ? 'Unavailable' : `${slot.start_time} - ${slot.end_time}`;
-
-                                                return `
-                                        <li>
-                                            <button class="${buttonClass}" 
-                                                    data-id="${slot.id}" 
-                                                    data-start="${slot.start_time}" 
-                                                    data-end="${slot.end_time}"
-                                                    data-slots="${slot.slots_remaining}">
-                                                ${buttonText}
-                                            </button>
-                                        </li>`;
-                                            }).join('');
-                                            modalSlots.innerHTML = `Available Time Slots:<ul>${slotsHtml}</ul>`;
-
-                                            document.querySelectorAll('.slot-button:not(.disabled)').forEach(button => {
-                                                button.addEventListener('click', function () {
-                                                    selectedTimeSlot.value = `${this.dataset.start} - ${this.dataset.end}`;
-                                                    timeSlotIdField.value = this.dataset.id; // Set the timeSlotId field
-                                                    bookingForm.style.display = 'block';
-                                                    modalSlots.style.display = 'none';
-                                                    toggleButton.style.display = 'inline-block';
-                                                });
-                                            });
-                                        } else {
-                                            modalSlots.innerHTML = 'No available time slots.';
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error fetching time slots:', error);
-                                        modalSlots.textContent = 'Failed to load time slots.';
-                                    });
-
-                                // Show the modal
-                                $(eventModal).modal('show');
-                            };
-
-                            info.el.appendChild(button);
-                        } else {
-                            // Reset background color for events not from 'schedule.php' (e.g., holidays)
-                            info.el.style.backgroundColor = 'gray'; // Reset to default background color
-                        }
-                    }
-                });
-
-                dashboardCalendar.render();
-
-                // Initially hide the toggle button and the booking form
-                toggleButton.style.display = 'none';
-                bookingForm.style.display = 'none';
-
-                // Event listener for the toggle button
-                toggleButton.addEventListener('click', function () {
-                    if (modalSlots.style.display === 'none') {
-                        // Show the time slots
-                        modalSlots.style.display = 'block';
-                        // Hide the booking form
-                        bookingForm.style.display = 'none';
-                        // Hide the toggle button again
-                        toggleButton.style.display = 'none';
-                    } else {
-                        // Hide the time slots
-                        modalSlots.style.display = 'none';
-                        // Show the booking form
-                        bookingForm.style.display = 'block';
-                        // Show the toggle button
-                        toggleButton.style.display = 'inline-block';
-                    }
-                });
-
-                // Refresh page when the modal is closed
-                $(eventModal).on('hidden.bs.modal', function () {
-                    location.reload();
-                });
-            });
-
-            // Intercept form submission
-            document.getElementById('bookingForm').addEventListener('submit', function (e) {
-                e.preventDefault(); // Prevent the default form submission
-
-                // Display the SweetAlert confirmation
-                Swal.fire({
-                    title: 'Appointment Booked!',
-                    text: 'Your appointment has been successfully booked.',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // If the user clicks 'OK', submit the form
-                        this.submit();
-                    }
-                });
-            });
-
             function markAsRead(transaction_no) {
                 fetch(`mark_notification_read_admin.php?transaction_no=${encodeURIComponent(transaction_no)}`)
                     .then(response => response.json())

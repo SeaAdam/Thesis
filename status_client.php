@@ -5,7 +5,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$sql = "SELECT status, COUNT(*) as total FROM transactions GROUP BY status";
+$sql = "SELECT status, COUNT(*) as total FROM client_booking GROUP BY status";
 $result = $conn->query($sql);
 
 $statusCounts = [
@@ -27,7 +27,7 @@ $conn->close();
 <div class="col-md-6 col-sm-6">
     <div class="x_panel">
         <div class="x_title">
-            <h2>Patient Booking Overview <small>Transaction Summary</small></h2>
+            <h2>Client Booking Overview <small>Transaction Summary</small></h2>
             <ul class="nav navbar-right panel_toolbox">
                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
                 <li><a class="close-link"><i class="fa fa-close"></i></a></li>
@@ -36,7 +36,7 @@ $conn->close();
         </div>
         <div class="x_content">
             <div class="chart-container" style="position: relative; width: 100%; height: 300px;">
-                <canvas id="statusDoughnutChart1"></canvas>
+                <canvas id="statusDoughnutChart2"></canvas>
             </div>
         </div>
     </div>
@@ -45,7 +45,7 @@ $conn->close();
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        var ctx1 = document.getElementById('statusDoughnutChart1').getContext('2d');
+        var ctx2 = document.getElementById('statusDoughnutChart2').getContext('2d');
 
         // Data from PHP
         var statusData = <?php echo json_encode($statusCounts); ?>;
@@ -53,7 +53,7 @@ $conn->close();
         var statusLabels = Object.keys(statusData);
         var statusValues = Object.values(statusData);
 
-        var statusDoughnutChart = new Chart(ctx1, {
+        var statusDoughnutChart = new Chart(ctx2, {
             type: 'doughnut',
             data: {
                 labels: statusLabels,

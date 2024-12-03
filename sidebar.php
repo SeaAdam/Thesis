@@ -9,8 +9,11 @@ if (isset($_SESSION['unlocked_pages']['adminAccount.php'])) {
     <div class="menu_section">
         <h3>General</h3>
         <ul class="nav side-menu">
-            <li><a href="adminDashboard.php"><i class="fa fa-home"></i> Dashboard </a>
-            </li>
+            <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="adminDashboard.php">Dashboard</a></li>
+                    </ul>
+                  </li>
             <li><a href="adminBookPatient.php"><i class="fa fa-book"></i> Book Appoinment - Patient
                 </a>
             </li>
@@ -24,7 +27,7 @@ if (isset($_SESSION['unlocked_pages']['adminAccount.php'])) {
             <li><a><i class="fa fa-desktop"></i> Clients <span class="fa fa-chevron-down"></span>
                 </a>
                 <ul class="nav child_menu">
-                <li><a href="adminClients.php">Active Clients</a></li>
+                    <li><a href="adminClients.php">Active Clients</a></li>
                     <li><a href="removeClients.php">Force Remove Clients</a></li>
                 </ul>
             </li>
