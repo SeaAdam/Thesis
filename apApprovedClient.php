@@ -84,7 +84,7 @@ $unread_count = countUnreadNotificationsAdmin();
                 </div>
             </div>
 
-            <?php include 'top_nav_admin.php'; ?>   
+            <?php include 'top_nav_admin.php'; ?>
 
             <div class="right_col" role="main">
                 <h2>Approved Transactions</h2>
@@ -225,12 +225,15 @@ $unread_count = countUnreadNotificationsAdmin();
 
             function updateTransactionStatus(id, status) {
                 var xhr = new XMLHttpRequest();
-                xhr.open("POST", "update_status_client.php", true); // Ensure this matches your PHP file
+                xhr.open("POST", "update_status_client.php", true);
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
                         Swal.close(); // Close the loading spinner
+
+                        // Log the response to check if it's 'Success' or something else
+                        console.log(xhr.responseText.trim());
 
                         if (xhr.responseText.trim() === 'Success') {
                             Swal.fire(
@@ -238,7 +241,6 @@ $unread_count = countUnreadNotificationsAdmin();
                                 'The transaction has been marked as completed.',
                                 'success'
                             ).then(() => {
-                                // Reload the page to reflect the changes
                                 window.location.reload();
                             });
                         } else {
@@ -254,6 +256,7 @@ $unread_count = countUnreadNotificationsAdmin();
                 // Send the data to the server
                 xhr.send("id=" + encodeURIComponent(id) + "&status=" + encodeURIComponent(status));
             }
+
 
             function markAsRead(transaction_no) {
                 fetch(`mark_notification_read_admin.php?transaction_no=${encodeURIComponent(transaction_no)}`)

@@ -71,6 +71,31 @@ if (isset($_POST['id']) && isset($_POST['status'])) {
             // Send email notification about status update
             $emailSubject = "Appointment Status Updated";
             $emailMessage = "Your appointment with ID $clientBookingID has been $status.";
+
+            if ($status === 'Completed') {
+                // Calculate the exact date and time for picking up the documents (2 working days)
+                $pickupDate = new DateTime();
+                $pickupDate->modify('+2 weekdays'); // Adds 2 working days
+
+                // Format the date and time
+                $pickupDateFormatted = $pickupDate->format('l, F j, Y \a\t g:i A');  // Example: Monday, December 4, 2024 at 3:00 PM
+                // Send email notification with details
+                $emailSubject = "Appointment Status Completed";
+            
+                // Format the message with client details
+                $emailMessage = "
+                    <p>Dear Client,</p>
+                    <p>Thank you for using our appointment system. Your appointment with ID $clientBookingID has been marked as <strong>Completed</strong>.</p>
+                    <p>We are pleased to inform you that the result or hard copy of your files will be available in 2 working days from the date and time you received this email.</p>
+                    <p>You can pick up the documents at our office on <strong>$pickupDateFormatted</strong>.</p>
+                    <p><strong>Location:</strong> 303, Sujeco Building, 1754 E Rodriguez Sr. Ave, Immaculate Conception, Quezon City, 1111 Metro Manila.</p>
+                    <p><strong>Office Hours:</strong> Mon-Fri 8am-5pm (Sun Closed).</p>
+                    <p>We look forward to serving you again!</p>
+                    <p>Best regards,</p>
+                    <p>Brain Master Diagnostic Center</p>
+                ";
+            }
+            
             if (sendEmailNotification($userEmail, $emailSubject, $emailMessage)) {
                 error_log("Email sent successfully to $userEmail");
             } else {
