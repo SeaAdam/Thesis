@@ -1,0 +1,21 @@
+[03-Dec-2024 12:25:44 Europe/Berlin] Received token: bcc0c15409f0e4f73bb1ad480f10d613618a821bd1f3ec22395f522e41a512ed
+[03-Dec-2024 12:25:44 Europe/Berlin] Number of rows returned: 1
+[03-Dec-2024 12:25:44 Europe/Berlin] Token data - Email: earladamit@gmail.com Expiry: 2024-12-03 13:21:58
+[03-Dec-2024 12:25:44 Europe/Berlin] Response: array (
+  'status' => '',
+  'message' => '',
+)
+[03-Dec-2024 12:26:17 Europe/Berlin] Received token: fbf288379b0ab12742abaa87f18480b1dfa838e1b15f35d141bef3c90fc3789a
+[03-Dec-2024 12:26:17 Europe/Berlin] Number of rows returned: 1
+[03-Dec-2024 12:26:17 Europe/Berlin] Token data - Email: earladamit@gmail.com Expiry: 2024-12-03 13:25:55
+[03-Dec-2024 12:26:17 Europe/Berlin] Response: array (
+  'status' => '',
+  'message' => '',
+)
+[03-Dec-2024 12:26:34 Europe/Berlin] Received token: fbf288379b0ab12742abaa87f18480b1dfa838e1b15f35d141bef3c90fc3789a
+[03-Dec-2024 12:26:34 Europe/Berlin] Number of rows returned: 1
+[03-Dec-2024 12:26:34 Europe/Berlin] Token data - Email: earladamit@gmail.com Expiry: 2024-12-03 13:25:55
+[03-Dec-2024 12:26:34 Europe/Berlin] Response: array (
+  'status' => '',
+  'message' => '',
+)
