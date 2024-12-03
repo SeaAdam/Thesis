@@ -246,46 +246,52 @@ $unread_count = countUnreadNotificationsAdmin();
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form id="bookingForm" method="POST" action="add_booking_as_client.php">
+                                <form id="bookingForm" method="POST" action="process_booking_as_admin.php">
                                     <div class="row">
                                         <div class="col-6">
                                             <label for="clientName" class="form-label">Client Name</label>
                                             <select class="form-control" id="clientName" name="clientName">
-                                                <?php echo $clientNameOptions; ?>
+                                                <option>--SELECT--</option>
+                                                <?php
+                                                include 'includes/dbconn.php';
+                                                $sql = "SELECT id, client_name FROM clients_info";
+                                                $query = $conn->query($sql);
+                                                while ($row = $query->fetch_assoc()) {
+                                                    ?>
+                                                    <option value="<?php echo $row['id']; ?>">
+                                                        <?php echo $row['client_name']; ?>
+                                                    </option>
+                                                    <?php
+                                                }
+                                                ?>
                                             </select>
                                         </div>
 
                                         <div class="col-6 mb-3">
                                             <label for="companyName" class="form-label">Company Name</label>
-                                            <select class="form-control" id="companyName" name="companyName">
-                                                <?php echo $companyNameOptions; ?>
-                                            </select>
+                                            <input type="text" class="form-control" id="companyName" name="companyName"
+                                                readonly>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-4">
                                             <label for="address" class="form-label">Address</label>
-                                            <select class="form-control" id="address" name="address">
-                                                <?php echo $addressOptions; ?>
-                                            </select>
+                                            <input type="text" class="form-control" id="address" name="address"
+                                                readonly>
                                         </div>
 
                                         <div class="col-4 mb-3">
                                             <label for="contact" class="form-label">Contact Number</label>
-                                            <select class="form-control" id="contact" name="contact">
-                                                <?php echo $contactOptions; ?>
-                                            </select>
+                                            <input type="text" class="form-control" id="contact" name="contact"
+                                                readonly>
                                         </div>
 
                                         <div class="col-4 mb-3">
                                             <label for="email" class="form-label">Email Address</label>
-                                            <select class="form-control" id="email" name="email">
-                                                <?php echo $emailAddress; ?>
-                                            </select>
+                                            <input type="text" class="form-control" id="email" name="email" readonly>
                                         </div>
                                     </div>
-
 
                                     <div class="mb-3">
                                         <label for="serviceType" class="form-label">Service Type</label>
@@ -485,23 +491,76 @@ $unread_count = countUnreadNotificationsAdmin();
             }
         });
 
-        // Intercept form submission
-        document.getElementById('bookingForm').addEventListener('submit', function (e) {
+        // Bind the form submit event
+        $('#bookingForm').on('submit', function (e) {
             e.preventDefault(); // Prevent the default form submission
 
-            // Display the SweetAlert confirmation
+            // Show confirmation SweetAlert
             Swal.fire({
-                title: 'Appointment Booked!',
-                text: 'Your appointment has been successfully booked.',
-                icon: 'success',
-                confirmButtonText: 'OK'
+                title: 'Are you sure?',
+                text: "Do you want to confirm the booking?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Confirm',
+                cancelButtonText: 'No, Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // If the user clicks 'OK', submit the form
-                    this.submit();
+                    // If confirmed, submit the form using AJAX
+                    $.ajax({
+                        url: 'process_booking_as_admin.php',  // Your server-side processing file
+                        type: 'POST',
+                        data: $('#bookingForm').serialize(),  // Serialize the form data
+                        success: function (response) {
+                            // Show a success alert
+                            Swal.fire({
+                                title: 'Success!',
+                                text: response,
+                                icon: 'success'
+                            }).then(() => {
+                                // Reload the page after the success alert
+                                location.reload();
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            // Show an error alert
+                            Swal.fire('Error!', 'There was an issue with the booking.', 'error');
+                        }
+                    });
                 }
             });
         });
+
+        $(document).ready(function () {
+            // When the client name is selected
+            $('#clientName').change(function () {
+                var clientId = $(this).val();
+
+                // Check if client is selected
+                if (clientId) {
+                    $.ajax({
+                        url: 'fetch_client_details.php', // PHP script to fetch client details
+                        type: 'GET',
+                        data: { clientId: clientId },
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response) {
+                                // Fill in the other fields with the fetched data
+                                $('#companyName').val(response.company_name);
+                                $('#address').val(response.address);
+                                $('#contact').val(response.contact_number);
+                                $('#email').val(response.email_address);
+                            }
+                        }
+                    });
+                } else {
+                    // Reset all fields if no client is selected
+                    $('#companyName, #address, #contact, #email').val('');
+                }
+            });
+        });
+
+
+
 
 
         function markAsRead(transaction_no) {
