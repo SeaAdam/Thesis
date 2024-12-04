@@ -57,7 +57,7 @@ if (isset($_SESSION['unlocked_pages']['adminAccount.php'])) {
                     <li><a href="clientSchedule.php">Client Schedule</a></li>
                     <li><a href="adminSchedule.php">Patient Schedule</a></li>
                     <li><a href="adminHolidays.php">Holidays</a></li>
-                    <li><a href="adminServices.php">Services</a></li>
+                    <li><a href="adminServices.php">Services </a></li>
                 </ul>
             </li>
             <li><a href="adminContacts.php"><i class="fa fa-phone"></i> Contacts </a>

@@ -10,7 +10,7 @@ if ($mysqli->connect_error) {
 }
 
 // Query to fetch events
-$query = "SELECT ID, Slots, Slots_Date, Start_Time, End_Time, Durations FROM schedule_record_table";
+$query = "SELECT ID, Slots, Slots_Date  FROM schedule_record_table";
 $result = $mysqli->query($query);
 
 $events = [];
@@ -23,7 +23,6 @@ if ($result->num_rows > 0) {
             'start' => $row['Slots_Date'],  // Ensure this format is compatible with FullCalendar
             'extendedProps' => [
                 'schedule_id' => $row['ID'],  // Include the schedule_id here
-                'slots_remaining' => $row['Slots'],  // Assuming 'Slots' represents available slots
                 'buttonText' => 'Book Here'  // Example button text
             ],
         ];

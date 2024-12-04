@@ -2,14 +2,14 @@
 include 'login.php';
 
 if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'admin') {
-    header('Location: index.php'); 
+    header('Location: index.php');
     exit();
 }
 
 
 $adminUsername = $_SESSION['username'];
 
-include 'notification_functions.php'; 
+include 'notification_functions.php';
 $notificationsAdmin = fetchNotificationsAdmin();
 $unread_count = countUnreadNotificationsAdmin();
 ?>
@@ -142,7 +142,7 @@ $unread_count = countUnreadNotificationsAdmin();
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Add New Services;</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Add New Services</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -150,12 +150,26 @@ $unread_count = countUnreadNotificationsAdmin();
                             <div class="modal-body">
                                 <form action="add_services.php" method="POST">
                                     <div class="mb-3">
-                                        <label for="Service" class="form-label">Service :</label>
+                                        <label for="Services" class="form-label">Service :</label>
                                         <input type="text" class="form-control" id="Services" name="Services" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="Cost" class="form-label">Cost :</label>
-                                        <input type="number" class="form-control" id="Cost" name="Cost" step=0.01
+                                        <input type="number" class="form-control" id="Cost" name="Cost" step="0.01"
+                                            required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="startTime" class="form-label">Start Time:</label>
+                                        <input type="time" class="form-control" id="startTime" name="startTime"
+                                            required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="endTime" class="form-label">End Time:</label>
+                                        <input type="time" class="form-control" id="endTime" name="endTime" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="duration" class="form-label">Duration (Minutes):</label>
+                                        <input type="number" class="form-control" id="duration" name="duration" step="1"
                                             required>
                                     </div>
                                     <div class="modal-footer">
@@ -168,12 +182,17 @@ $unread_count = countUnreadNotificationsAdmin();
                         </div>
                     </div>
                 </div>
+
                 <table id="servicesTable" class="table table-striped table-bordered">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Services</th>
                             <th scope="col">Cost</th>
+                            <th scope="col">Start Time</th>
+                            <th scope="col">End Time</th>
+                            <th scope="col">Duration</th>
+                            <th scope="col">Slots</th>
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -189,6 +208,10 @@ $unread_count = countUnreadNotificationsAdmin();
                                 <th scope="row"><?php echo $row['ID']; ?></th>
                                 <td><?php echo $row['Services']; ?></td>
                                 <td><?php echo $row['Cost']; ?></td>
+                                <td><?php echo $row['start_time']; ?></td>
+                                <td><?php echo $row['end_time']; ?></td>
+                                <td><?php echo $row['duration']; ?></td>
+                                <td><?php echo $row['slots_count']; ?></td>
                                 <td>
                                     <a href="#" data-id="<?php echo $row['ID']; ?>" class="btn btn-success btn-sm edit"><i
                                             class="fa fa-edit" aria-hidden="true"></i> Edit</a>

@@ -199,11 +199,12 @@ $unread_count = countUnreadNotificationsAdmin();
                 </div>
 
 
-                <table id="scheduleTable" class="table table-striped table-bordered">
+                <table id="scheduleTable" class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Date</th>
+                            <th scope="col">Slots</th>
+                            <th scope="col">Slots Date</th>
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -211,23 +212,29 @@ $unread_count = countUnreadNotificationsAdmin();
                         <?php
                         include 'includes/dbconn.php';
 
-                        $sql = "SELECT * FROM client_schedule";
+                        $sql = "SELECT * FROM schedule_record_table";
                         $query = $conn->query($sql);
                         while ($row = $query->fetch_assoc()) {
                             ?>
                             <tr>
-                                <th scope="row"><?php echo $row['id']; ?></th>
-                                <td><?php echo $row['schedule_date']; ?></td>
+                                <th scope="row"><?php echo $row['ID']; ?></th>
+                                <td><?php echo $row['Slots']; ?></td>
+                                <td><?php echo $row['Slots_Date']; ?></td>
+
                                 <td>
-                                    <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-success btn-sm edit"><i
-                                            class="fa fa-edit" aria-hidden="true"></i> Edit</a>
-                                    <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-danger btn-sm delete"><i
+
+                                    <a href="#" data-id="<?php echo $row['ID']; ?>" class="btn btn-success btn-sm edit"><i
+                                            class="fa fa-edit" aria-hidden="true"></i>
+                                        Edit</a>
+                                    <a href="#" data-id="<?php echo $row['ID']; ?>" class="btn btn-danger btn-sm delete"><i
                                             class="fa fa-trash" aria-hidden="true"></i> Delete</a>
                                 </td>
                             </tr>
+
                             <?php
                         }
                         ?>
+                        <!-- More rows as needed -->
                     </tbody>
                 </table>
 

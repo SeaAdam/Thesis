@@ -172,7 +172,8 @@ $unread_count = countUnreadNotifications($user_id);
             color: #721c24;
             background-color: #f8d7da;
             border-color: #f5c6cb;
-            display: none; /* Initially hidden */
+            display: none;
+            /* Initially hidden */
         }
     </style>
 
@@ -356,20 +357,8 @@ $unread_count = countUnreadNotifications($user_id);
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <p id="modalDate">Select a time slot:</p>
-                                <div id="modalSlots"></div>
-
-                                <button id="toggleSlotsButton" class="btn btn-secondary" style="margin-top: 15px;">Show
-                                    Time Slots</button>
-
                                 <form id="bookingForm" method="POST" action="add_booking_user.php"
                                     style="display: none; margin-top: 15px;">
-                                    <div class="mb-3">
-                                        <label for="selectedTimeSlot" class="form-label">Selected Time Slot</label>
-                                        <input type="text" class="form-control" id="selectedTimeSlot"
-                                            name="selectedTimeSlot" readonly>
-                                    </div>
-
                                     <div class="mb-3">
                                         <label for="patientName" class="form-label">Patient Name</label>
                                         <select class="form-control" id="patientName" name="patientName">
@@ -382,28 +371,32 @@ $unread_count = countUnreadNotifications($user_id);
                                     <div class="mb-3">
                                         <label for="serviceType" class="form-label">Service Type</label>
                                         <select class="form-control" id="serviceType" name="serviceType">
-                                            <option>--SELECT--</option>
+                                            <option value="">--SELECT--</option>
                                             <?php
                                             include 'includes/dbconn.php';
                                             $sql = "SELECT * FROM services_table";
                                             $query = $conn->query($sql);
                                             while ($row = $query->fetch_assoc()) {
                                                 ?>
-                                                <option value="<?php echo $row['ID']; ?>">
-                                                    <?php echo $row['Services']; ?>
+                                                <option value="<?php echo $row['ID']; ?>"><?php echo $row['Services']; ?>
                                                 </option>
                                                 <?php
                                             }
                                             ?>
                                         </select>
                                     </div>
+                                    <div id="modalSlots">Select a service to see available time slots.</div>
 
+                                    <!-- Hidden inputs for selected time slot, schedule, etc. -->
+                                    <input type="hidden" id="selectedTimeSlot" name="selectedTimeSlot">
                                     <input type="hidden" id="scheduleId" name="scheduleId">
                                     <input type="hidden" id="timeSlotId" name="timeSlotId">
+                                    <input type="hidden" id="selectedDate" name="selectedDate">
 
                                     <button type="submit" class="btn btn-primary">Submit Booking</button>
                                 </form>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -469,15 +462,11 @@ $unread_count = countUnreadNotifications($user_id);
             document.addEventListener('DOMContentLoaded', function () {
                 var dashboardCalendarEl = document.getElementById('calendar');
                 var eventModal = document.getElementById('eventModal');
-                var toggleButton = document.getElementById('toggleSlotsButton');
+                var modalTitle = document.getElementById('modalTitle');
                 var modalSlots = document.getElementById('modalSlots');
                 var bookingForm = document.getElementById('bookingForm');
-                var modalTitle = document.getElementById('modalTitle');
-                var modalDate = document.getElementById('modalDate');
-                var selectedTimeSlot = document.getElementById('selectedTimeSlot');
-                var scheduleIdField = document.getElementById('scheduleId');
-                var timeSlotIdField = document.getElementById('timeSlotId');
                 var serviceTypeSelect = document.getElementById('serviceType');
+                var selectedTimeSlotInput = document.getElementById('selectedTimeSlot');
 
                 // Initialize FullCalendar
                 var dashboardCalendar = new FullCalendar.Calendar(dashboardCalendarEl, {
@@ -496,9 +485,8 @@ $unread_count = countUnreadNotifications($user_id);
                             fetch(sources[index])
                                 .then(response => response.json())
                                 .then(data => {
-                                    // Add a source identifier to each event
                                     data.forEach(event => {
-                                        event.source = sources[index]; // Assign the source filename
+                                        event.source = sources[index];
                                     });
 
                                     combinedEvents = combinedEvents.concat(data);
@@ -513,147 +501,139 @@ $unread_count = countUnreadNotifications($user_id);
                         fetchNext(0);
                     },
                     eventDidMount: function (info) {
-                        // Check if the event is from 'schedule.php'
                         if (info.event.extendedProps && info.event.extendedProps.source === 'schedule.php') {
-                            const slotsRemaining = parseInt(info.el.querySelector('.fc-event-title').textContent, 10);
-
-                            // Apply background color based on slot availability
-                            if (slotsRemaining === undefined) {
-                                console.error('slots_remaining is undefined for event:', info.event);
-                            } else if (slotsRemaining === 0) {
-                                // Change background color of the event to red (Unavailable)
-                                info.el.style.backgroundColor = 'red';
-                                info.el.classList.add('event-unavailable');
-                            } else {
-                                // Change background color of the event to green (Available)
-                                info.el.style.backgroundColor = 'green';
-                                info.el.classList.add('event-available');
-                            }
-
                             const eventDate = new Date(info.event.start);
                             const currentDate = new Date();
-
-                            // Reset currentDate time to midnight for an accurate date comparison
                             currentDate.setHours(0, 0, 0, 0);
 
                             if (eventDate < currentDate) {
-                                // Disable the button if the event is in the past
                                 let button = document.createElement('button');
                                 button.textContent = 'Unavailable';
                                 button.className = 'btn btn-secondary btn-sm disabled';
                                 button.disabled = true;
                                 info.el.appendChild(button);
-                                return; // Do not add the "View Slots" button for past dates
+                                return;
                             }
 
-                            // Add the button for slot viewing
                             let button = document.createElement('button');
-                            button.textContent = info.event.extendedProps.buttonText || 'View Slots';
+                            button.textContent = 'Book Now';
                             button.className = 'btn btn-warning btn-sm';
                             button.onclick = function () {
-                                modalTitle.textContent = `BOOK FOR: ${info.event.start.toLocaleDateString()}`;
-                                modalDate.textContent = `SLOTS: ${info.event.title}`;
+                                const selectedScheduleId = info.event.id; // This gets the schedule ID from the event
+                                document.getElementById('scheduleId').value = selectedScheduleId; // Set the hidden input field
 
-                                let scheduleId = info.event.extendedProps.schedule_id;
-                                scheduleIdField.value = scheduleId; // Set the scheduleId field
+                                if (modalTitle) {
+                                    modalTitle.textContent = `BOOK FOR: ${info.event.start.toLocaleDateString()}`;
+                                }
 
-                                fetch(`fetch_time_slots.php?schedule_id=${scheduleId}`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (Array.isArray(data) && data.length > 0) {
-                                            let slotsHtml = data.map(slot => {
-                                                let buttonClass = slot.is_booked || new Date(slot.start_time) < currentDate ? 'btn btn-outline-secondary disabled' : 'btn btn-outline-primary slot-button';
-                                                let buttonText = slot.is_booked || new Date(slot.start_time) < currentDate ? 'Unavailable' : `${slot.start_time} - ${slot.end_time}`;
+                                if (bookingForm) {
+                                    bookingForm.style.display = 'block';
+                                }
 
-                                                return `
-                                <li>
-                                    <button class="${buttonClass}" 
-                                            data-id="${slot.id}" 
-                                            data-start="${slot.start_time}" 
-                                            data-end="${slot.end_time}"
-                                            data-slots="${slot.slots_remaining}">
-                                    ${buttonText}
-                                    </button>
-                                </li>`;
-                                            }).join('');
-                                            modalSlots.innerHTML = `Available Time Slots:<ul>${slotsHtml}</ul>`;
+                                modalSlots.innerHTML = 'Loading time slots...';
+                                let selectedServiceId = serviceTypeSelect.value;
 
-                                            document.querySelectorAll('.slot-button:not(.disabled)').forEach(button => {
-                                                button.addEventListener('click', function () {
-                                                    selectedTimeSlot.value = `${this.dataset.start} - ${this.dataset.end}`;
-                                                    timeSlotIdField.value = this.dataset.id; // Set the timeSlotId field
-                                                    bookingForm.style.display = 'block';
-                                                    modalSlots.style.display = 'none';
-                                                    toggleButton.style.display = 'inline-block';
+                                if (selectedServiceId) {
+                                    fetch(`fetch_service_details.php?service_id=${selectedServiceId}`)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.timeSlots && data.timeSlots.length > 0) {
+                                                modalSlots.innerHTML = '';
+
+                                                data.timeSlots.forEach(function (slot) {
+                                                    let slotButton = document.createElement('button');
+                                                    slotButton.textContent = slot.time;  // Assuming 'time' is the correct field
+                                                    slotButton.className = 'btn btn-outline-primary btn-sm m-1';
+                                                    slotButton.onclick = function () {
+                                                        document.getElementById('selectedTimeSlot').value = slot.id;
+                                                        setBookingDetails(info.event.id, slot.id, info.event.start.toLocaleDateString());
+                                                    };
+                                                    modalSlots.appendChild(slotButton);
                                                 });
-                                            });
-                                        } else {
-                                            modalSlots.innerHTML = 'No available time slots.';
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error fetching time slots:', error);
-                                        modalSlots.textContent = 'Failed to load time slots.';
-                                    });
+                                            } else {
+                                                modalSlots.innerHTML = 'No available time slots for the selected service.';
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error fetching service details:', error);
+                                            modalSlots.innerHTML = 'Failed to load time slots.';
+                                        });
+                                } else {
+                                    modalSlots.innerHTML = 'Please select a service type first.';
+                                }
 
-                                // Show the modal
                                 $(eventModal).modal('show');
                             };
 
                             info.el.appendChild(button);
                         } else {
-                            // Reset background color for events not from 'schedule.php' (e.g., holidays)
-                            info.el.style.backgroundColor = 'gray'; // Reset to default background color
+                            info.el.style.backgroundColor = 'gray';
                         }
                     }
                 });
 
                 dashboardCalendar.render();
 
-                // Initially hide the toggle button and the booking form
-                toggleButton.style.display = 'none';
-                bookingForm.style.display = 'none';
-
-                // Event listener for the toggle button
-                toggleButton.addEventListener('click', function () {
-                    if (modalSlots.style.display === 'none') {
-                        // Show the time slots
-                        modalSlots.style.display = 'block';
-                        // Hide the booking form
-                        bookingForm.style.display = 'none';
-                        // Hide the toggle button again
-                        toggleButton.style.display = 'none';
-                    } else {
-                        // Hide the time slots
-                        modalSlots.style.display = 'none';
-                        // Show the booking form
-                        bookingForm.style.display = 'block';
-                        // Show the toggle button
-                        toggleButton.style.display = 'inline-block';
-                    }
-                });
-
-                // Refresh page when the modal is closed
                 $(eventModal).on('hidden.bs.modal', function () {
                     location.reload();
                 });
-            });
 
-            document.getElementById('bookingForm').addEventListener('submit', function (e) {
-                e.preventDefault();
-
-                Swal.fire({
-                    title: 'Appointment Booked!',
-                    text: 'Your appointment has been successfully booked.',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-
-                        this.submit();
+                serviceTypeSelect.addEventListener('change', function () {
+                    let selectedServiceId = serviceTypeSelect.value;
+                    if (selectedServiceId) {
+                        modalSlots.innerHTML = 'Loading time slots...';
+                        fetch(`fetch_service_details.php?service_id=${selectedServiceId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.timeSlots && data.timeSlots.length > 0) {
+                                    modalSlots.innerHTML = '';
+                                    data.timeSlots.forEach(function (slot) {
+                                        let slotButton = document.createElement('button');
+                                        slotButton.textContent = slot.time_slot;  // Ensure you are using the correct property here
+                                        slotButton.className = 'btn btn-outline-primary btn-sm m-1';
+                                        slotButton.onclick = function () {
+                                            document.getElementById('selectedTimeSlot').value = slot.id;
+                                            setBookingDetails(info.event.id, slot.id, info.event.start.toLocaleDateString());
+                                        };
+                                        modalSlots.appendChild(slotButton);
+                                    });
+                                } else {
+                                    modalSlots.innerHTML = 'No available time slots for the selected service.';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error fetching service details:', error);
+                                modalSlots.innerHTML = 'Failed to load time slots.';
+                            });
                     }
                 });
+
+                document.getElementById('bookingForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    Swal.fire({
+                        title: 'Appointment Booked!',
+                        text: 'Your appointment has been successfully booked.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            this.submit();
+                        }
+                    });
+                });
+
+                function setBookingDetails(selectedScheduleId, selectedTimeSlotId, selectedDate) {
+                    document.getElementById('scheduleId').value = selectedScheduleId;
+                    document.getElementById('timeSlotId').value = selectedTimeSlotId;
+                    document.getElementById('selectedDate').value = selectedDate;
+                    document.getElementById('selectedTimeSlot').value = selectedTimeSlotId;
+                }
             });
+
+
+
+
 
             function markAsRead(transaction_id) {
                 fetch(`mark_notification_read.php?transaction_id=${transaction_id}`)

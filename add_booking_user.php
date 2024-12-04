@@ -11,11 +11,10 @@ function logToDatabase($message) {
     $stmt->close();
 }
 
-$selectedTimeSlot = $_POST['selectedTimeSlot'];
 $patientId = $_POST['patientName'];
 $serviceType = $_POST['serviceType'];
 $scheduleId = $_POST['scheduleId'];
-$timeSlotId = $_POST['timeSlotId'];
+$timeSlotId = $_POST['selectedTimeSlot']; 
 
 
 if (empty($patientId)) {
@@ -108,7 +107,7 @@ try {
     logToDatabase("Transaction $transactionNo inserted successfully.");
 
 
-    $sql = "UPDATE schedule_record_table SET Slots = Slots - 1 WHERE ID = ?";
+    $sql = "UPDATE services_table SET slots_count = slots_count - 1 WHERE ID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $scheduleId);
 
