@@ -358,7 +358,7 @@ $unread_count = countUnreadNotifications($user_id);
                             </div>
                             <div class="modal-body">
                                 <form id="bookingForm" method="POST" action="add_booking_user.php"
-                                    style="display: none; margin-top: 15px;">
+                                    style="margin-top: 15px;">
                                     <div class="mb-3">
                                         <label for="patientName" class="form-label">Patient Name</label>
                                         <select class="form-control" id="patientName" name="patientName">
@@ -369,8 +369,15 @@ $unread_count = countUnreadNotifications($user_id);
                                     </div>
 
                                     <div class="mb-3">
+                                        <label for="selectedTimeDisplay" class="form-label">Selected Time Slot</label>
+                                        <input type="text" class="form-control" id="selectedTimeDisplay"
+                                            name="selectedTimeDisplay" disabled>
+                                    </div>
+
+                                    <div class="mb-3">
                                         <label for="serviceType" class="form-label">Service Type</label>
-                                        <select class="form-control" id="serviceType" name="serviceType">
+                                        <select class="form-control" id="serviceType" name="serviceType"
+                                            onchange="fetchTimeSlots()">
                                             <option value="">--SELECT--</option>
                                             <?php
                                             include 'includes/dbconn.php';
@@ -385,7 +392,10 @@ $unread_count = countUnreadNotifications($user_id);
                                             ?>
                                         </select>
                                     </div>
-                                    <div id="modalSlots">Select a service to see available time slots.</div>
+
+                                    <div id="modalSlots" class="mb-3">
+                                        <p>Select a service to see available time slots.</p>
+                                    </div>
 
                                     <!-- Hidden inputs for selected time slot, schedule, etc. -->
                                     <input type="hidden" id="selectedTimeSlot" name="selectedTimeSlot">
@@ -396,7 +406,6 @@ $unread_count = countUnreadNotifications($user_id);
                                     <button type="submit" class="btn btn-primary">Submit Booking</button>
                                 </form>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -460,176 +469,164 @@ $unread_count = countUnreadNotifications($user_id);
             });
 
             document.addEventListener('DOMContentLoaded', function () {
-                var dashboardCalendarEl = document.getElementById('calendar');
-                var eventModal = document.getElementById('eventModal');
-                var modalTitle = document.getElementById('modalTitle');
-                var modalSlots = document.getElementById('modalSlots');
-                var bookingForm = document.getElementById('bookingForm');
-                var serviceTypeSelect = document.getElementById('serviceType');
-                var selectedTimeSlotInput = document.getElementById('selectedTimeSlot');
+                const dashboardCalendarEl = document.getElementById('calendar');
+                const eventModal = document.getElementById('eventModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalSlots = document.getElementById('modalSlots');
+                const bookingForm = document.getElementById('bookingForm');
+                const serviceTypeSelect = document.getElementById('serviceType');
+                const selectedTimeSlotInput = document.getElementById('selectedTimeSlot');
+                let selectedScheduleId = null;
+                let selectedTimeSlotId = null;
 
                 // Initialize FullCalendar
-                var dashboardCalendar = new FullCalendar.Calendar(dashboardCalendarEl, {
+                const dashboardCalendar = new FullCalendar.Calendar(dashboardCalendarEl, {
                     initialView: 'dayGridMonth',
                     selectable: true,
                     events: function (info, successCallback, failureCallback) {
-                        var sources = ['schedule.php', 'fetch_events.php'];
-                        var combinedEvents = [];
+                        const sources = ['schedule.php', 'fetch_events.php'];
+                        let combinedEvents = [];
 
-                        var fetchNext = function (index) {
-                            if (index >= sources.length) {
-                                successCallback(combinedEvents);
-                                return;
-                            }
+                        const fetchEventsFromSources = async () => {
+                            for (const source of sources) {
+                                try {
+                                    const response = await fetch(source);
+                                    const data = await response.json();
 
-                            fetch(sources[index])
-                                .then(response => response.json())
-                                .then(data => {
                                     data.forEach(event => {
-                                        event.source = sources[index];
+                                        event.source = source;
                                     });
 
                                     combinedEvents = combinedEvents.concat(data);
-                                    fetchNext(index + 1);
-                                })
-                                .catch(error => {
-                                    console.error('Error fetching events:', error);
-                                    fetchNext(index + 1);
-                                });
+                                } catch (error) {
+                                    console.error(`Error fetching events from ${source}:`, error);
+                                }
+                            }
+                            successCallback(combinedEvents);
                         };
 
-                        fetchNext(0);
+                        fetchEventsFromSources();
                     },
                     eventDidMount: function (info) {
-                        if (info.event.extendedProps && info.event.extendedProps.source === 'schedule.php') {
-                            const eventDate = new Date(info.event.start);
-                            const currentDate = new Date();
-                            currentDate.setHours(0, 0, 0, 0);
+                        const eventDate = new Date(info.event.start);
+                        const currentDate = new Date();
+                        currentDate.setHours(0, 0, 0, 0);
+
+                        if (info.event.extendedProps?.source === 'schedule.php') {
+                            const button = document.createElement('button');
 
                             if (eventDate < currentDate) {
-                                let button = document.createElement('button');
                                 button.textContent = 'Unavailable';
                                 button.className = 'btn btn-secondary btn-sm disabled';
                                 button.disabled = true;
-                                info.el.appendChild(button);
-                                return;
+                            } else {
+                                button.textContent = 'Book Now';
+                                button.className = 'btn btn-warning btn-sm';
+                                button.onclick = () => openBookingModal(info.event);
                             }
-
-                            let button = document.createElement('button');
-                            button.textContent = 'Book Now';
-                            button.className = 'btn btn-warning btn-sm';
-                            button.onclick = function () {
-                                const selectedScheduleId = info.event.id; // This gets the schedule ID from the event
-                                document.getElementById('scheduleId').value = selectedScheduleId; // Set the hidden input field
-
-                                if (modalTitle) {
-                                    modalTitle.textContent = `BOOK FOR: ${info.event.start.toLocaleDateString()}`;
-                                }
-
-                                if (bookingForm) {
-                                    bookingForm.style.display = 'block';
-                                }
-
-                                modalSlots.innerHTML = 'Loading time slots...';
-                                let selectedServiceId = serviceTypeSelect.value;
-
-                                if (selectedServiceId) {
-                                    fetch(`fetch_service_details.php?service_id=${selectedServiceId}`)
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            if (data.timeSlots && data.timeSlots.length > 0) {
-                                                modalSlots.innerHTML = '';
-
-                                                data.timeSlots.forEach(function (slot) {
-                                                    let slotButton = document.createElement('button');
-                                                    slotButton.textContent = slot.time;  // Assuming 'time' is the correct field
-                                                    slotButton.className = 'btn btn-outline-primary btn-sm m-1';
-                                                    slotButton.onclick = function () {
-                                                        document.getElementById('selectedTimeSlot').value = slot.id;
-                                                        setBookingDetails(info.event.id, slot.id, info.event.start.toLocaleDateString());
-                                                    };
-                                                    modalSlots.appendChild(slotButton);
-                                                });
-                                            } else {
-                                                modalSlots.innerHTML = 'No available time slots for the selected service.';
-                                            }
-                                        })
-                                        .catch(error => {
-                                            console.error('Error fetching service details:', error);
-                                            modalSlots.innerHTML = 'Failed to load time slots.';
-                                        });
-                                } else {
-                                    modalSlots.innerHTML = 'Please select a service type first.';
-                                }
-
-                                $(eventModal).modal('show');
-                            };
 
                             info.el.appendChild(button);
                         } else {
                             info.el.style.backgroundColor = 'gray';
                         }
-                    }
+                    },
                 });
 
                 dashboardCalendar.render();
 
-                $(eventModal).on('hidden.bs.modal', function () {
-                    location.reload();
-                });
+                // Open Booking Modal
+                function openBookingModal(event) {
+                    selectedScheduleId = event.id;
+                    document.getElementById('scheduleId').value = selectedScheduleId;
 
-                serviceTypeSelect.addEventListener('change', function () {
-                    let selectedServiceId = serviceTypeSelect.value;
-                    if (selectedServiceId) {
+                    if (modalTitle) {
+                        modalTitle.textContent = `BOOK FOR: ${event.start.toLocaleDateString()}`;
+                    }
+
+                    if (bookingForm) {
+                        bookingForm.style.display = 'block';
+                    }
+
+                    loadTimeSlots(serviceTypeSelect.value);
+                    $(eventModal).modal('show');
+                }
+
+                // Load Time Slots
+                function loadTimeSlots(serviceId) {
+                    if (serviceId) {
                         modalSlots.innerHTML = 'Loading time slots...';
-                        fetch(`fetch_service_details.php?service_id=${selectedServiceId}`)
+
+                        fetch(`fetch_service_details.php?service_id=${serviceId}`)
                             .then(response => response.json())
                             .then(data => {
-                                if (data.timeSlots && data.timeSlots.length > 0) {
+                                if (data.timeSlots?.length) {
                                     modalSlots.innerHTML = '';
-                                    data.timeSlots.forEach(function (slot) {
-                                        let slotButton = document.createElement('button');
-                                        slotButton.textContent = slot.time_slot;  // Ensure you are using the correct property here
-                                        slotButton.className = 'btn btn-outline-primary btn-sm m-1';
-                                        slotButton.onclick = function () {
-                                            document.getElementById('selectedTimeSlot').value = slot.id;
-                                            setBookingDetails(info.event.id, slot.id, info.event.start.toLocaleDateString());
-                                        };
-                                        modalSlots.appendChild(slotButton);
-                                    });
+                                    data.timeSlots.forEach(slot => createSlotButton(slot));
                                 } else {
                                     modalSlots.innerHTML = 'No available time slots for the selected service.';
                                 }
                             })
                             .catch(error => {
-                                console.error('Error fetching service details:', error);
+                                console.error('Error fetching time slots:', error);
                                 modalSlots.innerHTML = 'Failed to load time slots.';
                             });
+                    } else {
+                        modalSlots.innerHTML = 'Please select a service type first.';
                     }
+                }
+
+                // Create Slot Button
+                function createSlotButton(slot) {
+                    const slotButton = document.createElement('button');
+                    slotButton.textContent = slot.time_slot;
+                    slotButton.className = 'btn btn-outline-primary btn-sm m-1';
+                    slotButton.type = 'button';
+                    slotButton.onclick = () => {
+                        selectedTimeSlotId = slot.id;
+                        selectedTimeSlotInput.value = selectedTimeSlotId;
+                        document.getElementById('selectedTimeDisplay').value = slot.time_slot;
+                    };
+                    modalSlots.appendChild(slotButton);
+                }
+
+                // Reset Modal on Close
+                $(eventModal).on('hidden.bs.modal', () => location.reload());
+
+                serviceTypeSelect.addEventListener('change', () => {
+                    const selectedServiceId = serviceTypeSelect.value;
+                    loadTimeSlots(selectedServiceId);  // This should be loadTimeSlots, not fetchTimeSlots
                 });
 
-                document.getElementById('bookingForm').addEventListener('submit', function (e) {
+                // Form Submission with Validation
+                bookingForm.addEventListener('submit', function (e) {
                     e.preventDefault();
 
-                    Swal.fire({
-                        title: 'Appointment Booked!',
-                        text: 'Your appointment has been successfully booked.',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            this.submit();
-                        }
-                    });
+                    if (selectedTimeSlotId && selectedScheduleId) {
+                        Swal.fire({
+                            title: 'Appointment Booked!',
+                            text: 'Your appointment has been successfully booked.',
+                            icon: 'success',
+                            confirmButtonText: 'OK',
+                        }).then(result => {
+                            if (result.isConfirmed) {
+                                this.submit();
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Please select a time slot before submitting the booking.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                        });
+                    }
                 });
-
-                function setBookingDetails(selectedScheduleId, selectedTimeSlotId, selectedDate) {
-                    document.getElementById('scheduleId').value = selectedScheduleId;
-                    document.getElementById('timeSlotId').value = selectedTimeSlotId;
-                    document.getElementById('selectedDate').value = selectedDate;
-                    document.getElementById('selectedTimeSlot').value = selectedTimeSlotId;
-                }
             });
+
+
+
+
+
 
 
 

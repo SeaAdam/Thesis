@@ -203,7 +203,6 @@ $unread_count = countUnreadNotificationsAdmin();
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Slots</th>
                             <th scope="col">Slots Date</th>
                             <th scope="col">Actions</th>
                         </tr>
@@ -218,7 +217,6 @@ $unread_count = countUnreadNotificationsAdmin();
                             ?>
                             <tr>
                                 <th scope="row"><?php echo $row['ID']; ?></th>
-                                <td><?php echo $row['Slots']; ?></td>
                                 <td><?php echo $row['Slots_Date']; ?></td>
 
                                 <td>
