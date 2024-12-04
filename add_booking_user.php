@@ -109,14 +109,14 @@ try {
 
     $sql = "UPDATE services_table SET slots_count = slots_count - 1 WHERE ID = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('i', $scheduleId);
+    $stmt->bind_param('i', $serviceType,);
 
     if (!$stmt->execute()) {
         throw new Exception('Error updating schedule slots: ' . $stmt->error);
     }
 
 
-    logToDatabase("Schedule slots updated for schedule ID: $scheduleId.");
+    logToDatabase("Schedule slots updated for schedule ID: $serviceType.");
 
 
     $notificationSql = "INSERT INTO admin_notification (user_id, transaction_no, message, created_at) VALUES (?, ?, ?, NOW())";
