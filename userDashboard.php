@@ -377,7 +377,7 @@ $unread_count = countUnreadNotifications($user_id);
                                     <div class="mb-3">
                                         <label for="serviceType" class="form-label">Service Type</label>
                                         <select class="form-control" id="serviceType" name="serviceType"
-                                            onchange="fetchTimeSlots()">
+                                            onchange="loadTimeSlots()">
                                             <option value="">--SELECT--</option>
                                             <?php
                                             include 'includes/dbconn.php';
@@ -397,11 +397,11 @@ $unread_count = countUnreadNotifications($user_id);
                                         <p>Select a service to see available time slots.</p>
                                     </div>
 
-                                    <!-- Hidden inputs for selected time slot, schedule, etc. -->
                                     <input type="hidden" id="selectedTimeSlot" name="selectedTimeSlot">
                                     <input type="hidden" id="scheduleId" name="scheduleId">
                                     <input type="hidden" id="timeSlotId" name="timeSlotId">
                                     <input type="hidden" id="selectedDate" name="selectedDate">
+
 
                                     <button type="submit" class="btn btn-primary">Submit Booking</button>
                                 </form>
@@ -622,6 +622,7 @@ $unread_count = countUnreadNotifications($user_id);
                     }
                 });
             });
+
 
 
 
