@@ -109,7 +109,7 @@ try {
 
     $sql = "UPDATE services_table SET slots_count = slots_count - 1 WHERE ID = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('i', $serviceType,);
+    $stmt->bind_param('i', $serviceType);
 
     if (!$stmt->execute()) {
         throw new Exception('Error updating schedule slots: ' . $stmt->error);
