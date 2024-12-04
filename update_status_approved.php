@@ -105,7 +105,7 @@ if (isset($_POST['id']) && isset($_POST['status'])) {
             // Additional logic if status is 'Completed' or 'Rejected'
             if ($status === 'Rejected') {
                 
-                $sql = "SELECT schedule_id FROM appointment_system.transactions WHERE ID = ?";
+                $sql = "SELECT service_id  FROM appointment_system.transactions WHERE ID = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param('i', $transactionId);
                 $stmt->execute();
@@ -113,14 +113,14 @@ if (isset($_POST['id']) && isset($_POST['status'])) {
                 $transaction = $result->fetch_assoc();
 
                 if ($transaction) {
-                    $scheduleId = $transaction['schedule_id'];
+                    $serviceType = $transaction['service_id'];
 
                     // Increment the slots for the corresponding schedule
-                    $sql = "UPDATE schedule_record_table 
-                            SET Slots = Slots + 1 
+                    $sql = "UPDATE services_table
+                            SET slots_count = slots_count + 1 
                             WHERE ID = ?";
                     $stmt = $conn->prepare($sql);
-                    $stmt->bind_param('i', $scheduleId);
+                    $stmt->bind_param('i', $serviceType);
                     $stmt->execute();
                 }
             }
