@@ -202,7 +202,7 @@ $unread_count = countUnreadNotifications($user_id);
                         t.transaction_no,
                         s.Services AS service_id,
                         sr.Slots_Date AS schedule_id,
-                        CONCAT(ts.start_time, ' - ', ts.end_time) AS time_slot_id,
+                        ts. time_slot AS time_slot_id,
                         t.date_seen
                     FROM 
                         appointment_system.transactions t
