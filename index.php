@@ -550,7 +550,6 @@ session_start();
     <!-- End Forgot Password Modal -->
 
 
-    <!-- Page Header Start -->
     <div class="container-fluid page-header py-5 mb-5 wow fadeIn" data-wow-delay="0.1s">
         <div class="container text-center py-5 mt-4">
             <h1 class="display-2 text-white mb-3 animated slideInDown">Home</h1>
@@ -560,9 +559,20 @@ session_start();
                     <li class="breadcrumb-item"><a href="#about">About Us</a></li>
                 </ol>
             </nav>
+
+            <!-- Buttons visible on smaller screens -->
+            <div class="d-lg-none mt-4">
+                <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#myModal">
+                    Login
+                </button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#termsModal">
+                    Register for Appointment
+                </button>
+            </div>
         </div>
     </div>
-    <!-- Page Header End -->
+
+
 
 
     <!-- About Start -->
