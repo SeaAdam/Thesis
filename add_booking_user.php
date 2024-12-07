@@ -2,7 +2,8 @@
 include 'includes/dbconn.php';
 
 
-function logToDatabase($message) {
+function logToDatabase($message)
+{
     global $conn;
     $sql = "INSERT INTO booking_logs (message) VALUES (?)";
     $stmt = $conn->prepare($sql);
@@ -14,7 +15,7 @@ function logToDatabase($message) {
 $patientId = $_POST['patientName'];
 $serviceType = $_POST['serviceType'];
 $scheduleId = $_POST['scheduleId'];
-$timeSlotId = $_POST['selectedTimeSlot']; 
+$timeSlotId = $_POST['selectedTimeSlot'];
 
 
 if (empty($patientId)) {
@@ -106,6 +107,16 @@ try {
 
     logToDatabase("Transaction $transactionNo inserted successfully.");
 
+    // $sql = "UPDATE time_slot SET isBooked = 1 WHERE id = ?";
+    // $stmt = $conn->prepare($sql);
+    // $stmt->bind_param('i', $timeSlotId);
+
+    // if (!$stmt->execute()) {
+    //     throw new Exception('Error updating time slot status: ' . $stmt->error);
+    // }
+
+    // logToDatabase("Time slot with ID $timeSlotId marked as booked.");
+
 
     $sql = "UPDATE services_table SET slots_count = slots_count - 1 WHERE ID = ?";
     $stmt = $conn->prepare($sql);
@@ -139,7 +150,7 @@ try {
 
     $notificationStmt->close();
     $conn->commit();
-    
+
     $_SESSION['successBookingUser'] = 'Booking successfully added!';
     logToDatabase("Booking transaction completed successfully for transaction number: $transactionNo.");
 } catch (Exception $e) {

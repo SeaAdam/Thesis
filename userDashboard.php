@@ -396,13 +396,59 @@ $unread_count = countUnreadNotifications($user_id);
                                     <input type="hidden" id="timeSlotId" name="timeSlotId">
                                     <input type="hidden" id="selectedDate" name="selectedDate">
 
-
                                     <button type="submit" class="btn btn-primary">Submit Booking</button>
+                                </form>
+
+                                <button type="button" class="btn btn-secondary" id="addMultipleBookingsBtn">Add
+                                    Multiple Bookings</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Modal for Multiple Bookings -->
+                <div class="modal fade" id="newEventModal" tabindex="-1" aria-labelledby="newEventModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="newModalTitle">Book Multiple Services</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="newBookingForm" method="POST" action="add_multiple_bookings.php">
+                                    <div class="mb-3">
+                                        <label for="newServiceType" class="form-label">Select Services</label>
+                                        <select class="form-control" id="newServiceType" name="newServiceType[]"
+                                            multiple required>
+                                            <option value="">--SELECT--</option>
+                                            <?php
+                                            include 'includes/dbconn.php';
+                                            $sql = "SELECT * FROM services_table";
+                                            $query = $conn->query($sql);
+                                            while ($row = $query->fetch_assoc()) {
+                                                ?>
+                                                <option value="<?php echo $row['ID']; ?>"><?php echo $row['Services']; ?>
+                                                </option>
+                                                <?php
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+
+                                    <div id="modalSlots" class="mb-3">
+                                        <p>Please select between 2 to 4 services.</p>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary">Submit Multiple Bookings</button>
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
+
 
             </div>
 
@@ -470,9 +516,12 @@ $unread_count = countUnreadNotifications($user_id);
                 const bookingForm = document.getElementById('bookingForm');
                 const serviceTypeSelect = document.getElementById('serviceType');
                 const selectedTimeSlotInput = document.getElementById('selectedTimeSlot');
+                const newModal = document.getElementById('newEventModal'); // The new modal for multiple bookings
+                const addMultipleBookingsBtn = document.getElementById('addMultipleBookingsBtn');
                 let selectedScheduleId = null;
                 let selectedTimeSlotId = null;
                 let selectedServiceId = null;
+                let selectedServiceIds = [];
 
                 // Initialize FullCalendar
                 const dashboardCalendar = new FullCalendar.Calendar(dashboardCalendarEl, {
@@ -546,9 +595,9 @@ $unread_count = countUnreadNotifications($user_id);
                     $(eventModal).modal('show');
                 }
 
-                // Load Time Slots
+                // Load Time Slots based on selected service
                 function loadTimeSlots(serviceId) {
-                    if (serviceId) {
+                    if (serviceId && selectedServiceIds.length <= 4) {
                         modalSlots.innerHTML = 'Loading time slots...';
 
                         fetch(`fetch_service_details.php?service_id=${serviceId}`)
@@ -565,8 +614,11 @@ $unread_count = countUnreadNotifications($user_id);
                                 console.error('Error fetching time slots:', error);
                                 modalSlots.innerHTML = 'Failed to load time slots.';
                             });
+                    } else if (selectedServiceIds.length > 4) {
+                        modalSlots.innerHTML = 'Please select between 2 to 4 services.';
+                        modalSlots.style.display = 'none';
                     } else {
-                        modalSlots.innerHTML = 'Please select a service type first.';
+                        modalSlots.style.display = 'block';
                     }
                 }
 
@@ -587,9 +639,41 @@ $unread_count = countUnreadNotifications($user_id);
                 // Reset Modal on Close
                 $(eventModal).on('hidden.bs.modal', () => location.reload());
 
+                // Create new modal for multiple bookings
+                function openNewBookingModal() {
+                    $(eventModal).modal('hide');
+                    $(newModal).modal('show');
+                }
+
+                // Handle the submission of multiple bookings form
+                function submitMultipleBookings(event) {
+                    event.preventDefault();
+
+                    // Your logic to submit multiple bookings at once (can loop through services selected)
+                    console.log('Submit multiple bookings logic here');
+                }
+
+                // Bind the form submission event for multiple bookings
+                document.getElementById('newBookingForm').addEventListener('submit', submitMultipleBookings);
+
+                // Event listener to handle "Add Multiple Bookings" click
+                addMultipleBookingsBtn.addEventListener('click', function () {
+                    openNewBookingModal();
+                });
+
+                // Handling the service selection for multiple bookings
                 serviceTypeSelect.addEventListener('change', () => {
-                    const selectedServiceId = serviceTypeSelect.value;
-                    loadTimeSlots(selectedServiceId);
+                    const serviceId = serviceTypeSelect.value;
+
+                    if (serviceId) {
+                        if (selectedServiceIds.length >= 4) {
+                            alert('You can only select up to 4 services.');
+                            return;
+                        }
+
+                        selectedServiceIds.push(serviceId);
+                        loadTimeSlots(serviceId);
+                    }
                 });
 
                 // Show Confirmation Modal before form submission
