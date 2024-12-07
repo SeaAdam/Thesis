@@ -154,36 +154,10 @@ $unread_count = countUnreadNotificationsAdmin();
                             </div>
                             <div class="modal-body">
                                 <form action="add_sched_add_timeslots.php" method="POST">
-                                    <!-- Slots (Readonly, Auto-generated) -->
-                                    <div class="mb-3">
-                                        <label for="Slots" class="form-label">Slots</label>
-                                        <input type="number" class="form-control" id="Slots" name="Slots" readonly>
-                                    </div>
-
                                     <!-- Slots Date -->
                                     <div class="mb-3">
                                         <label for="SlotsDate" class="form-label">Slots Date</label>
                                         <input type="date" class="form-control" id="SlotsDate" name="SlotsDate"
-                                            required>
-                                    </div>
-
-                                    <!-- Start Time -->
-                                    <div class="mb-3">
-                                        <label for="StartTime" class="form-label">Start Time</label>
-                                        <input type="time" class="form-control" id="StartTime" name="StartTime"
-                                            required>
-                                    </div>
-
-                                    <!-- End Time -->
-                                    <div class="mb-3">
-                                        <label for="EndTime" class="form-label">End Time</label>
-                                        <input type="time" class="form-control" id="EndTime" name="EndTime" required>
-                                    </div>
-
-                                    <!-- Durations -->
-                                    <div class="mb-3">
-                                        <label for="Durations" class="form-label">Durations (in minutes)</label>
-                                        <input type="number" class="form-control" id="Durations" name="Durations"
                                             required>
                                     </div>
 

@@ -1,22 +1,18 @@
 <?php
 session_start();
-
 include 'includes/dbconn.php';
 
 $mysqli = new mysqli($servername, $username, $password, $dbname);
 
+// Check connection
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
 }
 
-
-$slots = $_POST['Slots'];
+// Get the SlotsDate from POST
 $slots_Date = $_POST['SlotsDate'];
-$start_Time = $_POST['StartTime'];
-$end_Time = $_POST['EndTime'];
-$durations = $_POST['Durations'];   
 
-
+// Check if the selected date already exists
 $check_query = "SELECT * FROM schedule_record_table WHERE Slots_Date = ?";
 $check_stmt = $mysqli->prepare($check_query);
 $check_stmt->bind_param("s", $slots_Date);
@@ -33,48 +29,21 @@ if ($check_stmt->num_rows > 0) {
 
 $check_stmt->close();
 
-
-$query = "INSERT INTO schedule_record_table (Slots, Slots_Date, Start_Time, End_Time, Durations) VALUES (?, ?, ?, ?, ?)";
+// Insert the SlotsDate into the table
+$query = "INSERT INTO schedule_record_table (Slots_Date) VALUES (?)";
 $stmt = $mysqli->prepare($query);
-$stmt->bind_param("sssss", $slots, $slots_Date, $start_Time, $end_Time, $durations);
+$stmt->bind_param("s", $slots_Date);
 
 if ($stmt->execute()) {
-
-    $schedule_id = $stmt->insert_id;
-    $_SESSION['save'] = "Event added successfully.";
-    
-
-    $start = new DateTime($start_Time);
-    $end = new DateTime($end_Time);
-    $interval = new DateInterval('PT' . $durations . 'M');
-
-    while ($start < $end) {
-        $slot_end = clone $start;
-        $slot_end->add($interval);
-
-        if ($slot_end > $end) {
-            $slot_end = $end;
-        }
-
-        $start_time_str = $start->format('H:i:s');
-        $end_time_str = $slot_end->format('H:i:s');
-        
-
-        $insert_query = "INSERT INTO time_slots (start_time, end_time, schedule_id) VALUES (?, ?, ?)";
-        $insert_stmt = $mysqli->prepare($insert_query);
-        $insert_stmt->bind_param('ssi', $start_time_str, $end_time_str, $schedule_id);
-        $insert_stmt->execute();
-        $insert_stmt->close();
-        
-        $start = $slot_end;
-    }
+    $_SESSION['save'] = "Date added successfully.";
 } else {
-    $_SESSION['cancel'] = "There was a problem saving the event.";
+    $_SESSION['cancel'] = "There was a problem saving the date.";
 }
 
 $stmt->close();
 $mysqli->close();
 
+// Redirect back to the admin schedule page
 header('Location: adminSchedule.php');
 exit();
 ?>

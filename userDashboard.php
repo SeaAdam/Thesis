@@ -369,12 +369,6 @@ $unread_count = countUnreadNotifications($user_id);
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="selectedTimeDisplay" class="form-label">Selected Time Slot</label>
-                                        <input type="text" class="form-control" id="selectedTimeDisplay"
-                                            name="selectedTimeDisplay" disabled>
-                                    </div>
-
-                                    <div class="mb-3">
                                         <label for="serviceType" class="form-label">Service Type</label>
                                         <select class="form-control" id="serviceType" name="serviceType"
                                             onchange="loadTimeSlots()">
@@ -478,6 +472,7 @@ $unread_count = countUnreadNotifications($user_id);
                 const selectedTimeSlotInput = document.getElementById('selectedTimeSlot');
                 let selectedScheduleId = null;
                 let selectedTimeSlotId = null;
+                let selectedServiceId = null;
 
                 // Initialize FullCalendar
                 const dashboardCalendar = new FullCalendar.Calendar(dashboardCalendarEl, {
@@ -581,10 +576,10 @@ $unread_count = countUnreadNotifications($user_id);
                     slotButton.textContent = slot.time_slot;
                     slotButton.className = 'btn btn-outline-primary btn-sm m-1';
                     slotButton.type = 'button';
+                    slotButton.dataset.id = slot.id; // Set the data-id attribute
                     slotButton.onclick = () => {
                         selectedTimeSlotId = slot.id;
                         selectedTimeSlotInput.value = selectedTimeSlotId;
-                        document.getElementById('selectedTimeDisplay').value = slot.time_slot;
                     };
                     modalSlots.appendChild(slotButton);
                 }
@@ -594,34 +589,82 @@ $unread_count = countUnreadNotifications($user_id);
 
                 serviceTypeSelect.addEventListener('change', () => {
                     const selectedServiceId = serviceTypeSelect.value;
-                    loadTimeSlots(selectedServiceId);  // This should be loadTimeSlots, not fetchTimeSlots
+                    loadTimeSlots(selectedServiceId);
                 });
 
-                // Form Submission with Validation
-                bookingForm.addEventListener('submit', function (e) {
-                    e.preventDefault();
+                // Show Confirmation Modal before form submission
+                function showConfirmationModal(event) {
+                    // Get selected service and time slot
+                    const selectedService = document.getElementById('serviceType').value;
+                    const selectedTimeSlot = document.getElementById('selectedTimeSlot').value;
 
-                    if (selectedTimeSlotId && selectedScheduleId) {
+                    if (selectedService && selectedTimeSlot) {
+                        // Create booking summary
+                        const serviceName = document.querySelector(`#serviceType option[value="${selectedService}"]`).text;
+                        const timeSlotButton = document.querySelector(`button[data-id="${selectedTimeSlot}"]`);
+                        const timeSlotText = timeSlotButton ? timeSlotButton.textContent : 'No time slot selected';
+
+                        const bookingSummary = `
+            <p><strong>Service:</strong> ${serviceName}</p>
+            <p><strong>Time Slot:</strong> ${timeSlotText}</p>
+        `;
+
+                        // Display summary in a confirmation modal
                         Swal.fire({
-                            title: 'Appointment Booked!',
-                            text: 'Your appointment has been successfully booked.',
-                            icon: 'success',
-                            confirmButtonText: 'OK',
+                            title: 'Confirm Your Booking',
+                            html: bookingSummary,
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'Confirm Booking',
+                            cancelButtonText: 'Cancel',
                         }).then(result => {
                             if (result.isConfirmed) {
-                                this.submit();
+                                // Submit the form if confirmed
+                                event.target.submit();
+
+                                // Call the success alert after the form is submitted
+                                showSuccessAlert();
+                            } else {
+                                // If cancelled, show cancellation message
+                                Swal.fire('Cancelled', 'Your booking has been cancelled.', 'info');
                             }
                         });
                     } else {
+                        // If no service or time slot is selected, show an error alert
                         Swal.fire({
                             title: 'Error!',
-                            text: 'Please select a time slot before submitting the booking.',
+                            text: 'Please select both a service and a time slot before submitting.',
                             icon: 'error',
                             confirmButtonText: 'OK',
                         });
                     }
+                }
+
+                // Success Confirmation Alert
+                function showSuccessAlert() {
+                    Swal.fire({
+                        title: 'Booking Confirmed!',
+                        text: 'Your booking has been successfully confirmed.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            // Redirect to another page (optional)
+                            window.location.href = 'userDashboard.php'; // Change this URL to wherever you'd like to go
+                        }
+                    });
+                }
+
+                // Bind the form submission event to show the confirmation modal
+                document.getElementById('bookingForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    showConfirmationModal(e); // Call the confirmation modal function
                 });
+
+
             });
+
+
 
 
 
