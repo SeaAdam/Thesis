@@ -8,7 +8,7 @@ if (isset($_POST['transaction_id'])) {
     $conn->begin_transaction();
 
     // Fetch the schedule_id for the transaction
-    $sql = "SELECT service_id FROM appointment_system.transactions WHERE ID = ?";
+    $sql = "SELECT service_id, time_slot_id FROM appointment_system.transactions WHERE ID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $transactionId);
     $stmt->execute();
@@ -17,6 +17,15 @@ if (isset($_POST['transaction_id'])) {
 
     if ($transaction) {
         $serviceType = $transaction['service_id'];
+        $timeSlotId = $transaction['time_slot_id']; 
+
+        // Reset the time slot availability to '0' (booked)
+        $sql = "UPDATE appointment_system.time_slots
+          SET isBooked = 0
+          WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('i', $timeSlotId);
+        $stmt->execute();
 
         // Increment the slots for the corresponding schedule
         $sql = "UPDATE appointment_system.services_table

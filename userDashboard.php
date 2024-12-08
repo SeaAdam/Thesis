@@ -664,7 +664,6 @@ $unread_count = countUnreadNotifications($user_id);
                     }
                 });
 
-
                 // Show Confirmation Modal before form submission
                 function showConfirmationModal(event) {
                     // Get selected service and time slot
