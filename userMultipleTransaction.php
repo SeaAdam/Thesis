@@ -231,7 +231,7 @@ $unread_count = countUnreadNotifications($user_id);
                                 <th>Schedule</th>
                                 <th>Created At</th>
                                 <th>Status</th>
-                                <th>Actions</th> <!-- Column for actions (View Receipt) -->
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -316,6 +316,21 @@ $unread_count = countUnreadNotifications($user_id);
                 </div>
             </div>
 
+            <script>
+                $(document).ready(function () {
+                    $('#transactionTable').DataTable({
+                        "paging": true,
+                        "searching": true,
+                        "ordering": true,
+                        "info": true,
+                        "pageLength": 10,
+                        "order": [[0, 'desc']],
+                        "columnDefs": [
+                            { "orderable": false, "targets": [5] } // Action column has index 5
+                        ]
+                    });
+                });
+            </script>
 
 
 
@@ -436,19 +451,6 @@ $unread_count = countUnreadNotifications($user_id);
                 });
             }
 
-            $(document).ready(function () {
-                $('#transactionTable').DataTable({
-                    "paging": true,         // Enable pagination
-                    "searching": true,      // Enable searching
-                    "ordering": true,       // Enable sorting
-                    "info": true,           // Show info like "Showing 1 to 10 of 50 entries"
-                    "pageLength": 10,       // Set the default page length
-                    "order": [[0, 'desc']], // Sort by transaction ID (or modify as needed)
-                    "columnDefs": [
-                        { "orderable": false, "targets": [4] } // Disable sorting for the Action column
-                    ]
-                });
-            });
 
 
 

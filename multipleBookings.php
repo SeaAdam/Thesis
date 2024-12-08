@@ -88,7 +88,7 @@ include 'includes/dbconn.php';
                                 echo "<button type='submit' name='action' value='reject'>Reject</button>";
                                 echo "</form>";
                                 echo "</td>";
-                            } elseif ($row['status'] == 'accepted') {
+                            } elseif ($row['status'] == 'Accepted') {
                                 echo "<td>";
                                 echo "<form method='POST' action='update_booking_status.php'>";
                                 echo "<input type='hidden' name='bookingId' value='" . $row['id'] . "'>";

@@ -6,6 +6,15 @@ include 'includes/dbconn.php';
 
 header('Content-Type: application/json');
 
+// Ensure the user is logged in and has a valid session
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['success' => false, 'error' => 'User not logged in']);
+    exit;
+}
+
+$user_id = $_SESSION['user_id'];
+
 if (isset($_POST['serviceIds']) && isset($_POST['schedule'])) {
     $serviceIds = json_decode($_POST['serviceIds']);
     $schedule = $_POST['schedule'];
@@ -33,7 +42,7 @@ if (isset($_POST['serviceIds']) && isset($_POST['schedule'])) {
     }
 
     // Prepare the query to insert into bookings table
-    $query = "INSERT INTO bookings_table (service_ids, schedule, status) VALUES (?, ?, ?)";
+    $query = "INSERT INTO bookings_table (user_id, service_ids, schedule, status) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($query);
 
     if ($stmt === false) {
@@ -41,7 +50,7 @@ if (isset($_POST['serviceIds']) && isset($_POST['schedule'])) {
         exit;
     }
 
-    $stmt->bind_param("sss", $serviceIdsJson, $schedule, $status);
+    $stmt->bind_param("ssss", $user_id, $serviceIdsJson, $schedule, $status);
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true]);
