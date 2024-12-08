@@ -656,21 +656,14 @@ $unread_count = countUnreadNotifications($user_id);
                 // Reset Modal on Close
                 $(eventModal).on('hidden.bs.modal', () => location.reload());
 
-
-                // Handling the service selection for multiple bookings
                 serviceTypeSelect.addEventListener('change', () => {
                     const serviceId = serviceTypeSelect.value;
 
                     if (serviceId) {
-                        if (selectedServiceIds.length >= 4) {
-                            alert('You can only select up to 4 services.');
-                            return;
-                        }
-
-                        selectedServiceIds.push(serviceId);
                         loadTimeSlots(serviceId);
                     }
                 });
+
 
                 // Show Confirmation Modal before form submission
                 function showConfirmationModal(event) {
