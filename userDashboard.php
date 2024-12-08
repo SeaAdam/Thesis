@@ -320,7 +320,7 @@ $unread_count = countUnreadNotifications($user_id);
                             <div id="legend">
                                 <h3>Legend</h3>
                                 <ul>
-                                    <li><span style="background-color: green;"></span> Available</li>
+                                    <li><span style="background-color: #ffc107;"></span> Available</li>
                                     <li><span style="background-color: red;"></span> Fully Booked</li>
                                     <li><span style="background-color: gray;"></span> Holidays</li>
                                 </ul>
@@ -646,11 +646,20 @@ $unread_count = countUnreadNotifications($user_id);
                                     const slotsCount = data.slotsCount; // Assuming you have slotsCount in the response
                                     modalSlots.innerHTML += `<p><strong>Total Slots:</strong> ${slotsCount}</p>`;
 
-                                    // Display the time slots
-                                    data.timeSlots.forEach(slot => {
-                                        const isBooked = slot.isBooked;
-                                        createSlotButton(slot, isBooked);
-                                    });
+                                    // Check slots count to change the button text
+                                    if (slotsCount === 0) {
+                                        // Change button state if no slots are available
+                                        const noSlotsButton = document.createElement('button');
+                                        noSlotsButton.textContent = 'No Slots Available';
+                                        noSlotsButton.className = 'btn btn-danger btn-sm disabled'; // Disabled and red button
+                                        modalSlots.appendChild(noSlotsButton);
+                                    } else {
+                                        // Display the time slots if available
+                                        data.timeSlots.forEach(slot => {
+                                            const isBooked = slot.isBooked;
+                                            createSlotButton(slot, isBooked);
+                                        });
+                                    }
                                 } else {
                                     modalSlots.innerHTML = 'No available time slots for the selected service.';
                                 }
