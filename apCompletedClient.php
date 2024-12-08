@@ -105,18 +105,17 @@ $unread_count = countUnreadNotificationsAdmin();
                         include 'includes/dbconn.php';
 
                         $sql = "
-                            SELECT 
-                                cb.id, 
-                                cb.status, 
-                                cb.booking_no, 
-                                st.Services AS service_name, 
-                                cb.date_appointment,
-                                cb.date_seen
-                            FROM 
-                                client_booking cb
-                                LEFT JOIN services_table st ON cb.services = st.ID
-                            WHERE 
-                                cb.status = 'Completed'";
+        SELECT 
+            cb.id, 
+            cb.status, 
+            cb.booking_no, 
+            cb.services AS services_ids, 
+            cb.date_appointment,
+            cb.date_seen
+        FROM 
+            client_booking cb
+        WHERE 
+            cb.status = 'Completed'";
 
                         $stmt = $conn->prepare($sql);
                         $stmt->execute();
@@ -124,23 +123,47 @@ $unread_count = countUnreadNotificationsAdmin();
 
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
+                                // Split the services_ids into an array
+                                $servicesIds = explode(',', $row['services_ids']);
+
+                                // Initialize an array to hold the service names
+                                $serviceNames = [];
+
+                                // Fetch each service name
+                                foreach ($servicesIds as $serviceId) {
+                                    // Query to get the service name for each service ID
+                                    $serviceQuery = "SELECT service_name FROM company_services WHERE ID = ?";
+                                    $serviceStmt = $conn->prepare($serviceQuery);
+                                    $serviceStmt->bind_param('i', $serviceId);
+                                    $serviceStmt->execute();
+                                    $serviceResult = $serviceStmt->get_result();
+                                    if ($serviceResult && $serviceRow = $serviceResult->fetch_assoc()) {
+                                        $serviceNames[] = $serviceRow['service_name']; // Add the service name to the array
+                                    }
+                                    $serviceStmt->close();
+                                }
+
+                                // Join the service names into a comma-separated string
+                                $servicesDisplay = implode(', ', $serviceNames);
+
                                 echo "<tr>
-                                <td>{$row['id']}</td>
-                                <td><span class='bg-info text-white'>{$row['status']}</span></td>
-                                <td>{$row['booking_no']}</td>
-                                <td>{$row['service_name']}</td>
-                                <td>{$row['date_appointment']}</td>
-                                <td>{$row['date_seen']}</td>
-                            </tr>";
+                <td>{$row['id']}</td>
+                <td><span class='bg-info text-white'>{$row['status']}</span></td>
+                <td>{$row['booking_no']}</td>
+                <td>{$servicesDisplay}</td> <!-- Display the services here -->
+                <td>{$row['date_appointment']}</td>
+                <td>{$row['date_seen']}</td>
+            </tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='7'>No pending transactions found.</td></tr>";
+                            echo "<tr><td colspan='7'>No completed transactions found.</td></tr>";
                         }
 
                         $stmt->close();
                         $conn->close();
                         ?>
                     </tbody>
+
                 </table>
             </div>
 
