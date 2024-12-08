@@ -604,14 +604,19 @@ $unread_count = countUnreadNotifications($user_id);
                     if (serviceId && selectedServiceIds.length <= 4) {
                         modalSlots.innerHTML = 'Loading time slots...';
 
-                        // Fetch time slots for the selected service
+                        // Fetch time slots and slots_count for the selected service
                         fetch(`fetch_service_details.php?service_id=${serviceId}`)
                             .then(response => response.json())
                             .then(data => {
                                 if (data.timeSlots?.length) {
                                     modalSlots.innerHTML = '';
+
+                                    // Display slots_count
+                                    const slotsCount = data.slotsCount; // Assuming you have slotsCount in the response
+                                    modalSlots.innerHTML += `<p><strong>Total Slots:</strong> ${slotsCount}</p>`;
+
+                                    // Display the time slots
                                     data.timeSlots.forEach(slot => {
-                                        // If the slot is booked, disable it
                                         const isBooked = slot.isBooked;
                                         createSlotButton(slot, isBooked);
                                     });
@@ -630,7 +635,7 @@ $unread_count = countUnreadNotifications($user_id);
                         modalSlots.style.display = 'block';
                     }
                 }
-
+                
                 function createSlotButton(slot, isBooked) {
                     const slotButton = document.createElement('button');
                     slotButton.textContent = slot.time_slot;

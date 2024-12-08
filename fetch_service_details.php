@@ -38,14 +38,42 @@ if (isset($_GET['service_id'])) {
             ];
         }
 
-        // Return the time slots as a JSON response
-        echo json_encode(['timeSlots' => $timeSlots]);
+        // Now fetch the slots_count from the services_table
+        $serviceQuery = "SELECT slots_count FROM services_table WHERE ID = ?";
+        $serviceStmt = $conn->prepare($serviceQuery);
+
+        if ($serviceStmt === false) {
+            echo json_encode(['error' => 'Failed to prepare SQL statement for service details']);
+            exit;
+        }
+
+        $serviceStmt->bind_param("i", $service_id);
+        $serviceStmt->execute();
+        $serviceResult = $serviceStmt->get_result();
+
+        if ($serviceResult->num_rows > 0) {
+            $serviceData = $serviceResult->fetch_assoc();
+            $slotsCount = $serviceData['slots_count']; // Get the slots_count for this service
+
+            // Return the time slots and slots_count as a JSON response
+            echo json_encode([
+                'timeSlots' => $timeSlots,
+                'slotsCount' => $slotsCount // Include slotsCount in the response
+            ]);
+        } else {
+            // If no service found with the provided service_id
+            echo json_encode(['error' => 'Service not found']);
+        }
+
+        // Close the service prepared statement
+        $serviceStmt->close();
+
     } else {
         // Return an error if no time slots are found for the selected service
         echo json_encode(['error' => 'No available time slots for this service.']);
     }
 
-    // Close the prepared statement
+    // Close the time slots prepared statement
     $stmt->close();
 } else {
     // Return an error if no service ID is provided
