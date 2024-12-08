@@ -17,14 +17,6 @@ if (isset($_POST['submit'])) {
     
     try {
 
-        $delete_time_slots_sql = "DELETE FROM time_slots WHERE schedule_id = ?";
-        $stmt = $conn->prepare($delete_time_slots_sql);
-        $stmt->bind_param("i", $ID);
-        if (!$stmt->execute()) {
-            throw new Exception("Failed to delete time slots: " . $stmt->error);
-        }
-
-
         $delete_schedule_sql = "DELETE FROM schedule_record_table WHERE ID = ?";
         $stmt = $conn->prepare($delete_schedule_sql);
         $stmt->bind_param("i", $ID);
