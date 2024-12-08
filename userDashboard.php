@@ -635,7 +635,7 @@ $unread_count = countUnreadNotifications($user_id);
                         modalSlots.style.display = 'block';
                     }
                 }
-                
+
                 function createSlotButton(slot, isBooked) {
                     const slotButton = document.createElement('button');
                     slotButton.textContent = slot.time_slot;
@@ -658,8 +658,11 @@ $unread_count = countUnreadNotifications($user_id);
                     modalSlots.appendChild(slotButton);
                 }
 
-                // Reset Modal on Close
-                $(eventModal).on('hidden.bs.modal', () => location.reload());
+                // $(eventModal).on('hidden.bs.modal', () => location.reload());
+
+                $('#eventModal').on('hidden.bs.modal', function () {
+                    location.reload(); // This will reload the page
+                });
 
                 serviceTypeSelect.addEventListener('change', () => {
                     const serviceId = serviceTypeSelect.value;
@@ -743,12 +746,31 @@ $unread_count = countUnreadNotifications($user_id);
 
             // Open New Modal for Multiple Bookings
             addMultipleBookingsBtn.addEventListener('click', () => {
+                // Disable page reload on modal close temporarily
+                $('#eventModal').off('hidden.bs.modal'); // Remove event listener for reloading the page
+
                 // Load services for multiple bookings
                 fetchServicesForMultipleBookings();
+
+                // Close the previous modal if it is open
+                $('#eventModal').modal('hide');
 
                 // Show the new modal
                 $(newEventModal).modal('show');
             });
+
+            // Optionally, restore the reload behavior for #eventModal after new modal is closed
+            $('#newEventModal').on('hidden.bs.modal', function () {
+                // Reload the page when #newEventModal is closed
+                location.reload();
+
+                // Restore the reload trigger for #eventModal
+                $('#eventModal').on('hidden.bs.modal', function () {
+                    location.reload(); // Reload the page when #eventModal is closed
+                });
+            });
+
+
 
             function fetchServicesForMultipleBookings() {
                 fetch('fetch_service.php')
