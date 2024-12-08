@@ -10,7 +10,7 @@ if ($mysqli->connect_error) {
 }
 
 // Query to fetch events
-$query = "SELECT ID,Slots_Date  FROM schedule_record_table";
+$query = "SELECT ID, Slots_Date  FROM schedule_record_table";
 $result = $mysqli->query($query);
 
 $events = [];
