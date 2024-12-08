@@ -104,8 +104,9 @@ if (isset($_POST['id']) && isset($_POST['status'])) {
 
             // Additional logic if status is 'Completed' or 'Rejected'
             if ($status === 'Rejected') {
-                
-                $sql = "SELECT service_id  FROM appointment_system.transactions WHERE ID = ?";
+
+                // Get the service ID and time slot ID from the transactions table
+                $sql = "SELECT service_id, time_slot_id FROM appointment_system.transactions WHERE ID = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param('i', $transactionId);
                 $stmt->execute();
@@ -114,11 +115,20 @@ if (isset($_POST['id']) && isset($_POST['status'])) {
 
                 if ($transaction) {
                     $serviceType = $transaction['service_id'];
+                    $timeSlotId = $transaction['time_slot_id']; // Assuming this is the time slot ID for the booking
 
-                    // Increment the slots for the corresponding schedule
+                    // Reset the time slot availability to '0' (booked)
+                    $sql = "UPDATE time_slots
+                SET isBooked = 0
+                WHERE id = ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param('i', $timeSlotId);
+                    $stmt->execute();
+
+                    // Optionally, you can also update the slots count for the service type (if needed)
                     $sql = "UPDATE services_table
-                            SET slots_count = slots_count + 1 
-                            WHERE ID = ?";
+                SET slots_count = slots_count + 1
+                WHERE ID = ?";
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param('i', $serviceType);
                     $stmt->execute();

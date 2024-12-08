@@ -10,7 +10,7 @@ if (isset($_GET['service_id'])) {
     global $conn;
 
     // Fetch the time slots for the provided service_id from the time_slots table
-    $query = "SELECT id, time_slot FROM time_slots WHERE service_id = ?";
+    $query = "SELECT id, time_slot, isBooked FROM time_slots WHERE service_id = ?";
     $stmt = $conn->prepare($query);
 
     if ($stmt === false) {
@@ -28,9 +28,13 @@ if (isset($_GET['service_id'])) {
 
         // Fetch the time slots and add them to the timeSlots array
         while ($row = $result->fetch_assoc()) {
+            // Check if the slot is booked
+            $isBooked = $row['isBooked'] == 1; // If isBooked is 1, the slot is unavailable
+
             $timeSlots[] = [
                 'id' => $row['id'],
-                'time_slot' => $row['time_slot']
+                'time_slot' => $row['time_slot'],
+                'isBooked' => $isBooked // Add the isBooked field to the response
             ];
         }
 
@@ -47,5 +51,4 @@ if (isset($_GET['service_id'])) {
     // Return an error if no service ID is provided
     echo json_encode(['error' => 'Service ID not provided']);
 }
-
 ?>

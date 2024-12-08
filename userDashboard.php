@@ -600,17 +600,21 @@ $unread_count = countUnreadNotifications($user_id);
                     $(eventModal).modal('show');
                 }
 
-                // Load Time Slots based on selected service
                 function loadTimeSlots(serviceId) {
                     if (serviceId && selectedServiceIds.length <= 4) {
                         modalSlots.innerHTML = 'Loading time slots...';
 
+                        // Fetch time slots for the selected service
                         fetch(`fetch_service_details.php?service_id=${serviceId}`)
                             .then(response => response.json())
                             .then(data => {
                                 if (data.timeSlots?.length) {
                                     modalSlots.innerHTML = '';
-                                    data.timeSlots.forEach(slot => createSlotButton(slot));
+                                    data.timeSlots.forEach(slot => {
+                                        // If the slot is booked, disable it
+                                        const isBooked = slot.isBooked;
+                                        createSlotButton(slot, isBooked);
+                                    });
                                 } else {
                                     modalSlots.innerHTML = 'No available time slots for the selected service.';
                                 }
@@ -627,17 +631,25 @@ $unread_count = countUnreadNotifications($user_id);
                     }
                 }
 
-                // Create Slot Button
-                function createSlotButton(slot) {
+                function createSlotButton(slot, isBooked) {
                     const slotButton = document.createElement('button');
                     slotButton.textContent = slot.time_slot;
                     slotButton.className = 'btn btn-outline-primary btn-sm m-1';
                     slotButton.type = 'button';
                     slotButton.dataset.id = slot.id; // Set the data-id attribute
-                    slotButton.onclick = () => {
-                        selectedTimeSlotId = slot.id;
-                        selectedTimeSlotInput.value = selectedTimeSlotId;
-                    };
+
+                    if (isBooked) {
+                        // If the slot is booked, disable the button and add the 'disabled' class
+                        slotButton.classList.add('btn-secondary', 'disabled');
+                        slotButton.disabled = true;
+                    } else {
+                        // If the slot is available, add a click handler
+                        slotButton.onclick = () => {
+                            selectedTimeSlotId = slot.id;
+                            selectedTimeSlotInput.value = selectedTimeSlotId;
+                        };
+                    }
+
                     modalSlots.appendChild(slotButton);
                 }
 
