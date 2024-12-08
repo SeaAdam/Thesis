@@ -518,6 +518,7 @@ $unread_count = countUnreadNotifications($user_id);
                 const multipleServiceTypeSelect = document.getElementById('multipleServiceTypeSelect');
                 const scheduleSelectDiv = document.getElementById('scheduleSelectDiv');
                 const multipleModalSlots = document.getElementById('multipleModalSlots');  // For displaying the message
+                const multipleBookingForm = document.getElementById('multipleBookingForm');
 
                 let selectedScheduleId = null;
                 let selectedTimeSlotId = null;
@@ -789,27 +790,20 @@ $unread_count = countUnreadNotifications($user_id);
                     scheduleSelectDiv.style.display = 'none';
                     multipleModalSlots.innerHTML = 'Please select between 2 and 4 services.';
                 }
+
+
             });
 
-            // Confirm Multiple Bookings
             document.getElementById('multipleBookingForm').addEventListener('submit', function (e) {
-                e.preventDefault();
+                e.preventDefault();  // Prevent the form from submitting normally
 
                 // Get the selected AM/PM schedule
                 const selectedSchedule = document.getElementById('scheduleSelect').value;
 
-                // Check if services are selected
-                if (selectedServiceIds.length === 0) {
-                    console.error('No services selected!');
-                    return;
-                }
+                // Get selected service IDs
+                const selectedServiceIds = Array.from(multipleServiceTypeSelect.selectedOptions).map(option => option.value);
 
-                // You can now proceed with processing the form data
-                console.log('Selected services:', selectedServiceIds);
-                console.log('Selected schedule:', selectedSchedule);
-
-                // Proceed with submitting or further processing
-
+                // Validate the selected services
                 if (selectedServiceIds.length < 2 || selectedServiceIds.length > 4) {
                     Swal.fire({
                         title: 'Error!',
@@ -817,19 +811,67 @@ $unread_count = countUnreadNotifications($user_id);
                         icon: 'error',
                         confirmButtonText: 'OK',
                     });
-                } else {
-                    // Process the multiple bookings confirmation (submit to backend, etc.)
-                    Swal.fire({
-                        title: 'Multiple Bookings Confirmed!',
-                        text: `You have selected ${selectedServiceIds.length} services for booking.`,
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                    }).then(() => {
-                        // Optionally, redirect or reload the page
-                        window.location.href = 'userDashboard.php';
-                    });
+                    return;
                 }
+
+                // Prepare the form data for submission
+                const formData = new FormData();
+                formData.append('serviceIds', JSON.stringify(selectedServiceIds));  // Convert selectedServiceIds to a JSON string
+                formData.append('schedule', selectedSchedule);  // Append the selected AM/PM schedule
+
+                fetch('save_multiple_bookings.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();  // Use text() to capture raw response
+                    })
+                    .then(responseText => {
+                        console.log('Raw response:', responseText);  // Log the raw response for debugging
+                        try {
+                            const data = JSON.parse(responseText);  // Try to parse the response as JSON
+                            if (data.success) {
+                                Swal.fire({
+                                    title: 'Multiple Bookings Confirmed!',
+                                    text: `You have selected ${selectedServiceIds.length} services for booking.`,
+                                    icon: 'success',
+                                    confirmButtonText: 'OK',
+                                }).then(() => {
+                                    window.location.href = 'userDashboard.php';
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: data.error || 'There was an error saving the bookings. Please try again.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK',
+                                });
+                            }
+                        } catch (error) {
+                            console.error('Error parsing JSON:', error);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Failed to process the response. Please try again later.',
+                                icon: 'error',
+                                confirmButtonText: 'OK',
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'An error occurred. Please try again later.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                        });
+                    });
             });
+
+
 
 
 
