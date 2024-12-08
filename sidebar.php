@@ -49,6 +49,7 @@ if (isset($_SESSION['unlocked_pages']['adminAccount.php'])) {
                     <li><a href="apApproved.php">Approved</a></li>
                     <li><a href="apCompleted.php">Completed</a></li>
                     <li><a href="apRejected.php">Rejected</a></li>
+                    <li><a href="multipleBookings.php">Multiple Bookings</a></li>
                 </ul>
             </li>
             <li><a><i class="fa fa-wrench"></i> Maintenance<span class="fa fa-chevron-down"></span>

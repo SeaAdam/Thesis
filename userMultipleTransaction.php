@@ -89,7 +89,8 @@ $unread_count = countUnreadNotifications($user_id);
                                 <li><a href="userProfile.php"><i class="fa fa-desktop"></i> Profile </a>
                                 </li>
                                 <li><a href="userTransaction.php"><i class="fa fa-table"></i> Transaction </a>
-                                <li><a href="userMultipleTransaction.php"><i class="fa fa-table"></i> Multiple Transaction</a>
+                                <li><a href="userMultipleTransaction.php"><i class="fa fa-table"></i> Multiple
+                                        Transaction</a>
                                 <li><a href="#"><i></i> HELP DESK </a>
                                 </li>
                                 <?php
@@ -173,116 +174,73 @@ $unread_count = countUnreadNotifications($user_id);
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>Service Names</th>
+                                <th>Schedule</th>
+                                <th>Created At</th>
                                 <th>Status</th>
-                                <th>Transaction No.</th>
-                                <th>Services</th>
-                                <th>Date Appointment</th>
-                                <th>Time Slot</th>
-                                <th>Date Seen</th>
-                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
                             include 'includes/dbconn.php';
 
-                            $username = $_SESSION['username'];
+                            // Fetch all bookings from the database
+                            $query = "SELECT id, service_ids, schedule, created_at, status FROM bookings_table";
+                            $result = $conn->query($query);
 
-                            $sql = "SELECT ID FROM appointment_system.registration_table WHERE username = ?";
-                            $stmt = $conn->prepare($sql);
-                            $stmt->bind_param('s', $username);
-                            $stmt->execute();
-                            $stmt->bind_result($user_id);
-                            $stmt->fetch();
-                            $stmt->close();
+                            if ($result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
+                                    // Decode the schedule field (assuming it's a JSON array like ["AM", "PM"])
+                                    $schedule = $row['schedule'];
+                                    $scheduleStr = "";
 
-                            if ($user_id !== null) {
-                                $sql = "SELECT 
-                        t.ID AS transaction_id,
-                        t.status,
-                        t.transaction_no,
-                        s.Services AS service_id,
-                        sr.Slots_Date AS schedule_id,
-                        ts. time_slot AS time_slot_id,
-                        t.date_seen
-                    FROM 
-                        appointment_system.transactions t
-                        LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
-                        LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
-                        LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
-                    WHERE 
-                        t.user_id = ?";
-
-                                $stmt = $conn->prepare($sql);
-                                $stmt->bind_param('i', $user_id);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-
-                                if ($result === false) {
-                                    die('Query failed: ' . htmlspecialchars($stmt->error));
-                                }
-
-                                if ($result->num_rows > 0) {
-                                    while ($row = $result->fetch_assoc()) {
-                                        $statusClass = '';
-                                        $buttonText = '';
-                                        $buttonClass = '';
-                                        $buttonAction = '';
-
-                                        if ($row['status'] == 'Approved') {
-                                            $statusClass = 'bg-success text-white';
-                                            $buttonText = 'View Receipt';
-                                            $buttonClass = 'btn btn-primary btn-sm';
-                                            $buttonAction = "href='receipt.php?transaction_id={$row['transaction_id']}'";
-                                        } elseif ($row['status'] == 'Completed') {
-                                            $statusClass = 'bg-info text-white';
-                                            $buttonText = 'View Receipt';
-                                            $buttonClass = 'btn btn-primary btn-sm';
-                                            $buttonAction = "href='receipt.php?transaction_id={$row['transaction_id']}'";
-                                        } elseif ($row['status'] == 'Rejected') {
-                                            $statusClass = 'bg-danger text-white';
-                                            $buttonText = 'View Receipt';
-                                            $buttonClass = 'btn btn-primary btn-sm';
-                                            $buttonAction = "href='receipt.php?transaction_id={$row['transaction_id']}'";
-                                        } elseif ($row['status'] == 'Pending') {
-                                            $statusClass = 'bg-dark text-white';
-                                            $buttonText = 'Cancel Booking';
-                                            $buttonClass = 'btn btn-danger btn-sm';
-                                            $buttonAction = "onclick='confirmCancellation({$row['transaction_id']})'";
-                                        }
-
-                                        echo "<tr>
-                        <td>{$row['transaction_id']}</td>
-                        <td><span class='{$statusClass}'>{$row['status']}</span></td>
-                        <td>{$row['transaction_no']}</td>
-                        <td>{$row['service_id']}</td>
-                        <td>{$row['schedule_id']}</td>
-                        <td>{$row['time_slot_id']}</td>
-                        <td>{$row['date_seen']}</td>
-                        <td>";
-
-                                        if ($row['status'] == 'Pending') {
-                                            echo "<button class='btn btn-danger btn-sm' onclick='cancelBooking({$row['transaction_id']})'>Cancel Booking</button>";
-                                        } else {
-                                            echo "<a class='{$buttonClass}' {$buttonAction}>{$buttonText}</a>";
-                                        }
-
-                                        echo "</td></tr>";
+                                    // Map schedule to time slots
+                                    if ($schedule == 'AM') {
+                                        $scheduleStr = "10:00 AM - 12:00 PM";
+                                    } elseif ($schedule == 'PM') {
+                                        $scheduleStr = "2:00 PM - 4:00 PM";
                                     }
-                                } else {
-                                    echo "<p>No transactions found for User $username.</p>";
-                                }
 
-                                $stmt->close();
+                                    // Decode the service_ids (array of IDs)
+                                    $serviceIds = json_decode($row['service_ids']);
+                                    $serviceNames = [];
+
+                                    // Get service names from the services table using the IDs
+                                    if (!empty($serviceIds)) {
+                                        foreach ($serviceIds as $serviceId) {
+                                            $serviceQuery = "SELECT Services FROM services_table WHERE ID = ?";
+                                            $serviceStmt = $conn->prepare($serviceQuery);
+                                            $serviceStmt->bind_param('i', $serviceId);
+                                            $serviceStmt->execute();
+                                            $serviceStmt->bind_result($serviceName);
+                                            $serviceStmt->fetch();
+                                            $serviceStmt->close();
+
+                                            if ($serviceName) {
+                                                $serviceNames[] = $serviceName;
+                                            }
+                                        }
+                                    }
+
+                                    // Join the service names with commas for display
+                                    $serviceNamesStr = implode(', ', $serviceNames);
+
+                                    echo "<tr>";
+                                    echo "<td>" . $row['id'] . "</td>";  // Booking ID
+                                    echo "<td>" . htmlspecialchars($serviceNamesStr) . "</td>";  // Service Names
+                                    echo "<td>" . $scheduleStr . "</td>";  // Schedule (AM/PM)
+                                    echo "<td>" . $row['created_at'] . "</td>";  // Created At
+                                    echo "<td>" . $row['status'] . "</td>";  // Status (accepted/rejected)
+                                    echo "</tr>";
+                                }
                             } else {
-                                echo "<p>No user ID found for username '$username'.</p>";
+                                echo "<tr><td colspan='6'>No bookings found</td></tr>";
                             }
 
                             $conn->close();
                             ?>
                         </tbody>
                     </table>
-
 
                 </div>
 
@@ -416,7 +374,7 @@ $unread_count = countUnreadNotifications($user_id);
                     "pageLength": 10,       // Set the default page length
                     "order": [[0, 'desc']], // Sort by transaction ID (or modify as needed)
                     "columnDefs": [
-                        { "orderable": false, "targets": [7] } // Disable sorting for the Action column
+                        { "orderable": false, "targets": [4] } // Disable sorting for the Action column
                     ]
                 });
             });
