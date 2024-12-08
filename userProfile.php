@@ -116,6 +116,7 @@ $unread_count = countUnreadNotifications($user_id);
                                 <li><a href="userProfile.php"><i class="fa fa-desktop"></i> Profile </a>
                                 </li>
                                 <li><a href="userTransaction.php"><i class="fa fa-table"></i> Transaction </a>
+                                <li><a href="userMultipleTransaction.php"><i class="fa fa-table"></i> Multiple Transaction</a>
                                 <li><a href="#"><i></i> HELP DESK </a>
                                 </li>
                                 <?php

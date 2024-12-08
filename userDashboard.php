@@ -226,6 +226,9 @@ $unread_count = countUnreadNotifications($user_id);
                                 </li>
                                 <li><a href="userTransaction.php"><i class="fa fa-table"></i> Transaction </a>
 
+                                <li><a href="userMultipleTransaction.php"><i class="fa fa-table"></i> Multiple
+                                        Transaction</a>
+
                                 <li><a href="#"><i></i> HELP DESK </a>
                                 </li>
                                 <?php
@@ -810,6 +813,8 @@ $unread_count = countUnreadNotifications($user_id);
                         text: 'Please select between 2 and 4 services before confirming.',
                         icon: 'error',
                         confirmButtonText: 'OK',
+                    }).then(() => {
+                        location.reload();  // Reload the page after clicking OK
                     });
                     return;
                 }
@@ -848,6 +853,8 @@ $unread_count = countUnreadNotifications($user_id);
                                     text: data.error || 'There was an error saving the bookings. Please try again.',
                                     icon: 'error',
                                     confirmButtonText: 'OK',
+                                }).then(() => {
+                                    location.reload();  // Reload the page after clicking OK on error
                                 });
                             }
                         } catch (error) {
@@ -857,6 +864,8 @@ $unread_count = countUnreadNotifications($user_id);
                                 text: 'Failed to process the response. Please try again later.',
                                 icon: 'error',
                                 confirmButtonText: 'OK',
+                            }).then(() => {
+                                location.reload();  // Reload the page after clicking OK
                             });
                         }
                     })
@@ -867,9 +876,12 @@ $unread_count = countUnreadNotifications($user_id);
                             text: 'An error occurred. Please try again later.',
                             icon: 'error',
                             confirmButtonText: 'OK',
+                        }).then(() => {
+                            location.reload();  // Reload the page after clicking OK
                         });
                     });
             });
+
 
 
 

@@ -18,10 +18,24 @@ if (isset($_POST['serviceIds']) && isset($_POST['schedule'])) {
     $serviceIdsJson = json_encode($serviceIds);
     $status = 'pending';  // Default status is 'pending'
 
+    // Check if there are any pending bookings
+    $checkQuery = "SELECT id FROM bookings_table WHERE status = 'pending'";
+    $stmt = $conn->prepare($checkQuery);
+    $stmt->execute();
+    $stmt->store_result();
+
+    // If there's any pending booking, prevent the new booking
+    if ($stmt->num_rows > 0) {
+        echo json_encode(['success' => false, 'error' => 'There is already a pending booking.']);
+        $stmt->close();
+        $conn->close();
+        exit;
+    }
+
     // Prepare the query to insert into bookings table
     $query = "INSERT INTO bookings_table (service_ids, schedule, status) VALUES (?, ?, ?)";
-
     $stmt = $conn->prepare($query);
+
     if ($stmt === false) {
         echo json_encode(['success' => false, 'error' => 'Database prepare failed']);
         exit;
