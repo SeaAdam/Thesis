@@ -4,6 +4,7 @@ include 'includes/dbconn.php';
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,39 +12,9 @@ include 'includes/dbconn.php';
     <!-- Add your CSS for styling -->
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="container">
-        <!-- Pending Bookings Section -->
-        <div class="pending-bookings">
-            <h2>Pending Bookings</h2>
-            <?php
-            // Fetch pending bookings from the database
-            $query = "SELECT id, service_ids, schedule FROM bookings_table WHERE status = 'pending'";
-            $result = $conn->query($query);
-
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $bookingId = $row['id'];
-                    $serviceIds = json_decode($row['service_ids']);
-                    $schedule = $row['schedule'];
-
-                    echo "<div class='booking'>";
-                    echo "<h3>Booking ID: $bookingId</h3>";
-                    echo "<p>Services: " . implode(', ', $serviceIds) . "</p>";
-                    echo "<p>Schedule: $schedule</p>";
-                    echo "<form method='POST' action='update_booking_status.php'>";
-                    echo "<input type='hidden' name='bookingId' value='$bookingId'>";
-                    echo "<button type='submit' name='action' value='accept'>Accept</button>";
-                    echo "<button type='submit' name='action' value='reject'>Reject</button>";
-                    echo "</form>";
-                    echo "</div>";
-                }
-            } else {
-                echo "<p>No pending bookings.</p>";
-            }
-            ?>
-        </div>
-
         <!-- Transaction Table Section -->
         <div class="transaction-table">
             <h1>Transaction Table</h1>
@@ -55,6 +26,7 @@ include 'includes/dbconn.php';
                         <th>Schedule</th>
                         <th>Created At</th>
                         <th>Status</th>
+                        <th>Actions</th> <!-- Add actions column -->
                     </tr>
                 </thead>
                 <tbody>
@@ -106,10 +78,31 @@ include 'includes/dbconn.php';
                             echo "<td>" . $scheduleStr . "</td>";  // Schedule (AM/PM)
                             echo "<td>" . $row['created_at'] . "</td>";  // Created At
                             echo "<td>" . $row['status'] . "</td>";  // Status (accepted/rejected)
+                    
+                            // Add Action Buttons for Accept/Reject
+                            if ($row['status'] == 'pending') {
+                                echo "<td>";
+                                echo "<form method='POST' action='update_booking_status.php'>";
+                                echo "<input type='hidden' name='bookingId' value='" . $row['id'] . "'>";
+                                echo "<button type='submit' name='action' value='accept'>Accept</button>";
+                                echo "<button type='submit' name='action' value='reject'>Reject</button>";
+                                echo "</form>";
+                                echo "</td>";
+                            } elseif ($row['status'] == 'accepted') {
+                                echo "<td>";
+                                echo "<form method='POST' action='update_booking_status.php'>";
+                                echo "<input type='hidden' name='bookingId' value='" . $row['id'] . "'>";
+                                echo "<button type='submit' name='action' value='complete'>Complete</button>";
+                                echo "</form>";
+                                echo "</td>";
+                            } else {
+                                echo "<td>-</td>";  // If not pending or accepted, show a dash or other text
+                            }
+
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='5'>No bookings found</td></tr>";
+                        echo "<tr><td colspan='6'>No bookings found</td></tr>";
                     }
 
                     $conn->close();
@@ -119,4 +112,5 @@ include 'includes/dbconn.php';
         </div>
     </div>
 </body>
+
 </html>

@@ -47,6 +47,59 @@ $unread_count = countUnreadNotifications($user_id);
             background-color: #ffffff;
             font-weight: normal;
         }
+
+        /* Style for status color coding */
+        .status-accepted {
+            background-color: #28a745;
+            /* Green for accepted */
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .status-rejected {
+            background-color: #dc3545;
+            /* Red for rejected */
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .status-completed {
+            background-color: #007bff;
+            /* Blue for completed */
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .status-pending {
+            background-color: #ffc107;
+            /* Yellow for pending */
+            color: black;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        /* Style for the 'View Receipt' button */
+        .btn-info {
+            background-color: #17a2b8;
+            /* Info button color */
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+            /* Darker blue for hover effect */
+        }
     </style>
 
 </head>
@@ -178,6 +231,7 @@ $unread_count = countUnreadNotifications($user_id);
                                 <th>Schedule</th>
                                 <th>Created At</th>
                                 <th>Status</th>
+                                <th>Actions</th> <!-- Column for actions (View Receipt) -->
                             </tr>
                         </thead>
                         <tbody>
@@ -225,12 +279,30 @@ $unread_count = countUnreadNotifications($user_id);
                                     // Join the service names with commas for display
                                     $serviceNamesStr = implode(', ', $serviceNames);
 
+                                    // Color-coding the status
+                                    $statusClass = "";
+                                    switch ($row['status']) {
+                                        case 'accepted':
+                                            $statusClass = "status-accepted";
+                                            break;
+                                        case 'rejected':
+                                            $statusClass = "status-rejected";
+                                            break;
+                                        case 'completed':
+                                            $statusClass = "status-completed";
+                                            break;
+                                        default:
+                                            $statusClass = "status-pending";
+                                    }
+
+                                    // Add the row to the table
                                     echo "<tr>";
                                     echo "<td>" . $row['id'] . "</td>";  // Booking ID
                                     echo "<td>" . htmlspecialchars($serviceNamesStr) . "</td>";  // Service Names
                                     echo "<td>" . $scheduleStr . "</td>";  // Schedule (AM/PM)
                                     echo "<td>" . $row['created_at'] . "</td>";  // Created At
-                                    echo "<td>" . $row['status'] . "</td>";  // Status (accepted/rejected)
+                                    echo "<td class='$statusClass'>" . $row['status'] . "</td>";  // Status (with color)
+                                    echo "<td><a href='view_receipt_mb.php?id=" . $row['id'] . "' class='btn btn-info'>View Receipt</a></td>";  // View Receipt button
                                     echo "</tr>";
                                 }
                             } else {
@@ -241,10 +313,9 @@ $unread_count = countUnreadNotifications($user_id);
                             ?>
                         </tbody>
                     </table>
-
                 </div>
-
             </div>
+
 
 
 

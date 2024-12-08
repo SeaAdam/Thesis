@@ -5,12 +5,15 @@ if (isset($_POST['bookingId']) && isset($_POST['action'])) {
     $bookingId = $_POST['bookingId'];
     $action = $_POST['action'];
 
+    // Determine the status based on the action
     if ($action === 'accept') {
-        $status = 'accepted';
+        $status = 'Accepted';
     } elseif ($action === 'reject') {
-        $status = 'rejected';
+        $status = 'Rejected';
+    } elseif ($action === 'complete') {
+        $status = 'Completed';
     } else {
-        echo "Invalid action!";
+        echo json_encode(['success' => false, 'error' => 'Invalid action!']);
         exit;
     }
 
@@ -19,7 +22,7 @@ if (isset($_POST['bookingId']) && isset($_POST['action'])) {
     $stmt = $conn->prepare($query);
 
     if ($stmt === false) {
-        echo "Database prepare failed";
+        echo json_encode(['success' => false, 'error' => 'Database prepare failed']);
         exit;
     }
 
