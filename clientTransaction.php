@@ -204,20 +204,17 @@ $unread_count = countUnreadNotificationsClient($id);
                             $stmt->close();
 
                             $sql = "
-            SELECT 
-                cb.id, 
-                cb.status, 
-                cb.booking_no, 
-                st.Services AS service_name, 
-                cb.date_appointment, 
-                cb.date_seen
-            FROM 
-                client_booking cb
-            LEFT JOIN 
-                services_table st ON cb.services = st.ID
-            WHERE 
-                cb.account_id = ?";
-
+                           SELECT 
+                               cb.id, 
+                               cb.status, 
+                               cb.booking_no, 
+                               cb.services AS services_ids, 
+                               cb.date_appointment, 
+                               cb.date_seen
+                           FROM 
+                               client_booking cb
+                           WHERE 
+                               cb.account_id = ?";
                             $query = $conn->prepare($sql);
                             $query->bind_param('i', $clientId);
                             $query->execute();
@@ -225,6 +222,27 @@ $unread_count = countUnreadNotificationsClient($id);
 
                             if ($result) {
                                 while ($row = $result->fetch_assoc()) {
+                                    // Split the services_ids into an array
+                                    $servicesIds = explode(',', $row['services_ids']);
+
+                                    // Fetch the corresponding service names
+                                    $serviceNames = [];
+                                    foreach ($servicesIds as $serviceId) {
+                                        $serviceQuery = "SELECT service_name FROM company_services WHERE id = ?";
+                                        $serviceStmt = $conn->prepare($serviceQuery);
+                                        $serviceStmt->bind_param('i', $serviceId);
+                                        $serviceStmt->execute();
+                                        $serviceResult = $serviceStmt->get_result();
+                                        if ($serviceResult) {
+                                            $serviceRow = $serviceResult->fetch_assoc();
+                                            $serviceNames[] = $serviceRow['service_name']; // Store the service name
+                                        }
+                                        $serviceStmt->close();
+                                    }
+
+                                    // Join the service names into a string to display
+                                    $servicesDisplay = implode(', ', $serviceNames);
+
                                     $statusClass = '';
                                     if ($row['status'] == 'Approved') {
                                         $statusClass = 'bg-success text-white';
@@ -253,7 +271,7 @@ $unread_count = countUnreadNotificationsClient($id);
                                             </span>
                                         </td>
                                         <td><?php echo htmlspecialchars($row['booking_no']); ?></td>
-                                        <td><?php echo htmlspecialchars($row['service_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($servicesDisplay); ?></td> <!-- Display the services -->
                                         <td><?php echo htmlspecialchars($row['date_appointment']); ?></td>
                                         <td><?php echo htmlspecialchars($row['date_seen']); ?></td>
                                         <td>

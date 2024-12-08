@@ -27,6 +27,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $serviceType = $_POST['serviceType'];
     $selectedDate = $_POST['selectedDate'];
 
+    // Capture the selected services (array)
+    $selectedServices = $_POST['serviceType']; // This is an array of selected service IDs
+
+    // Convert the array of service IDs into a comma-separated string
+    $services = implode(",", $selectedServices);
+
     $booking_no = 'CLT-' . str_pad(rand(0, 999), 3, '0', STR_PAD_LEFT);
 
     // Check if user is logged in
@@ -193,11 +199,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $deleteStmt->close();
 
     // Insert the new booking record into the database
-    $sql = "INSERT INTO client_booking (status, booking_no, services, date_appointment, date_seen, account_id)
-            VALUES (?, ?, ?, ?, NOW(), ?)";
+
+    $sql = "INSERT INTO client_booking (status, booking_no, date_appointment, date_seen, account_id, services)
+    VALUES (?, ?, ?, NOW(), ?, ?)";
     $stmt = $conn->prepare($sql);
     $status = 'Pending';  // Set status as Pending
-    $stmt->bind_param('ssssi', $status, $booking_no, $serviceType, $selectedDate, $account_id);
+    $stmt->bind_param('sssis', $status, $booking_no, $selectedDate, $account_id, $services);
+
 
     if ($stmt->execute()) {
         logToDatabase("Successfully inserted booking for client ID: $account_id with booking number: $booking_no", $conn);

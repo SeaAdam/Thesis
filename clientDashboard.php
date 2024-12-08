@@ -452,22 +452,25 @@ $unread_count = countUnreadNotificationsClient($id);
 
                                     <div class="mb-3">
                                         <label for="serviceType" class="form-label">Service Type</label>
-                                        <select class="form-control" id="serviceType" name="serviceType" required>
+                                        <select class="form-control" id="serviceType" name="serviceType[]" multiple
+                                            required>
                                             <option>--SELECT--</option>
                                             <?php
                                             include 'includes/dbconn.php';
-                                            $sql = "SELECT * FROM services_table";
+                                            $sql = "SELECT * FROM company_services"; // Fetch services from the database
                                             $query = $conn->query($sql);
                                             while ($row = $query->fetch_assoc()) {
                                                 ?>
-                                                <option value="<?php echo $row['ID']; ?>">
-                                                    <?php echo $row['Services']; ?>
+                                                <option value="<?php echo $row['id']; ?>">
+                                                    <?php echo $row['service_name']; ?> <!-- Service name from database -->
                                                 </option>
                                                 <?php
                                             }
                                             ?>
                                         </select>
                                     </div>
+
+
 
                                     <button type="submit" class="btn btn-primary">Submit Booking</button>
 
