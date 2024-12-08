@@ -583,7 +583,6 @@ $unread_count = countUnreadNotifications($user_id);
 
                 dashboardCalendar.render();
 
-                // Open Booking Modal
                 function openBookingModal(event) {
                     selectedScheduleId = event.id;
                     document.getElementById('scheduleId').value = selectedScheduleId;
@@ -596,9 +595,41 @@ $unread_count = countUnreadNotifications($user_id);
                         bookingForm.style.display = 'block';
                     }
 
-                    loadTimeSlots(serviceTypeSelect.value);
+                    // Now load services based on the selected schedule ID
+                    loadServicesBasedOnSchedule(selectedScheduleId);
                     $(eventModal).modal('show');
                 }
+
+                function loadServicesBasedOnSchedule(scheduleId) {
+                    // Clear previous services
+                    serviceTypeSelect.innerHTML = '<option value="">--SELECT--</option>';
+
+                    // Fetch services based on selected schedule ID
+                    fetch(`fetch_services_by_schedule.php?schedule_id=${scheduleId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.services && data.services.length) {
+                                data.services.forEach(service => {
+                                    const option = document.createElement('option');
+                                    option.value = service.ID;
+                                    option.textContent = service.Services;
+                                    serviceTypeSelect.appendChild(option);
+                                });
+                            } else {
+                                const option = document.createElement('option');
+                                option.textContent = 'No services available for this schedule.';
+                                serviceTypeSelect.appendChild(option);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching services:', error);
+                            const option = document.createElement('option');
+                            option.textContent = 'Error loading services.';
+                            serviceTypeSelect.appendChild(option);
+                        });
+                }
+
+
 
                 function loadTimeSlots(serviceId) {
                     if (serviceId && selectedServiceIds.length <= 4) {

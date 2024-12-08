@@ -172,6 +172,23 @@ $unread_count = countUnreadNotificationsAdmin();
                                         <input type="number" class="form-control" id="duration" name="duration" step="1"
                                             required>
                                     </div>
+                                    <div class="mb-3">
+                                        <label for="schedule_id" class="form-label">Schedule</label>
+                                        <select class="form-control" id="schedule_id" name="schedule_id">
+                                            <option value="">--Select Schedule--</option>
+                                            <?php
+                                            include 'includes/dbconn.php';
+                                            $sql = "SELECT * FROM schedule_record_table";  // Assuming you have a schedule record table
+                                            $query = $conn->query($sql);
+                                            while ($row = $query->fetch_assoc()) {
+                                                echo "<option value='" . $row['ID'] . "'>" . $row['Slots_Date'] . "</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+
+
+
                                     <div class="modal-footer">
                                         <button type="reset" class="btn btn-secondary"
                                             data-dismiss="modal">Close</button>
