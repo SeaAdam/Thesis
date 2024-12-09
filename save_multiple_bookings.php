@@ -6,7 +6,6 @@ include 'includes/dbconn.php';
 
 header('Content-Type: application/json');
 
-// Ensure the user is logged in and has a valid session
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
