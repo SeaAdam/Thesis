@@ -370,6 +370,7 @@ $unread_count = countUnreadNotificationsClient($id);
                                 <ul>
                                     <li><span style="background-color: #007bff;"></span> Available</li>
                                     <li><span style="background-color: red;"></span>Already Booked</li>
+                                    <li><span style="background-color: green;"></span>Appointment Completed</li>
                                     <li><span style="background-color: gray;"></span> Holidays</li>
                                 </ul>
                             </div>

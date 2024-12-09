@@ -173,6 +173,7 @@ $unread_count = countUnreadNotificationsAdmin();
                             <ul>
                                 <li><span style="background-color: #ffc107;"></span> Available</li>
                                 <li><span style="background-color: red;"></span> Fully Booked</li>
+                                <li><span style="background-color: green;"></span>Appointment Completed</li>
                                 <li><span style="background-color: gray;"></span> Holidays</li>
                             </ul>
                         </div>
