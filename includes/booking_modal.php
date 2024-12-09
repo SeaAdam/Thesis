@@ -111,27 +111,10 @@
                 <div class="modal-body">
                     <input type="text" class="ID" name="ID" hidden>
                     <div class="mb-3">
-                        <label for="Slots" class="form-label">Slots:</label>
-                        <input type="text" class="form-control" id="editSlots" name="Slots" readonly>
-                    </div>
-                    <div class="mb-3">
                         <label for="Slots_Date" class="form-label">Slots Date:</label>
                         <input type="date" class="form-control" id="Slots_Date" name="Slots_Date" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="Start_Time" class="form-label">Start Time:</label>
-                        <input type="time" class="form-control" id="Start_Time" name="Start_Time" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="End_Time" class="form-label">End Time:</label>
-                        <input type="time" class="form-control" id="End_Time" name="End_Time" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="Durations" class="form-label">Duration:</label>
-                        <input type="text" class="form-control" id="editDurations" name="Durations" required>
-                    </div>
                 </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" name="submit">Save Changes</button>
@@ -158,7 +141,6 @@
                     <input type="hidden" class="ID" name="ID">
                     <center>
                         <p> Are you sure to delete this record?</p><br>
-                        Slots : <span class="Slots"></span><br>
                         Slots Date: <span class="Slots_Date"></span>
                     </center>
             </div>
