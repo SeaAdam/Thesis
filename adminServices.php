@@ -330,8 +330,8 @@ $unread_count = countUnreadNotificationsAdmin();
                     success: function (response) {
                         // Populate the modal fields with the current data
                         $('.ID').val(response.ID);
-                        $('.Service').val(response.Services);
-                        $('.Cost').val(response Cost);
+                        $('.Services').html(response.Services);
+                        $('.Cost').html(response.Cost);
                         $('#editService').val(response.Services);
                         $('#editCost').val(response.Cost);
                         $('#editStartTime').val(response.start_time);

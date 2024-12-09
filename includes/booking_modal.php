@@ -297,7 +297,7 @@
                     <input type="hidden" class="ID" name="ID">
                     <center>
                         <p> Are you sure to delete this record?</p><br>
-                        Service : <span class="Service"></span><br>
+                        Service : <span class="Services"></span><br>
                         Cost : <span class="Cost"></span>
                     </center>
             </div>

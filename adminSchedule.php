@@ -136,6 +136,42 @@ $unread_count = countUnreadNotificationsAdmin();
                 }
                 ?>
 
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                    New Schedule
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Add New Schedule</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="add_sched_add_timeslots.php" method="POST">
+                                    <!-- Slots Date -->
+                                    <div class="mb-3">
+                                        <label for="SlotsDate" class="form-label">Slots Date</label>
+                                        <input type="date" class="form-control" id="SlotsDate" name="SlotsDate"
+                                            required>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="reset" class="btn btn-secondary"
+                                            data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <table id="scheduleTable" class="table table-striped">
                     <thead>
                         <tr>
