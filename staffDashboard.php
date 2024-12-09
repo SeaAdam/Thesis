@@ -151,6 +151,32 @@ $percentReviews = ($countReviews / $maxValue) * 100;
             background-color: #e0e0e0;
             /* Example styling for read */
         }
+
+        .tile_stats_count {
+            text-align: center;
+            background: #f7f7f7;
+            border: 1px solid #e6e6e6;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .count {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .count_top {
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .count_bottom {
+            font-size: 0.9em;
+            color: #999;
+        }
     </style>
 </head>
 
@@ -187,7 +213,7 @@ $percentReviews = ($countReviews / $maxValue) * 100;
             <?php include 'top_nav_admin.php'; ?>
 
             <?php include 'staff_dashboard_content.php'; ?>
-            
+
 
 
 
