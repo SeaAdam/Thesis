@@ -13,6 +13,7 @@ $staffUsername = $_SESSION['username'];
 include 'notification_functions.php'; // Include the file with fetchNotificationsAdmin function
 $notificationsAdmin = fetchNotificationsAdmin();
 $unread_count = countUnreadNotificationsAdmin();
+
 ?>
 
 <!DOCTYPE html>
@@ -78,7 +79,8 @@ $unread_count = countUnreadNotificationsAdmin();
                     <br />
 
                     <?php include('sidebar_staff.php'); ?>
-                    
+
+
                 </div>
             </div>
 
@@ -94,7 +96,6 @@ $unread_count = countUnreadNotificationsAdmin();
                             <th scope="col">Transaction No.</th>
                             <th scope="col">Services</th>
                             <th scope="col">Date Appointment</th>
-                            <th scope="col">Time Slot</th>
                             <th scope="col">Date & Time Approved</th>
                             <th scope="col">Actions</th>
                         </tr>
@@ -103,48 +104,62 @@ $unread_count = countUnreadNotificationsAdmin();
                         <?php
                         include 'includes/dbconn.php';
 
-                        // Fetch all approved transactions
-                        $sql = "SELECT 
-                t.ID AS transaction_id,
-                t.status,
-                t.transaction_no,
-                s.Services AS service_id,
-                sr.Slots_Date AS schedule_id,
-                ts. time_slot AS time_slot_id,
-                t.date_seen
+                        $sql = "
+            SELECT 
+                cb.id, 
+                cb.status, 
+                cb.booking_no, 
+                cb.services AS services_ids, 
+                cb.date_appointment,
+                cb.date_seen
             FROM 
-                appointment_system.transactions t
-                LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
-                LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
-                LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
+                client_booking cb
             WHERE 
-                t.status = 'Approved'";
+                cb.status = 'Approved'";
 
                         $stmt = $conn->prepare($sql);
                         $stmt->execute();
                         $result = $stmt->get_result();
 
-                        if ($result === false) {
-                            die('Query failed: ' . htmlspecialchars($stmt->error));
-                        }
-
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
+                                // Split the services_ids into an array
+                                $servicesIds = explode(',', $row['services_ids']);
+
+                                // Initialize an array to hold the service names
+                                $serviceNames = [];
+
+                                // Fetch each service name
+                                foreach ($servicesIds as $serviceId) {
+                                    // Query to get the service name for each service ID
+                                    $serviceQuery = "SELECT service_name FROM company_services WHERE id = ?";
+                                    $serviceStmt = $conn->prepare($serviceQuery);
+                                    $serviceStmt->bind_param('i', $serviceId);
+                                    $serviceStmt->execute();
+                                    $serviceResult = $serviceStmt->get_result();
+                                    if ($serviceResult && $serviceRow = $serviceResult->fetch_assoc()) {
+                                        $serviceNames[] = $serviceRow['service_name']; // Add the service name to the array
+                                    }
+                                    $serviceStmt->close();
+                                }
+
+                                // Join the service names into a comma-separated string
+                                $servicesDisplay = implode(', ', $serviceNames);
+
                                 echo "<tr>
-                        <td>{$row['transaction_id']}</td>
-                        <td><span class='bg-success text-white'>{$row['status']}</span></td>
-                        <td>{$row['transaction_no']}</td>
-                        <td>{$row['service_id']}</td>
-                        <td>{$row['schedule_id']}</td>
-                        <td>{$row['time_slot_id']}</td>
-                        <td>{$row['date_seen']}</td>
-                        <td>
-                            <button class='btn btn-success btn-sm' onclick='confirmCompleteTransaction({$row['transaction_id']})'>Complete</button>
-                        </td>
-                    </tr>";
+                    <td>{$row['id']}</td>
+                    <td><span class='bg-success text-white'>{$row['status']}</span></td>
+                    <td>{$row['booking_no']}</td>
+                    <td>{$servicesDisplay}</td> <!-- Display the services here -->
+                    <td>{$row['date_appointment']}</td>
+                    <td>{$row['date_seen']}</td>
+                    <td>
+                        <button class='btn btn-success btn-sm' onclick='confirmCompleteTransaction({$row['id']}, \"Completed\")'>Complete</button>
+                    </td>
+                </tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='8'>No approved transactions found.</td></tr>";
+                            echo "<tr><td colspan='7'>No approved transactions found.</td></tr>";
                         }
 
                         $stmt->close();
@@ -152,6 +167,7 @@ $unread_count = countUnreadNotificationsAdmin();
                         ?>
                     </tbody>
                 </table>
+
             </div>
 
 
@@ -202,7 +218,7 @@ $unread_count = countUnreadNotificationsAdmin();
         <script src="build/js/custom.min.js"></script>
 
         <script>
-            function confirmCompleteTransaction(transactionId) {
+            function confirmCompleteTransaction(clientBookingID) {
                 Swal.fire({
                     title: 'Are you sure?',
                     text: "You want to mark this transaction as completed.",
@@ -225,19 +241,22 @@ $unread_count = countUnreadNotificationsAdmin();
                         });
 
                         // Proceed with updating the transaction status
-                        updateTransactionStatus(transactionId, 'Completed');
+                        updateTransactionStatus(clientBookingID, 'Completed');
                     }
                 });
             }
 
             function updateTransactionStatus(id, status) {
                 var xhr = new XMLHttpRequest();
-                xhr.open("POST", "update_status_approved.php", true); // Ensure this matches your PHP file
+                xhr.open("POST", "update_status_client.php", true);
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
                         Swal.close(); // Close the loading spinner
+
+                        // Log the response to check if it's 'Success' or something else
+                        console.log(xhr.responseText.trim());
 
                         if (xhr.responseText.trim() === 'Success') {
                             Swal.fire(
@@ -245,7 +264,6 @@ $unread_count = countUnreadNotificationsAdmin();
                                 'The transaction has been marked as completed.',
                                 'success'
                             ).then(() => {
-                                // Reload the page to reflect the changes
                                 window.location.reload();
                             });
                         } else {
@@ -261,6 +279,7 @@ $unread_count = countUnreadNotificationsAdmin();
                 // Send the data to the server
                 xhr.send("id=" + encodeURIComponent(id) + "&status=" + encodeURIComponent(status));
             }
+
 
             function markAsRead(transaction_no) {
                 fetch(`mark_notification_read_admin.php?transaction_no=${encodeURIComponent(transaction_no)}`)

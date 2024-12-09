@@ -61,7 +61,7 @@ if ($existingBooking) {
     session_start();
     $_SESSION['errorMessage'] = "Error: You already have a pending or approved booking. Please complete your current booking first.";
     logToDatabase($_SESSION['errorMessage']);
-    header('Location: adminBookPatient.php');
+    header('Location: staffBookPatient.php');
     exit;
 }
 
@@ -165,6 +165,6 @@ $stmt->close();
 $conn->close();
 
 
-header('Location: adminBookPatient.php');
+header('Location: staffBookPatient.php');
 exit;
 ?>

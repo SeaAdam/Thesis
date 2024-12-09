@@ -11,6 +11,12 @@ $email = $_POST['email'];
 $serviceType = $_POST['serviceType'];
 $selectedDate = $_POST['selectedDate'];
 
+// Capture the selected services (array)
+$selectedServices = $_POST['serviceType']; // This is an array of selected service IDs
+
+// Convert the array of service IDs into a comma-separated string
+$services = implode(",", $selectedServices);
+
 // Get the client_id from clients_account based on clientId (from clients_info)
 $sql = "SELECT client_id FROM clients_account WHERE client_id = ?";
 $stmt = $conn->prepare($sql);
@@ -28,8 +34,8 @@ if ($result->num_rows > 0) {
 }
 
 // Insert the new booking record into the client_booking table
-$sql_booking = "INSERT INTO client_booking (status, booking_no, services, date_appointment, date_seen, account_id)
-                VALUES (?, ?, ?, ?, NOW(), ?)";
+$sql_booking = "INSERT INTO client_booking (status, booking_no, date_appointment, date_seen, account_id, services)
+    VALUES (?, ?, ?, NOW(), ?, ?)";
 $stmt_booking = $conn->prepare($sql_booking);
 
 // Generate a booking number
@@ -37,7 +43,7 @@ $booking_no = 'CLT-' . str_pad(rand(0, 999), 3, '0', STR_PAD_LEFT);
 
 // Set the booking status as 'Pending'
 $status = 'Pending';
-$stmt_booking->bind_param('ssssi', $status, $booking_no, $serviceType, $selectedDate, $account_id);  // Use account_id here
+$stmt_booking->bind_param('sssis', $status, $booking_no, $selectedDate, $account_id, $services);
 
 // Execute the query and check for success
 if ($stmt_booking->execute()) {

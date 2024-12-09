@@ -1,6 +1,7 @@
 <?php
 include 'login.php';
 
+
 // Check if the user is logged in and is a staff member
 if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'staff') {
     header('Location: index.php'); // Redirect to login page if not logged in as staff
@@ -13,6 +14,7 @@ $staffUsername = $_SESSION['username'];
 include 'notification_functions.php'; // Include the file with fetchNotificationsAdmin function
 $notificationsAdmin = fetchNotificationsAdmin();
 $unread_count = countUnreadNotificationsAdmin();
+
 ?>
 
 <!DOCTYPE html>
@@ -70,7 +72,7 @@ $unread_count = countUnreadNotificationsAdmin();
                         </div>
                         <div class="profile_info">
                             <span>Welcome,</span>
-                            <h2><?php echo htmlspecialchars($staffUsername); ?></h2>
+                            <h2><?php echo htmlspecialchars($staffUsername ); ?></h2>
                         </div>
                     </div>
                     <!-- /menu profile quick info -->
@@ -95,7 +97,6 @@ $unread_count = countUnreadNotificationsAdmin();
                             <th scope="col">Transaction No.</th>
                             <th scope="col">Services</th>
                             <th scope="col">Date Appointment</th>
-                            <th scope="col">Time Slot</th>
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -103,45 +104,59 @@ $unread_count = countUnreadNotificationsAdmin();
                         <?php
                         include 'includes/dbconn.php';
 
-                        $sql = "SELECT 
-                        t.ID AS transaction_id,
-                        t.status,
-                        t.transaction_no,
-                        s.Services AS service_id,
-                        sr.Slots_Date AS schedule_id,
-                        ts. time_slot AS time_slot_id,
-                        t.date_seen
-                    FROM 
-                        appointment_system.transactions t
-                        LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
-                        LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
-                        LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
-                    WHERE 
-                        t.status = 'Pending'";
+                        $sql = "
+        SELECT 
+            cb.id,
+            cb.status, 
+            cb.booking_no, 
+            cb.services AS services_ids, 
+            cb.date_appointment
+        FROM 
+            client_booking cb
+        WHERE 
+            cb.status = 'Pending'";
 
                         $stmt = $conn->prepare($sql);
                         $stmt->execute();
                         $result = $stmt->get_result();
 
-                        if ($result === false) {
-                            die('Query failed: ' . htmlspecialchars($stmt->error));
-                        }
-
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
+                                // Split the services_ids into an array
+                                $servicesIds = explode(',', $row['services_ids']);
+
+                                // Initialize an array to hold the service names
+                                $serviceNames = [];
+
+                                // Fetch each service name
+                                foreach ($servicesIds as $serviceId) {
+                                    // Query to get the service name for each service ID
+                                    $serviceQuery = "SELECT service_name FROM company_services WHERE id = ?";
+                                    $serviceStmt = $conn->prepare($serviceQuery);
+                                    $serviceStmt->bind_param('i', $serviceId);
+                                    $serviceStmt->execute();
+                                    $serviceResult = $serviceStmt->get_result();
+                                    if ($serviceResult && $serviceRow = $serviceResult->fetch_assoc()) {
+                                        $serviceNames[] = $serviceRow['service_name']; // Add the service name to the array
+                                    }
+                                    $serviceStmt->close();
+                                }
+
+                                // Join the service names into a comma-separated string
+                                $servicesDisplay = implode(', ', $serviceNames);
+
                                 echo "<tr>
-                            <td>{$row['transaction_id']}</td>
-                            <td><span class='bg-dark text-white'>{$row['status']}</span></td>
-                            <td>{$row['transaction_no']}</td>
-                            <td>{$row['service_id']}</td>
-                            <td>{$row['schedule_id']}</td>
-                            <td>{$row['time_slot_id']}</td>
-                            <td>
-                                <button class='btn btn-primary btn-sm' onclick='confirmAction({$row['transaction_id']}, \"Approved\")'>Approve</button>
-                                <button class='btn btn-success btn-sm' onclick='confirmAction({$row['transaction_id']}, \"Completed\")'>Complete</button>
-                                <button class='btn btn-danger btn-sm' onclick='confirmAction({$row['transaction_id']}, \"Rejected\")'>Reject</button>
-                            </td>
-                        </tr>";
+                <td>{$row['id']}</td>
+                <td><span class='bg-dark text-white'>{$row['status']}</span></td>
+                <td>{$row['booking_no']}</td>
+                <td>{$servicesDisplay}</td> <!-- Display the services here -->
+                <td>{$row['date_appointment']}</td>
+                <td>
+                    <button class='btn btn-primary btn-sm' onclick='confirmAction({$row['id']}, \"Approved\")'>Approve</button>
+                    <button class='btn btn-success btn-sm' onclick='confirmAction({$row['id']}, \"Completed\")'>Complete</button>
+                    <button class='btn btn-danger btn-sm' onclick='confirmAction({$row['id']}, \"Rejected\")'>Reject</button>
+                </td>
+            </tr>";
                             }
                         } else {
                             echo "<tr><td colspan='7'>No pending transactions found.</td></tr>";
@@ -151,6 +166,8 @@ $unread_count = countUnreadNotificationsAdmin();
                         $conn->close();
                         ?>
                     </tbody>
+
+
                 </table>
             </div>
 
@@ -226,7 +243,7 @@ $unread_count = countUnreadNotificationsAdmin();
 
                         // AJAX request to update the transaction status and send notification
                         var xhr = new XMLHttpRequest();
-                        xhr.open("POST", "update_status_approved.php", true);
+                        xhr.open("POST", "update_status_client.php", true);
                         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
                         xhr.onreadystatechange = function () {
@@ -259,9 +276,9 @@ $unread_count = countUnreadNotificationsAdmin();
                 });
             }
 
-            function confirmAction(transactionId, action) {
+            function confirmAction(clientBookingID, action) {
                 // This function now just triggers the update with SweetAlert
-                updateTransactionStatus(transactionId, action);
+                updateTransactionStatus(clientBookingID, action);
             }
 
             function markAsRead(transaction_no) {
