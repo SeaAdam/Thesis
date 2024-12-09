@@ -162,18 +162,12 @@ $unread_count = countUnreadNotificationsAdmin();
                                 // Add Action Buttons with Color Based on Status
                                 if ($row['status'] == 'pending') {
                                     echo "<td>";
-                                    echo "<form method='POST' action='update_booking_status.php'>";
-                                    echo "<input type='hidden' name='bookingId' value='" . $row['id'] . "'>";
-                                    echo "<button type='submit' name='action' value='accept' style='background-color: green; color: white; border: none; padding: 5px 10px; margin-right: 5px;'>Accept</button>";
-                                    echo "<button type='submit' name='action' value='reject' style='background-color: red; color: white; border: none; padding: 5px 10px;'>Reject</button>";
-                                    echo "</form>";
+                                    echo "<button onclick=\"updateStatus(" . $row['id'] . ", 'accept')\" style='background-color: green; color: white; border: none; padding: 5px 10px; margin-right: 5px;'>Accept</button>";
+                                    echo "<button onclick=\"updateStatus(" . $row['id'] . ", 'reject')\" style='background-color: red; color: white; border: none; padding: 5px 10px;'>Reject</button>";
                                     echo "</td>";
                                 } elseif ($row['status'] == 'Accepted') {
                                     echo "<td>";
-                                    echo "<form method='POST' action='update_booking_status.php'>";
-                                    echo "<input type='hidden' name='bookingId' value='" . $row['id'] . "'>";
-                                    echo "<button type='submit' name='action' value='complete' style='background-color: blue; color: white; border: none; padding: 5px 10px;'>Complete</button>";
-                                    echo "</form>";
+                                    echo "<button onclick=\"updateStatus(" . $row['id'] . ", 'complete')\" style='background-color: blue; color: white; border: none; padding: 5px 10px;'>Complete</button>";
                                     echo "</td>";
                                 } else {
                                     echo "<td>-</td>";  // If not pending or accepted, show a dash or other text
@@ -238,7 +232,73 @@ $unread_count = countUnreadNotificationsAdmin();
         <!-- Custom Theme Scripts -->
         <script src="build/js/custom.min.js"></script>
 
+        <!-- SweetAlert2 CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
         <script>
+
+            function updateStatus(bookingId, action) {
+                // Show SweetAlert loading message
+                Swal.fire({
+                    title: 'Updating...',
+                    text: 'Please wait while we update the status.',
+                    allowOutsideClick: false,  // Prevent click outside to dismiss
+                    didOpen: () => {
+                        Swal.showLoading();  // Show loading animation
+                    }
+                });
+
+                // Prepare data to send to the server
+                var data = {
+                    bookingId: bookingId,
+                    action: action
+                };
+
+                // Send AJAX request
+                $.ajax({
+                    url: 'update_booking_status.php', // PHP file to update status
+                    type: 'POST',
+                    data: data,
+                    success: function (response) {
+                        var result = JSON.parse(response);
+                        if (result.success) {
+                            // Close the loading popup
+                            Swal.close();
+
+                            // Show success SweetAlert confirmation
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: result.message,
+                            }).then(() => {
+                                location.reload(); // Reload the page to reflect the updated status (optional)
+                            });
+                        } else {
+                            // Close the loading popup
+                            Swal.close();
+
+                            // Show error SweetAlert message
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: result.error,
+                            });
+                        }
+                    },
+                    error: function () {
+                        // Close the loading popup
+                        Swal.close();
+
+                        // Show AJAX error message
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Failed',
+                            text: 'Failed to update booking status',
+                        });
+                    }
+                });
+            }
+
             function markAsRead(transaction_no) {
                 fetch(`mark_notification_read_admin.php?transaction_no=${encodeURIComponent(transaction_no)}`)
                     .then(response => response.json())
