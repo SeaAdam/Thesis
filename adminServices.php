@@ -210,6 +210,7 @@ $unread_count = countUnreadNotificationsAdmin();
                             <th scope="col">End Time</th>
                             <th scope="col">Duration</th>
                             <th scope="col">Slots</th>
+                            <th scope="col">Schedule Date</th>
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -217,8 +218,13 @@ $unread_count = countUnreadNotificationsAdmin();
                         <?php
                         include 'includes/dbconn.php';
 
-                        $sql = "SELECT * FROM services_table";
+                        // SQL query with JOIN to get schedule_date from the schedule_table
+                        $sql = "SELECT s.ID, s.Services, s.Cost, s.start_time, s.end_time, s.duration, s.slots_count, 
+                       sch.Slots_Date 
+                FROM services_table s
+                JOIN schedule_record_table sch ON s.schedule_id = sch.ID";
                         $query = $conn->query($sql);
+
                         while ($row = $query->fetch_assoc()) {
                             ?>
                             <tr>
@@ -229,6 +235,7 @@ $unread_count = countUnreadNotificationsAdmin();
                                 <td><?php echo $row['end_time']; ?></td>
                                 <td><?php echo $row['duration']; ?></td>
                                 <td><?php echo $row['slots_count']; ?></td>
+                                <td><?php echo $row['Slots_Date']; ?></td> <!-- Displaying schedule_date -->
                                 <td>
                                     <a href="#" data-id="<?php echo $row['ID']; ?>" class="btn btn-success btn-sm edit"><i
                                             class="fa fa-edit" aria-hidden="true"></i> Edit</a>
