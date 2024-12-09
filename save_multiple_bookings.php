@@ -1,25 +1,15 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 include 'includes/dbconn.php';
 
 header('Content-Type: application/json');
 
-session_start();
-
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'error' => 'User not logged in']);
-    exit;
-}
-
-$user_id = $_SESSION['user_id'];
-
-if (isset($_POST['serviceIds']) && isset($_POST['schedule'])) {
+// Check if necessary data is sent in the POST request
+if (isset($_POST['serviceIds']) && isset($_POST['schedule']) && isset($_POST['userId'])) {
     $serviceIds = json_decode($_POST['serviceIds']);
     $schedule = $_POST['schedule'];
+    $userId = $_POST['userId'];  // This is now userId (the logged-in user making the booking)
 
-    if (empty($serviceIds) || empty($schedule)) {
+    if (empty($serviceIds) || empty($schedule) || empty($userId)) {
         echo json_encode(['success' => false, 'error' => 'Invalid input data']);
         exit;
     }
@@ -27,16 +17,16 @@ if (isset($_POST['serviceIds']) && isset($_POST['schedule'])) {
     $serviceIdsJson = json_encode($serviceIds);
     $status = 'pending';  // Default status is 'pending'
 
-
-    // Check if there are any pending bookings
-    $checkQuery = "SELECT id FROM bookings_table WHERE status = 'pending'";
+    // Check if there are any pending bookings for the current user
+    $checkQuery = "SELECT id FROM bookings_table WHERE status = 'pending' AND user_id = ?";
     $stmt = $conn->prepare($checkQuery);
+    $stmt->bind_param("s", $userId);  // Bind the user_id
     $stmt->execute();
     $stmt->store_result();
 
     // If there's any pending booking, prevent the new booking
     if ($stmt->num_rows > 0) {
-        echo json_encode(['success' => false, 'error' => 'There is already a pending booking.']);
+        echo json_encode(['success' => false, 'error' => 'You already have a pending booking.']);
         $stmt->close();
         $conn->close();
         exit;
@@ -51,7 +41,8 @@ if (isset($_POST['serviceIds']) && isset($_POST['schedule'])) {
         exit;
     }
 
-    $stmt->bind_param("ssss", $user_id, $serviceIdsJson, $schedule, $status);
+    // Bind parameters and execute the query
+    $stmt->bind_param("ssss", $userId, $serviceIdsJson, $schedule, $status);
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true]);
