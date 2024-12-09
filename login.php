@@ -10,13 +10,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = trim($_POST['loginPassword']);
     $loginType = $_POST['loginType'];
 
-
     logAction(0, 'Login attempt', "Username: $username, Login Type: $loginType");
 
     if ($loginType === 'admin') {
         $query = "SELECT ID, Username, Password FROM admin_table WHERE Username = ?";
     } elseif ($loginType === 'clients') {
         $query = "SELECT ID, Username, Password FROM clients_account WHERE Username = ?";
+    } elseif ($loginType === 'staff') { // Added check for staff login
+        $query = "SELECT ID, Username, Password FROM staff_table WHERE Username = ?";
     } else {
         $query = "SELECT ID, Username, Password FROM registration_table WHERE Username = ?";
     }
@@ -34,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['username'] = $user['Username'];
             $_SESSION['loginType'] = $loginType;
 
-
             logAction($user['ID'], 'Successful login', "Logged in as $loginType");
 
             if ($loginType === 'admin') {
@@ -45,20 +45,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $response['status'] = 'success';
                 $response['message'] = 'Successfully logged in as our client!';
                 $response['redirect'] = 'clientDashboard.php';
+            } elseif ($loginType === 'staff') { // Redirect for staff login
+                $response['status'] = 'success';
+                $response['message'] = 'Successfully logged in as staff!';
+                $response['redirect'] = 'staffDashboard.php';
             } else {
                 $response['status'] = 'success';
                 $response['message'] = 'Redirecting to 2FA authentication...';
                 $response['redirect'] = 'enter_email.php';
             }
         } else {
-
             logAction(0, 'Failed login attempt', "Invalid password for Username: $username");
 
             $response['status'] = 'error';
             $response['message'] = 'Invalid password.';
         }
     } else {
-
         logAction(0, 'Failed login attempt', "Username not found: $username");
 
         $response['status'] = 'error';
