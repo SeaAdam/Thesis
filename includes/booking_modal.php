@@ -523,7 +523,7 @@
                             <div class="col-md-4">
                                 <div class="card">
                                     <div class="card-body text-center">
-                                        <img src="profile.jpg" class="rounded-circle mb-3" alt="Profile Picture"
+                                        <img src="images\profile-pic.jpg" class="rounded-circle mb-3" alt="Profile Picture"
                                             width="150" height="150">
                                         <h4 class="client_name"></h4>
                                         <!-- <input type="" class="ID" name="ID"> -->
@@ -690,7 +690,7 @@
                             <div class="col-md-4">
                                 <div class="card">
                                     <div class="card-body text-center">
-                                        <img src="profile.jpg" class="rounded-circle mb-3" alt="Profile Picture"
+                                        <img src="images\profile-pic.jpg" class="rounded-circle mb-3" alt="Profile Picture"
                                             width="150" height="150">
                                         <h4 class="FullName"></h4>
                                         <p class="Email"></p>

@@ -443,10 +443,6 @@ $unread_count = countUnreadNotificationsAdmin();
                                 <td>
                                     <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-info btn-sm view"><i
                                             class="fa fa-eye"></i> View</a>
-                                    <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-success btn-sm edit"><i
-                                            class="fa fa-edit"></i> Edit</a>
-                                    <a href="#" data-id="<?php echo $row['id']; ?>" class="btn btn-danger btn-sm delete"><i
-                                            class="fa fa-trash"></i> Delete</a>
                                 </td>
                             </tr>
                             <?php
