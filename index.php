@@ -133,7 +133,7 @@ session_start();
         <div class="container pb-2">
             <div class="d-flex justify-content-center">
                 <a href="index.php" class="h1 text-white mb-0">Brain Master <span class="text-dark">Diagnostic
-                        Center (BMDC)</span> Appoinment</a>
+                        Center (BMDC)</span> Appointment</a>
             </div>
         </div>
     </div>
