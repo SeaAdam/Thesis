@@ -378,6 +378,11 @@ $unread_count = countUnreadNotificationsAdmin();
     <?php include "includes/booking_modal.php"; ?>
 
     <script>
+
+        $('#eventModal').on('hidden.bs.modal', function () {
+            location.reload();
+        });
+        
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
             var modal = new bootstrap.Modal(document.getElementById('eventModal'));

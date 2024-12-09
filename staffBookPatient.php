@@ -109,10 +109,28 @@ $unread_count = countUnreadNotificationsAdmin();
         .fc-h-event .fc-event-title {
             font-size: .8rem;
         }
+
+        .alert {
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            display: none;
+        }
     </style>
 </head>
 
 <body class="nav-md">
+    <?php
+    if (isset($_SESSION['errorMessage'])) {
+        $errorMessage = $_SESSION['errorMessage'];
+        unset($_SESSION['errorMessage']); // Remove it immediately after setting
+        echo "<div class='alert' id='error-alert'>$errorMessage</div>";
+    }
+    ?>
     <div class="container body">
         <div class="main_container">
             <div class="col-md-3 left_col">
@@ -353,6 +371,15 @@ $unread_count = countUnreadNotificationsAdmin();
     <?php include "includes/booking_modal.php"; ?>
 
     <script>
+
+        // Show the alert message after page load if the error alert exists
+        window.onload = function () {
+            var errorAlert = document.getElementById('error-alert');
+            if (errorAlert) {
+                errorAlert.style.display = 'block'; // Display the alert
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', function () {
             const dashboardCalendarEl = document.getElementById('calendar');
             const eventModal = document.getElementById('eventModal');

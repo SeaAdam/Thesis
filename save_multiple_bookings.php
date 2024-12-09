@@ -27,6 +27,7 @@ if (isset($_POST['serviceIds']) && isset($_POST['schedule'])) {
     $serviceIdsJson = json_encode($serviceIds);
     $status = 'pending';  // Default status is 'pending'
 
+
     // Check if there are any pending bookings
     $checkQuery = "SELECT id FROM bookings_table WHERE status = 'pending'";
     $stmt = $conn->prepare($checkQuery);
