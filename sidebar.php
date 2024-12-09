@@ -63,6 +63,8 @@ if (isset($_SESSION['unlocked_pages']['adminAccount.php'])) {
             </li>
             <li><a href="adminContacts.php"><i class="fa fa-phone"></i> Contacts </a>
             </li>
+            <li><a href="staffAccount.php"><i class="fa fa-user"></i> Staff Accounts </a>
+            </li>
             <li><a href="adminAccount.php"><i class="fa fa-user"></i> Admin Accounts </a>
             </li>
             <li><a><i class="fa fa-cogs"></i> Logs <span class="fa fa-chevron-down"></span>

@@ -328,14 +328,19 @@ $unread_count = countUnreadNotificationsAdmin();
                     data: { id: id },
                     dataType: 'json',
                     success: function (response) {
+                        // Populate the modal fields with the current data
                         $('.ID').val(response.ID);
-                        $('.Service').html(response.Services);
-                        $('.Cost').html(response.Cost);
                         $('#editService').val(response.Services);
                         $('#editCost').val(response.Cost);
+                        $('#editStartTime').val(response.start_time);
+                        $('#editEndTime').val(response.end_time);
+                        $('#editDuration').val(response.duration);
+                        $('#editSlotsCount').val(response.slots_count);
+                        $('#editScheduleId').val(response.schedule_id);
                     }
                 });
             }
+
 
             function markAsRead(transaction_no) {
                 fetch(`mark_notification_read_admin.php?transaction_no=${encodeURIComponent(transaction_no)}`)

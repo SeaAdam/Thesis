@@ -222,19 +222,52 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit Services:</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="close">&times;
-                </button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">&times;</button>
             </div>
             <form action="edit_services.php" method="POST">
                 <div class="modal-body">
                     <input type="text" class="ID" name="ID" hidden>
+
+                    <!-- Service Field -->
                     <div class="mb-3">
                         <label for="Services" class="form-label">Service :</label>
                         <input type="text" class="form-control" id="editService" name="Services" required>
                     </div>
+
+                    <!-- Cost Field -->
                     <div class="mb-3">
                         <label for="Cost" class="form-label">Cost :</label>
                         <input type="number" class="form-control" id="editCost" name="Cost" step="0.01" required>
+                    </div>
+
+                    <!-- Start Time Field -->
+                    <div class="mb-3">
+                        <label for="start_time" class="form-label">Start Time :</label>
+                        <input type="time" class="form-control" id="editStartTime" name="start_time" required>
+                    </div>
+
+                    <!-- End Time Field -->
+                    <div class="mb-3">
+                        <label for="end_time" class="form-label">End Time :</label>
+                        <input type="time" class="form-control" id="editEndTime" name="end_time" required>
+                    </div>
+
+                    <!-- Duration Field -->
+                    <div class="mb-3">
+                        <label for="duration" class="form-label">Duration (minutes):</label>
+                        <input type="number" class="form-control" id="editDuration" name="duration" required>
+                    </div>
+
+                    <!-- Slots Count Field -->
+                    <div class="mb-3">
+                        <label for="slots_count" class="form-label">Slots Count:</label>
+                        <input type="number" class="form-control" id="editSlotsCount" name="slots_count" required>
+                    </div>
+
+                    <!-- Schedule ID Field -->
+                    <div class="mb-3">
+                        <label for="schedule_id" class="form-label">Schedule ID:</label>
+                        <input type="number" class="form-control" id="editScheduleId" name="schedule_id" required>
                     </div>
                 </div>
 
