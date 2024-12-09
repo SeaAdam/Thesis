@@ -238,9 +238,23 @@ $unread_count = countUnreadNotifications($user_id);
                             <?php
                             include 'includes/dbconn.php';
 
-                            // Fetch all bookings from the database
-                            $query = "SELECT id, service_ids, schedule, created_at, status FROM bookings_table";
-                            $result = $conn->query($query);
+                            $username = $_SESSION['username'];
+
+                            // Fetch the user ID based on the username
+                            $sql = "SELECT ID FROM appointment_system.registration_table WHERE username = ?";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param('s', $username);
+                            $stmt->execute();
+                            $stmt->bind_result($user_id);
+                            $stmt->fetch();
+                            $stmt->close();
+
+                            // Fetch all bookings from the database for the logged-in user
+                            $query = "SELECT id, service_ids, schedule, created_at, status FROM bookings_table WHERE user_id = ?";
+                            $stmt = $conn->prepare($query);
+                            $stmt->bind_param('i', $user_id);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
 
                             if ($result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) {
@@ -312,6 +326,7 @@ $unread_count = countUnreadNotifications($user_id);
                             $conn->close();
                             ?>
                         </tbody>
+
                     </table>
                 </div>
             </div>
