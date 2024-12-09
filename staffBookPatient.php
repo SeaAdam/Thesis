@@ -9,7 +9,6 @@ if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'staff') {
 
 // Retrieve the staff username from the session
 $staffUsername = $_SESSION['username'];
-
 // Fetch notifications
 include 'notification_functions.php'; // Include the file with fetchNotificationsAdmin function
 $notificationsAdmin = fetchNotificationsAdmin();
@@ -210,8 +209,7 @@ $unread_count = countUnreadNotificationsAdmin();
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form id="bookingForm" method="POST" action="add_booking_staff.php"
-                                    style="margin-top: 15px;">
+                                <form id="bookingForm" method="POST" action="add_booking.php" style="margin-top: 15px;">
                                     <div class="mb-3">
                                         <label for="patientName" class="form-label">Patient Name</label>
                                         <select class="form-control" id="patientName" name="patientName">
@@ -283,6 +281,13 @@ $unread_count = countUnreadNotificationsAdmin();
                             </div>
                             <div class="modal-body">
                                 <form id="multipleBookingForm">
+                                    <div class="mb-3">
+                                        <label for="patientSelect">Select Patient</label>
+                                        <select id="patientSelect" name="patientId" required>
+                                            <option value="">Select Patient</option>
+                                            <!-- Populate this dynamically from the database -->
+                                        </select>
+                                    </div>
                                     <div class="mb-3">
                                         <label for="multipleServiceTypeSelect" class="form-label">Select
                                             Services</label>
@@ -379,7 +384,7 @@ $unread_count = countUnreadNotificationsAdmin();
                 errorAlert.style.display = 'block'; // Display the alert
             }
         }
-        
+
         document.addEventListener('DOMContentLoaded', function () {
             const dashboardCalendarEl = document.getElementById('calendar');
             const eventModal = document.getElementById('eventModal');
@@ -682,24 +687,33 @@ $unread_count = countUnreadNotificationsAdmin();
             });
         });
 
+        function fetchPatients() {
+            fetch('fetch_patients.php')  // The PHP file you're calling to fetch patients
+                .then(response => response.json())
+                .then(patients => {
+                    const patientSelect = document.getElementById('patientSelect');
+                    patientSelect.innerHTML = '<option value="">Select Patient</option>'; // Clear the existing options
+                    patients.forEach(patient => {
+                        const option = document.createElement('option');
+                        option.value = patient.ID;
+                        option.textContent = patient.fullName;  // Use fullName for display
+                        patientSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching patients:', error));
+        }
 
+        // Call the function when the page loads
+        fetchPatients();
 
         function fetchServicesForMultipleBookings() {
             fetch('fetch_service.php')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();  // Parse the response as JSON
-                })
+                .then(response => response.json())
                 .then(data => {
-                    console.log('Services fetched:', data);
-                    // Call the function to populate the select element with fetched services
                     populateServicesSelect(data);
+                    fetchPatients();  // Fetch patients when services are loaded
                 })
-                .catch(error => {
-                    console.error('Error fetching services:', error);
-                });
+                .catch(error => console.error('Error fetching services:', error));
         }
 
         function populateServicesSelect(services) {
@@ -739,9 +753,22 @@ $unread_count = countUnreadNotificationsAdmin();
 
 
         });
-
         document.getElementById('multipleBookingForm').addEventListener('submit', function (e) {
             e.preventDefault();  // Prevent the form from submitting normally
+
+            // Get the selected user ID (patient ID) from the select dropdown
+            const selectedUserId = document.getElementById('patientSelect').value;
+
+            // Check if the user ID is selected
+            if (!selectedUserId) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please select a patient before confirming.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
+                return;
+            }
 
             // Get the selected AM/PM schedule
             const selectedSchedule = document.getElementById('scheduleSelect').value;
@@ -765,7 +792,8 @@ $unread_count = countUnreadNotificationsAdmin();
             // Prepare the form data for submission
             const formData = new FormData();
             formData.append('serviceIds', JSON.stringify(selectedServiceIds));  // Convert selectedServiceIds to a JSON string
-            formData.append('schedule', selectedSchedule);  // Append the selected AM/PM schedule
+            formData.append('schedule', selectedSchedule);
+            formData.append('userId', selectedUserId); // Append the selected patient/user ID
 
             fetch('save_multiple_bookings.php', {
                 method: 'POST',

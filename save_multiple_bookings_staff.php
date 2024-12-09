@@ -1,60 +1,38 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 include 'includes/dbconn.php';
 
 header('Content-Type: application/json');
 
-// Check if user_id and other fields are provided
-if (isset($_POST['user_id'], $_POST['serviceIds'], $_POST['schedule'])) {
-    $user_id = $_POST['user_id'];
+// Check if necessary data is sent in the POST request
+if (isset($_POST['serviceIds']) && isset($_POST['schedule']) && isset($_POST['userId'])) {
     $serviceIds = json_decode($_POST['serviceIds']);
     $schedule = $_POST['schedule'];
+    $userId = $_POST['userId'];  // This is now userId (the logged-in user making the booking)
 
-
-
-    // Validate inputs
-    if (empty($user_id) || empty($serviceIds) || empty($schedule)) {
+    if (empty($serviceIds) || empty($schedule) || empty($userId)) {
         echo json_encode(['success' => false, 'error' => 'Invalid input data']);
         exit;
     }
 
-    // Validate user_id exists in registration_table
-    $checkUserQuery = "SELECT ID FROM registration_table WHERE ID = ?";
-    $stmt = $conn->prepare($checkUserQuery);
-    $stmt->bind_param("s", $user_id);
-    $stmt->execute();
-    $stmt->store_result();
+    $serviceIdsJson = json_encode($serviceIds);
+    $status = 'pending';  // Default status is 'pending'
 
-    if ($stmt->num_rows === 0) {
-        echo json_encode(['success' => false, 'error' => 'Invalid user ID. The user does not exist.']);
-        $stmt->close();
-        $conn->close();
-        exit;
-    }
-    $stmt->close();
-
-
-    // Check if there are any pending bookings for the selected user
+    // Check if there are any pending bookings for the current user
     $checkQuery = "SELECT id FROM bookings_table WHERE status = 'pending' AND user_id = ?";
     $stmt = $conn->prepare($checkQuery);
-    $stmt->bind_param("s", $user_id);
+    $stmt->bind_param("s", $userId);  // Bind the user_id
     $stmt->execute();
     $stmt->store_result();
 
+    // If there's any pending booking, prevent the new booking
     if ($stmt->num_rows > 0) {
-        echo json_encode(['success' => false, 'error' => 'There is already a pending booking for this user.']);
+        echo json_encode(['success' => false, 'error' => 'You already have a pending booking.']);
         $stmt->close();
         $conn->close();
         exit;
     }
-    $stmt->close();
 
-    // Insert the booking into the database
-    $status = 'pending'; // Default status is 'pending'
-    $serviceIdsJson = json_encode($serviceIds);
-
+    // Prepare the query to insert into bookings table
     $query = "INSERT INTO bookings_table (user_id, service_ids, schedule, status) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($query);
 
@@ -63,7 +41,8 @@ if (isset($_POST['user_id'], $_POST['serviceIds'], $_POST['schedule'])) {
         exit;
     }
 
-    $stmt->bind_param("ssss", $user_id, $serviceIdsJson, $schedule, $status);
+    // Bind parameters and execute the query
+    $stmt->bind_param("ssss", $userId, $serviceIdsJson, $schedule, $status);
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true]);
