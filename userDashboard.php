@@ -890,53 +890,41 @@ $unread_count = countUnreadNotifications($user_id);
                     return;
                 }
 
-                // Prepare the form data for submission
-                const formData = new FormData();
-                formData.append('serviceIds', JSON.stringify(selectedServiceIds));  // Convert selectedServiceIds to a JSON string
-                formData.append('schedule', selectedSchedule);  // Append the selected AM/PM schedule
+                // Debugging inputs
+                console.log('Selected Service IDs:', selectedServiceIds);
+                console.log('Selected Schedule:', selectedSchedule);
 
-                fetch('save_multiple_bookings.php', {
+                // Prepare FormData
+                const formData = new FormData();
+                formData.append('serviceIds', JSON.stringify(selectedServiceIds));
+                formData.append('schedule', selectedSchedule);
+
+                fetch('save_multiple_bookings_user.php', {
                     method: 'POST',
-                    body: formData
+                    body: formData,
                 })
                     .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.text();  // Use text() to capture raw response
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.text();
                     })
                     .then(responseText => {
-                        console.log('Raw response:', responseText);  // Log the raw response for debugging
-                        try {
-                            const data = JSON.parse(responseText);  // Try to parse the response as JSON
-                            if (data.success) {
-                                Swal.fire({
-                                    title: 'Multiple Bookings Confirmed!',
-                                    text: `You have selected ${selectedServiceIds.length} services for booking.`,
-                                    icon: 'success',
-                                    confirmButtonText: 'OK',
-                                }).then(() => {
-                                    window.location.href = 'userDashboard.php';
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: data.error || 'There was an error saving the bookings. Please try again.',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK',
-                                }).then(() => {
-                                    location.reload();  // Reload the page after clicking OK on error
-                                });
-                            }
-                        } catch (error) {
-                            console.error('Error parsing JSON:', error);
+                        console.log('Raw response:', responseText);
+                        const data = JSON.parse(responseText);
+                        if (data.success) {
                             Swal.fire({
-                                title: 'Error!',
-                                text: 'Failed to process the response. Please try again later.',
-                                icon: 'error',
+                                title: 'Multiple Bookings Confirmed!',
+                                text: `You have selected ${selectedServiceIds.length} services for booking.`,
+                                icon: 'success',
                                 confirmButtonText: 'OK',
                             }).then(() => {
-                                location.reload();  // Reload the page after clicking OK
+                                window.location.href = 'userDashboard.php';
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: data.error || 'Unknown error occurred.',
+                                icon: 'error',
+                                confirmButtonText: 'OK',
                             });
                         }
                     })
@@ -944,11 +932,9 @@ $unread_count = countUnreadNotifications($user_id);
                         console.error('Error:', error);
                         Swal.fire({
                             title: 'Error!',
-                            text: 'An error occurred. Please try again later.',
+                            text: 'An unexpected error occurred. Please try again later.',
                             icon: 'error',
                             confirmButtonText: 'OK',
-                        }).then(() => {
-                            location.reload();  // Reload the page after clicking OK
                         });
                     });
             });
