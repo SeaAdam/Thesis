@@ -191,6 +191,7 @@ $result = $conn->query($sql);
                                 <option value="user">User</option>
                                 <option value="admin">Admin</option>
                                 <option value="clients">Client</option>
+                                <option value="staff">Staff</option>
                             </select>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mb-3">
