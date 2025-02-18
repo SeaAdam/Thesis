@@ -89,7 +89,8 @@ $unread_count = countUnreadNotifications($user_id);
                                 <li><a href="userProfile.php"><i class="fa fa-desktop"></i> Profile </a>
                                 </li>
                                 <li><a href="userTransaction.php"><i class="fa fa-table"></i> Transaction </a>
-                                <li><a href="userMultipleTransaction.php"><i class="fa fa-table"></i> Multiple Transaction</a>
+                                <li><a href="userMultipleTransaction.php"><i class="fa fa-table"></i> Multiple
+                                        Transaction</a>
                                 <li><a href="#"><i></i> HELP DESK </a>
                                 </li>
                                 <?php
@@ -198,20 +199,20 @@ $unread_count = countUnreadNotifications($user_id);
 
                             if ($user_id !== null) {
                                 $sql = "SELECT 
-                        t.ID AS transaction_id,
-                        t.status,
-                        t.transaction_no,
-                        s.Services AS service_id,
-                        sr.Slots_Date AS schedule_id,
-                        ts. time_slot AS time_slot_id,
-                        t.date_seen
-                    FROM 
-                        appointment_system.transactions t
-                        LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
-                        LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
-                        LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
-                    WHERE 
-                        t.user_id = ?";
+                    t.ID AS transaction_id,
+                    t.status,
+                    t.transaction_no,
+                    s.Services AS service_id,
+                    sr.Slots_Date AS schedule_id,
+                    ts.time_slot AS time_slot_id,
+                    t.date_seen
+                FROM 
+                    appointment_system.transactions t
+                    LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
+                    LEFT JOIN appointment_system.schedule_record_table sr ON t.schedule_id = sr.ID
+                    LEFT JOIN appointment_system.time_slots ts ON t.time_slot_id = ts.ID
+                WHERE 
+                    t.user_id = ?";
 
                                 $stmt = $conn->prepare($sql);
                                 $stmt->bind_param('i', $user_id);
@@ -262,7 +263,8 @@ $unread_count = countUnreadNotifications($user_id);
                         <td>";
 
                                         if ($row['status'] == 'Pending') {
-                                            echo "<button class='btn btn-danger btn-sm' onclick='cancelBooking({$row['transaction_id']})'>Cancel Booking</button>";
+                                            echo "<button class='btn btn-danger btn-sm' onclick='cancelBooking({$row['transaction_id']})'>Cancel Booking</button>
+                                        <button class='btn btn-warning btn-sm' onclick='openRescheduleModal({$row['transaction_id']})'>Reschedule Booking</button>";
                                         } else {
                                             echo "<a class='{$buttonClass}' {$buttonAction}>{$buttonText}</a>";
                                         }
@@ -287,6 +289,53 @@ $unread_count = countUnreadNotifications($user_id);
                 </div>
 
             </div>
+
+            <!-- Reschedule Modal -->
+            <div class="modal fade" id="rescheduleModal" tabindex="-1" role="dialog"
+                aria-labelledby="rescheduleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="rescheduleModalLabel">Reschedule Appointment</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="rescheduleForm">
+                                <input type="hidden" id="rescheduleTransactionId" name="transaction_id">
+                                <input type="hidden" id="currentServiceId" name="service_id"> <!-- Auto-filled -->
+
+                                <!-- Current Service (Read-only) -->
+                                <div class="form-group">
+                                    <label for="currentService">Current Service</label>
+                                    <input type="text" class="form-control" id="currentService" readonly>
+                                </div>
+
+                                <!-- Select New Date -->
+                                <div class="form-group">
+                                    <label for="newDate">Select New Date</label>
+                                    <select class="form-control" id="newDate" name="newDate" required>
+                                        <!-- Dates will be loaded dynamically -->
+                                    </select>
+                                </div>
+
+                                <!-- Select New Time Slot -->
+                                <div class="form-group">
+                                    <label for="newTimeSlot">Select New Time Slot</label>
+                                    <select class="form-control" id="newTimeSlot" name="newTimeSlot" required>
+                                        <!-- Time slots will be loaded dynamically -->
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Reschedule</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
 
 
 
@@ -366,7 +415,7 @@ $unread_count = countUnreadNotifications($user_id);
                                 item.classList.add('read');
                             });
 
-                            // Update the count
+                            // Update the count      
                             location.reload();
                         }
                     });
@@ -418,6 +467,54 @@ $unread_count = countUnreadNotifications($user_id);
                     "columnDefs": [
                         { "orderable": false, "targets": [7] } // Disable sorting for the Action column
                     ]
+                });
+            });
+
+            function openRescheduleModal(transactionId) {
+                $('#rescheduleTransactionId').val(transactionId);
+                $('#rescheduleModal').modal('show');
+
+                // Fetch available dates from the database
+                $.ajax({
+                    url: 'fetch_dates_resched.php',
+                    method: 'GET',
+                    success: function (response) {
+                        $('#newDate').html(response);
+                        $('#newTimeSlot').html(''); // Clear time slots when date changes
+                    }
+                });
+            }
+
+            // Load available time slots when a date is selected
+            $('#newDate').on('change', function () {
+                let selectedDate = $(this).val();
+                $.ajax({
+                    url: 'fetch_time_slots_resched.php',
+                    method: 'GET',
+                    data: { date: selectedDate },
+                    success: function (response) {
+                        $('#newTimeSlot').html(response);
+                    }
+                });
+            });
+
+            // Submit reschedule request
+            $('#rescheduleForm').on('submit', function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: 'reschedule_booking_user.php',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        Swal.fire('Success!', response, 'success').then(() => {
+                            $('#rescheduleModal').modal('hide');
+                            location.reload();
+                        });
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'Failed to reschedule. Please try again.', 'error');
+                    }
                 });
             });
 
