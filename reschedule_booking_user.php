@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("is", $newDate, $timeValue);
         $stmt->execute();
         $result = $stmt->get_result();
-        
+
         if ($row = $result->fetch_assoc()) {
             $newTimeSlotId = $row['id'];
 
@@ -57,6 +57,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("i", $newTimeSlotId);
             $stmt->execute();
+
+            // **Get the service_id for the new schedule** (if it's different)
+            $sql = "SELECT service_id FROM appointment_system.time_slots WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $newTimeSlotId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+
+            // Check if the service is available for the new date
+            if ($row) {
+                $newServiceType = $row['service_id'];
+
+                // **Decrement the slots count for the new service schedule**
+                $sql = "UPDATE appointment_system.services_table
+                        SET slots_count = slots_count - 1 
+                        WHERE ID = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("i", $newServiceType);
+                $stmt->execute();
+            }
         } else {
             // If no matching time slot is found, set to 0 (so user selects a new one)
             $newTimeSlotId = 0;
