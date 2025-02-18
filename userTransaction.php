@@ -320,14 +320,6 @@ $unread_count = countUnreadNotifications($user_id);
                                     </select>
                                 </div>
 
-                                <!-- Select New Time Slot -->
-                                <div class="form-group">
-                                    <label for="newTimeSlot">Select New Time Slot</label>
-                                    <select class="form-control" id="newTimeSlot" name="newTimeSlot" required>
-                                        <!-- Time slots will be loaded dynamically -->
-                                    </select>
-                                </div>
-
                                 <button type="submit" class="btn btn-primary">Reschedule</button>
                             </form>
                         </div>
@@ -470,6 +462,7 @@ $unread_count = countUnreadNotifications($user_id);
                 });
             });
 
+            // Open the reschedule modal and fetch the current service and available dates
             function openRescheduleModal(transactionId) {
                 $('#rescheduleTransactionId').val(transactionId);
                 $('#rescheduleModal').modal('show');
@@ -490,27 +483,11 @@ $unread_count = countUnreadNotifications($user_id);
                             method: 'GET',
                             success: function (response) {
                                 $('#newDate').html(response);
-                                $('#newTimeSlot').html(''); // Clear time slots when date changes
                             }
                         });
                     }
                 });
             }
-
-            $('#newDate').on('change', function () {
-                let selectedDate = $(this).val();
-                let serviceId = $('#currentServiceId').val(); // Get selected service ID
-
-                $.ajax({
-                    url: 'fetch_time_slots_resched.php',
-                    method: 'GET',
-                    data: { date: selectedDate, service_id: serviceId },  // Pass service_id
-                    success: function (response) {
-                        $('#newTimeSlot').html(response);
-                    }
-                });
-            });
-
 
             // Submit reschedule request
             $('#rescheduleForm').on('submit', function (e) {
@@ -531,6 +508,7 @@ $unread_count = countUnreadNotifications($user_id);
                     }
                 });
             });
+
 
 
 
