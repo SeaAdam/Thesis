@@ -8,8 +8,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Start a transaction to ensure data consistency
     $conn->begin_transaction();
 
-    // Fetch the current time_slot_id and service_id for the transaction
-    $sql = "SELECT time_slot_id, service_id FROM appointment_system.transactions WHERE ID = ?";
+    // Fetch the current time slot value and service_id for the transaction
+    $sql = "SELECT t.time_slot_id, s.time_slot, t.service_id 
+            FROM appointment_system.transactions t
+            JOIN appointment_system.time_slots s ON t.time_slot_id = s.id
+            WHERE t.ID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $transactionId);
     $stmt->execute();
@@ -18,10 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($transaction) {
         $oldTimeSlotId = $transaction['time_slot_id'];
+        $timeValue = $transaction['time_slot']; // Get the exact time range (e.g., "08:00 - 08:30")
         $serviceType = $transaction['service_id'];
 
         if ($oldTimeSlotId != 0) {
-            // Reset the previous time slot's availability
+            // Reset the previous time slot's availability (set isBooked = 0)
             $sql = "UPDATE appointment_system.time_slots SET isBooked = 0 WHERE id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("i", $oldTimeSlotId);
@@ -36,12 +40,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("i", $serviceType);
         $stmt->execute();
 
-        // Update the transaction: Set new schedule, reset time_slot_id to 0, and change status
+        // Find a new time slot on the new date with the same time_value
+        $newTimeSlotId = null;
+        $sql = "SELECT id FROM appointment_system.time_slots 
+                WHERE schedule_id = ? AND time_slot = ? AND isBooked = 0 LIMIT 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("is", $newDate, $timeValue);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($row = $result->fetch_assoc()) {
+            $newTimeSlotId = $row['id'];
+
+            // Mark the new time slot as booked (isBooked = 1)
+            $sql = "UPDATE appointment_system.time_slots SET isBooked = 1 WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $newTimeSlotId);
+            $stmt->execute();
+        } else {
+            // If no matching time slot is found, set to 0 (so user selects a new one)
+            $newTimeSlotId = 0;
+        }
+
+        // Update the transaction with the new schedule, same time slot (if available), and new status
         $sql = "UPDATE appointment_system.transactions 
-                SET schedule_id = ?, time_slot_id = 0, status = 'Rescheduled' 
+                SET schedule_id = ?, time_slot_id = ?, status = 'Rescheduled' 
                 WHERE ID = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ii", $newDate, $transactionId);
+        $stmt->bind_param("iii", $newDate, $newTimeSlotId, $transactionId);
         $stmt->execute();
 
         $conn->commit();
