@@ -2,20 +2,18 @@
 include 'includes/dbconn.php';
 
 if (isset($_GET['date']) && isset($_GET['service_id'])) {
-    $dateId = $_GET['date'];
-    $serviceId = $_GET['service_id'];
+    $scheduleId = $_GET['date'];  // Schedule ID (selected date)
+    $serviceId = $_GET['service_id'];  // Selected service ID
 
-    // Fetch time slots for the selected service that are not already booked
+    // Fetch available time slots for the selected service and schedule (date)
     $sql = "SELECT ts.ID, ts.time_slot
             FROM appointment_system.time_slots ts
-            WHERE ts.ID NOT IN (
-                SELECT t.time_slot_id
-                FROM appointment_system.transactions t
-                WHERE t.schedule_id = ? AND t.service_id = ? AND t.status NOT IN ('Rejected', 'Cancelled')
-            )";
+            WHERE ts.schedule_id = ? 
+            AND ts.service_id = ? 
+            AND ts.isBooked = 0";  // Only fetch available (not booked) time slots
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ii", $dateId, $serviceId);
+    $stmt->bind_param("ii", $scheduleId, $serviceId);
     $stmt->execute();
     $result = $stmt->get_result();
 
