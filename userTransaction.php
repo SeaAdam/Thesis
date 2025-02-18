@@ -264,7 +264,7 @@ $unread_count = countUnreadNotifications($user_id);
 
                                         if ($row['status'] == 'Pending') {
                                             echo "<button class='btn btn-danger btn-sm' onclick='cancelBooking({$row['transaction_id']})'>Cancel Booking</button>
-                                        <button class='btn btn-warning btn-sm' onclick='openRescheduleModal({$row['transaction_id']})'>Reschedule Booking</button>";
+                                      <button class='btn btn-warning btn-sm' onclick='openRescheduleModal({$row['transaction_id']})'>Reschedule Booking</button>";
                                         } else {
                                             echo "<a class='{$buttonClass}' {$buttonAction}>{$buttonText}</a>";
                                         }
@@ -448,20 +448,6 @@ $unread_count = countUnreadNotifications($user_id);
                 });
             }
 
-            $(document).ready(function () {
-                $('#transactionTable').DataTable({
-                    "paging": true,         // Enable pagination
-                    "searching": true,      // Enable searching
-                    "ordering": true,       // Enable sorting
-                    "info": true,           // Show info like "Showing 1 to 10 of 50 entries"
-                    "pageLength": 10,       // Set the default page length
-                    "order": [[0, 'desc']], // Sort by transaction ID (or modify as needed)
-                    "columnDefs": [
-                        { "orderable": false, "targets": [7] } // Disable sorting for the Action column
-                    ]
-                });
-            });
-
             // Open the reschedule modal and fetch the current service and available dates
             function openRescheduleModal(transactionId) {
                 $('#rescheduleTransactionId').val(transactionId);
@@ -489,25 +475,41 @@ $unread_count = countUnreadNotifications($user_id);
                 });
             }
 
-            // Submit reschedule request
+            // Submit reschedule request with confirmation
             $('#rescheduleForm').on('submit', function (e) {
                 e.preventDefault();
 
-                $.ajax({
-                    url: 'reschedule_booking_user.php',
-                    method: 'POST',
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        Swal.fire('Success!', response, 'success').then(() => {
-                            $('#rescheduleModal').modal('hide');
-                            location.reload();
+                // Show SweetAlert confirmation dialog
+                Swal.fire({
+                    title: 'Are you sure you want to reschedule?',
+                    text: "You only have one chance to reschedule this appointment.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, reschedule it!',
+                    cancelButtonText: 'No, keep the current appointment'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Proceed with the rescheduling if confirmed
+                        $.ajax({
+                            url: 'reschedule_booking_user.php',
+                            method: 'POST',
+                            data: $(this).serialize(),
+                            success: function (response) {
+                                // Show success message
+                                Swal.fire('Success!', response, 'success').then(() => {
+                                    // Refresh the page after success
+                                    location.reload();
+                                });
+                            },
+                            error: function () {
+                                Swal.fire('Error', 'Failed to reschedule. Please try again.', 'error');
+                            }
                         });
-                    },
-                    error: function () {
-                        Swal.fire('Error', 'Failed to reschedule. Please try again.', 'error');
                     }
                 });
             });
+
+
 
 
 
