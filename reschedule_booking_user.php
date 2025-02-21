@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Update the transaction with the new schedule, same time slot (if available), and new status
         $sql = "UPDATE appointment_system.transactions 
-                SET schedule_id = ?, time_slot_id = ?, status = 'Pending' 
+                SET schedule_id = ?, time_slot_id = ?, status = 'Pending'
                 WHERE ID = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("iii", $newDate, $newTimeSlotId, $transactionId);

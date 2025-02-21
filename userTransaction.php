@@ -16,6 +16,31 @@ include 'notification_functions.php'; // Create this file for the functions
 
 $notifications = fetchNotifications($user_id);
 $unread_count = countUnreadNotifications($user_id);
+
+// Get the user ID
+$sql = "SELECT ID FROM appointment_system.registration_table WHERE username = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('s', $username);
+$stmt->execute();
+$stmt->bind_result($user_id);
+$stmt->fetch();
+$stmt->close();
+
+$rescheduleCount = 0; // Default to 0
+
+if ($user_id !== null) {
+    // Count the number of rescheduled transactions for this user
+    $sql = "SELECT COUNT(*) AS reschedule_count 
+            FROM appointment_system.transactions 
+            WHERE user_id = ? AND reschedule_count > 0";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $user_id);
+    $stmt->execute();
+    $stmt->bind_result($rescheduleCount);
+    $stmt->fetch();
+    $stmt->close();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -170,6 +195,8 @@ $unread_count = countUnreadNotifications($user_id);
             <div class="right_col" role="main">
                 <div>
                     <h1>Transaction Table</h1>
+                    <p>You have rescheduled your appointments <strong><?php echo $rescheduleCount; ?></strong> times.
+                    </p>
                     <table id="transactionTable" class="table table-striped table-bordered" style="width:100%">
                         <thead>
                             <tr>
@@ -263,7 +290,6 @@ $unread_count = countUnreadNotifications($user_id);
                         <td>{$row['time_slot_id']}</td>
                         <td>{$row['date_seen']}</td>
                         <td>";
-
                                         if ($row['status'] == 'Pending') {
                                             echo "<button class='btn btn-danger btn-sm' onclick='cancelBooking({$row['transaction_id']})'>Cancel Booking</button>";
 
