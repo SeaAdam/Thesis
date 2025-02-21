@@ -527,11 +527,16 @@ if ($user_id !== null) {
                             method: 'POST',
                             data: $(this).serialize(),
                             success: function (response) {
-                                // Show success message
-                                Swal.fire('Success!', response, 'success').then(() => {
-                                    // Refresh the page after success
-                                    location.reload();
-                                });
+                                if (response.includes("successfully")) {
+                                    // Show success message if reschedule is successful
+                                    Swal.fire('Success!', response, 'success').then(() => {
+                                        location.reload(); // Refresh the page
+                                    });
+                                } else {
+                                    Swal.fire('Error', response, 'error').then(() => {
+                                        location.reload(); // Reload even on error
+                                    });
+                                }
                             },
                             error: function () {
                                 Swal.fire('Error', 'Failed to reschedule. Please try again.', 'error');
@@ -540,6 +545,7 @@ if ($user_id !== null) {
                     }
                 });
             });
+
 
 
 
