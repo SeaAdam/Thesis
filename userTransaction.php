@@ -205,7 +205,9 @@ $unread_count = countUnreadNotifications($user_id);
                     s.Services AS service_id,
                     sr.Slots_Date AS schedule_id,
                     ts.time_slot AS time_slot_id,
-                    t.date_seen
+                    t.date_seen,
+                    t.reschedule_count
+                    
                 FROM 
                     appointment_system.transactions t
                     LEFT JOIN appointment_system.services_table s ON t.service_id = s.ID
@@ -263,8 +265,12 @@ $unread_count = countUnreadNotifications($user_id);
                         <td>";
 
                                         if ($row['status'] == 'Pending') {
-                                            echo "<button class='btn btn-danger btn-sm' onclick='cancelBooking({$row['transaction_id']})'>Cancel Booking</button>
-                                      <button class='btn btn-warning btn-sm' onclick='openRescheduleModal({$row['transaction_id']})'>Reschedule Booking</button>";
+                                            echo "<button class='btn btn-danger btn-sm' onclick='cancelBooking({$row['transaction_id']})'>Cancel Booking</button>";
+
+                                            // Hide the Reschedule Booking button if reschedule_count is 1 or more
+                                            if ($row['reschedule_count'] == 0) {
+                                                echo "<button class='btn btn-warning btn-sm' onclick='openRescheduleModal({$row['transaction_id']})'>Reschedule Booking</button>";
+                                            }
                                         } else {
                                             echo "<a class='{$buttonClass}' {$buttonAction}>{$buttonText}</a>";
                                         }

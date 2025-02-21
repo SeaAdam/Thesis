@@ -85,10 +85,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Update the transaction with the new schedule, same time slot (if available), and new status
         $sql = "UPDATE appointment_system.transactions 
-                SET schedule_id = ?, time_slot_id = ?, status = 'Rescheduled' 
+                SET schedule_id = ?, time_slot_id = ?, status = 'Pending' 
                 WHERE ID = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("iii", $newDate, $newTimeSlotId, $transactionId);
+        $stmt->execute();
+
+
+        // Increment the reschedule count for the transaction
+        $sql = "UPDATE appointment_system.transactions 
+                SET reschedule_count = reschedule_count + 1 
+                WHERE ID = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $transactionId);
         $stmt->execute();
 
         $conn->commit();
