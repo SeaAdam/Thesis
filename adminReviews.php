@@ -94,6 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all'])) {
                 </div>
 
                 <table id="reviewsTable" class="table table-striped table-bordered">
+
                     <thead class="table-dark">
                         <tr>
                             <th>Name</th>
@@ -125,6 +126,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all'])) {
                         <?php endif; ?>
                     </tbody>
                 </table>
+
+                <button class="btn btn-info" id="tableOverview" data-bs-toggle="tooltip" data-bs-html="true" title="
+    <div style='text-align: left; max-width: 250px; font-size: 14px; line-height: 1.5;'>
+        <strong>📊 Table Overview:</strong><br>
+        <span style='color: #28a745;'>✔</span> Displays all user-submitted reviews.<br>
+        <span style='color: #28a745;'>✔</span> Includes <strong>Name</strong>, <strong>Profession</strong>, <strong>Review</strong>, <strong>Rating</strong>, and <strong>Submission Date</strong>.<br>
+        <span style='color: #28a745;'>✔</span> Supports <em>sorting, searching, and pagination</em>.<br>
+        <span style='color: #dc3545;'>⚠</span> Admin can <strong>print</strong> or <strong>delete all reviews</strong> permanently.<br>
+    </div>
+">
+                    Table Overview 🛈
+                </button>
 
             </div>
         </div>
@@ -189,7 +202,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all'])) {
                 "pageLength": 10,
                 "order": [[4, "desc"]] // Default sort by "Created At" column descending
             });
+
+            // Enable Bootstrap Tooltip with Custom Styling
+            $('[data-bs-toggle="tooltip"]').tooltip({
+                html: true,
+                placement: "right",
+                trigger: "hover",
+            });
         });
+
+
 
 
 
