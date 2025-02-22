@@ -29,6 +29,7 @@ if (isset($_SESSION['unlocked_pages']['adminAccount.php'])) {
                 <ul class="nav child_menu">
                     <li><a href="adminClients.php">Active Clients</a></li>
                     <li><a href="removeClients.php">Force Remove Clients</a></li>
+                    <li><a href="seasonal_reports.php">Quarterly Reports Clients</a></li>
                 </ul>
             </li>
             <li><a><i class="fa fa-table"></i> Client Appointment <span class="fa fa-chevron-down"></span>
