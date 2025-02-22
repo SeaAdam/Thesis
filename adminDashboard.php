@@ -150,6 +150,71 @@ $percentReviews = ($countReviews / $maxValue) * 100;
             background-color: #e0e0e0;
             /* Example styling for read */
         }
+
+        .overview-card {
+            display: none;
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            background: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 1000;
+        }
+
+        .overview-card h4 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .overview-btn:hover+.overview-card,
+        .overview-card:hover {
+            display: block;
+        }
+
+        /* Scoped CSS for Performance Overview */
+        .performance-overview {
+            position: relative;
+        }
+
+        .performance-overview .overview-card {
+            display: none;
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            background: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 1000;
+            border: 1px solid #ddd;
+        }
+
+        .performance-overview .overview-card h4 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .performance-overview .overview-btn:hover+.overview-card,
+        .performance-overview .overview-card:hover {
+            display: block;
+        }
+
+        .performance-overview .progress {
+            height: 20px;
+            border-radius: 10px;
+        }
+
+        .performance-overview .progress-bar {
+            font-size: 12px;
+            text-align: center;
+            line-height: 20px;
+        }
     </style>
 </head>
 
@@ -186,7 +251,7 @@ $percentReviews = ($countReviews / $maxValue) * 100;
             <?php include 'top_nav_admin.php'; ?>
 
             <?php include 'admin_dashboard_content.php'; ?>
-            
+
 
 
 
@@ -274,6 +339,8 @@ $percentReviews = ($countReviews / $maxValue) * 100;
                         }
                     });
             }
+
+            
 
         </script>
 

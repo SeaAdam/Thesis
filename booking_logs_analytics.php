@@ -57,6 +57,38 @@ $failedLogs = array_column($logsData, 'failed_logs');
                 <div class="progress-bar bg-danger"
                     style="width: <?= (array_sum($failedLogs) / array_sum($totalLogs)) * 100 ?>%;"></div>
             </div>
+
+            <button class="btn btn-info overview-btn">View Details</button>
+
+            <!-- Performance Report (Initially Hidden) -->
+            <div id="performanceReport" class="overview-card">
+                <h4>📊 Performance Summary</h4>
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th>Total Logs</th>
+                            <td><?= array_sum($totalLogs) ?></td>
+                        </tr>
+                        <tr>
+                            <th>Successful Logs</th>
+                            <td><?= array_sum($successLogs) ?>
+                                (<?= round((array_sum($successLogs) / array_sum($totalLogs)) * 100, 2) ?>%)</td>
+                        </tr>
+                        <tr>
+                            <th>Failed Logs</th>
+                            <td><?= array_sum($failedLogs) ?>
+                                (<?= round((array_sum($failedLogs) / array_sum($totalLogs)) * 100, 2) ?>%)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><b>Summary:</b> Out of <b><?= array_sum($totalLogs) ?></b> logs,
+                    <b><?= array_sum($successLogs) ?></b> were successful, achieving a success rate of
+                    <b><?= round((array_sum($successLogs) / array_sum($totalLogs)) * 100, 2) ?>%</b>. However,
+                    <b><?= array_sum($failedLogs) ?></b> logs failed, accounting for
+                    <b><?= round((array_sum($failedLogs) / array_sum($totalLogs)) * 100, 2) ?>%</b> of total attempts.
+                </p>
+            </div>
+
         </div>
     </div>
 
@@ -104,6 +136,28 @@ $failedLogs = array_column($logsData, 'failed_logs');
                     }
                 }
             }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let overviewSection = document.querySelector(".performance-overview");
+            let overviewBtn = overviewSection.querySelector(".overview-btn");
+            let overviewCard = overviewSection.querySelector(".overview-card");
+
+            overviewBtn.addEventListener("mouseenter", function () {
+                overviewCard.style.display = "block";
+            });
+
+            overviewBtn.addEventListener("mouseleave", function () {
+                setTimeout(() => {
+                    if (!overviewCard.matches(":hover")) {
+                        overviewCard.style.display = "none";
+                    }
+                }, 200);
+            });
+
+            overviewCard.addEventListener("mouseleave", function () {
+                overviewCard.style.display = "none";
+            });
         });
     </script>
 </body>

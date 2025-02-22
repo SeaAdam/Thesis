@@ -20,6 +20,7 @@ while ($row = $userActivityResult->fetch_assoc()) {
 ?>
 
 <div class="right_col" role="main">
+
     <div class="row" style="display: inline-block;">
         <div class="tile_count">
             <div class="col-md-2 col-sm-4 tile_stats_count">
@@ -84,6 +85,69 @@ while ($row = $userActivityResult->fetch_assoc()) {
                 <span class="count_bottom"><i class="green"><?php echo round($percentReviews, 2); ?>% </i> Of 100</span>
             </div>
         </div>
+        <!-- Overview Button -->
+        <button class="btn btn-info overview-btn">Overview</button>
+
+        <!-- Overview Report (Initially Hidden) -->
+        <div id="overviewReport" class="overview-card">
+            <h4>📊 Overview Report</h4>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Total Patients</th>
+                        <td><?php echo $countPatient; ?></td>
+                    </tr>
+                    <tr>
+                        <th>Services Offered</th>
+                        <td><?php echo $countServices; ?></td>
+                    </tr>
+                    <tr>
+                        <th>Scheduled Appointments</th>
+                        <td><?php echo $countSchedules; ?></td>
+                    </tr>
+                    <tr>
+                        <th>Admin Users</th>
+                        <td><?php echo $countAdmin; ?></td>
+                    </tr>
+                    <tr>
+                        <th>Blocked Users</th>
+                        <td><?php echo $countBlocked; ?></td>
+                    </tr>
+                    <tr>
+                        <th>Clients</th>
+                        <td><?php echo $countClients; ?></td>
+                    </tr>
+                    <tr>
+                        <th>Client Schedules</th>
+                        <td><?php echo $countClientSchedules; ?></td>
+                    </tr>
+                    <tr>
+                        <th>Events</th>
+                        <td><?php echo $countEvents; ?></td>
+                    </tr>
+                    <tr>
+                        <th>Holidays</th>
+                        <td><?php echo $countHolidays; ?></td>
+                    </tr>
+                    <tr>
+                        <th>Removed Clients</th>
+                        <td><?php echo $countRemovedClients; ?></td>
+                    </tr>
+                    <tr>
+                        <th>Reviews</th>
+                        <td><?php echo $countReviews; ?></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><b>Summary:</b> The system currently has <b><?php echo $countPatient; ?></b> total patients, with
+                <b><?php echo $countServices; ?></b> active services.
+                There are <b><?php echo $countSchedules; ?></b> scheduled appointments.
+                <b><?php echo $countAdmin; ?></b> administrators are managing the system.
+                <b><?php echo $countBlocked; ?></b> users are blocked, and <b><?php echo $countReviews; ?></b> reviews
+                have been received.
+            </p>
+        </div>
+
     </div>
     <hr>
     <div class="row">
@@ -203,6 +267,27 @@ while ($row = $userActivityResult->fetch_assoc()) {
                 }
             }
         }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let overviewBtn = document.querySelector(".overview-btn");
+        let overviewCard = document.querySelector("#overviewReport");
+
+        overviewBtn.addEventListener("mouseenter", function () {
+            overviewCard.style.display = "block";
+        });
+
+        overviewBtn.addEventListener("mouseleave", function () {
+            setTimeout(() => {
+                if (!overviewCard.matches(":hover")) {
+                    overviewCard.style.display = "none";
+                }
+            }, 200);
+        });
+
+        overviewCard.addEventListener("mouseleave", function () {
+            overviewCard.style.display = "none";
+        });
     });
 </script>
 
