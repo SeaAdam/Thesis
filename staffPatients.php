@@ -302,6 +302,19 @@ $unread_count = countUnreadNotificationsAdmin();
                         ?>
                     </tbody>
                 </table>
+                <button class="btn btn-info" id="registrationTableOverview" data-bs-toggle="tooltip" data-bs-html="true" title="
+    <div style='text-align: left; max-width: 260px; font-size: 14px; line-height: 1.5;'>
+        <strong>📝 Registration Table Overview:</strong><br>
+        <span style='color: #007bff;'>🔹</span> Stores <strong>patient registration details</strong>.<br>
+        <span style='color: #28a745;'>🆔</span> Includes <strong>Unique ID, Name, and Contact</strong>.<br>
+        <span style='color: #17a2b8;'>📅</span> Tracks <strong>Age and Date of Birth</strong>.<br>
+        <span style='color: #dc3545;'>🏠</span> Contains <strong>Address and Gender info</strong>.<br>
+        <span style='color: #ffc107;'>🔍</span> Admins can <strong>view records</strong> for reference.<br>
+    </div>
+">
+    Table Overview 🛈
+</button>
+
 
             </div>
 
@@ -513,6 +526,12 @@ $unread_count = countUnreadNotificationsAdmin();
                     "info": true,         // Display info like "Showing 1 to 10 of 50 entries"
                     "pageLength": 10,     // Set the default page length
                     "order": [[0, 'asc']] // Set default sorting by the first column (Unique ID) in ascending order
+                });
+                // Enable Bootstrap Tooltip with Custom Styling
+                $('[data-bs-toggle="tooltip"]').tooltip({
+                    html: true,
+                    placement: "right",
+                    trigger: "hover",
                 });
             });
         </script>

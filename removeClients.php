@@ -104,6 +104,20 @@ $unread_count = countUnreadNotificationsAdmin();
                         ?>
                     </tbody>
                 </table>
+                <button class="btn btn-info" id="removedClientsOverview" data-bs-toggle="tooltip" data-bs-html="true"
+                    title="
+    <div style='text-align: left; max-width: 270px; font-size: 14px; line-height: 1.5;'>
+        <strong>🚫 Removed Clients Table Overview:</strong><br>
+        <span style='color: #dc3545;'>❌</span> Lists clients who have been removed from the system.<br>
+        <span style='color: #007bff;'>📌</span> Displays <strong>ID</strong>, <strong>Name</strong>, <strong>Company</strong>, <strong>Position</strong>, and <strong>Removal Reason</strong>.<br>
+        <span style='color: #ffc107;'>⏳</span> Tracks the exact <strong>removal date</strong> for reference.<br>
+        <span style='color: #28a745;'>🔍</span> Supports <em>searching, sorting, and pagination</em>.<br>
+        <span style='color: #17a2b8;'>📝</span> Useful for reviewing past removals and decision-making.<br>
+    </div>
+">
+                    Table Overview 🛈
+                </button>
+
             </div>
         </div>
     </div>
@@ -122,6 +136,13 @@ $unread_count = countUnreadNotificationsAdmin();
                 "info": true,
                 "pageLength": 10,
                 "order": [[0, "asc"]] // Default sort by "#" column ascending
+            });
+
+            // Enable Bootstrap Tooltip with Custom Styling
+            $('[data-bs-toggle="tooltip"]').tooltip({
+                html: true,
+                placement: "right",
+                trigger: "hover",
             });
         });
     </script>

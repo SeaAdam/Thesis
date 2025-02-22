@@ -112,6 +112,18 @@ $unread_count = countUnreadNotificationsAdmin();
                         <?php endif; ?>
                     </tbody>
                 </table>
+                <button class="btn btn-info" id="logMessageTableOverview" data-bs-toggle="tooltip" data-bs-html="true" title="
+    <div style='text-align: left; max-width: 260px; font-size: 14px; line-height: 1.5;'>
+        <strong>📜 Log Message Table Overview:</strong><br>
+        <span style='color: #007bff;'>🔹</span> Stores <strong>system-generated logs</strong>.<br>
+        <span style='color: #28a745;'>📅</span> Includes <strong>Timestamp & Log Message</strong>.<br>
+        <span style='color: #17a2b8;'>🔍</span> Helps in <strong>monitoring system events</strong>.<br>
+        <span style='color: #dc3545;'>⚠️</span> Logs are <strong>read-only</strong> for security purposes.<br>
+    </div>
+">
+    Table Overview 🛈
+</button>
+
 
             </div>
         </div>
@@ -176,6 +188,12 @@ $unread_count = countUnreadNotificationsAdmin();
                 "pageLength": 10,     // Set the default page length
                 "order": [[0, 'desc']] // Sort by the "Timestamp" column in descending order
             });
+            // Enable Bootstrap Tooltip with Custom Styling
+            $('[data-bs-toggle="tooltip"]').tooltip({
+                    html: true,
+                    placement: "right",
+                    trigger: "hover",
+                });
         });
 
     </script>

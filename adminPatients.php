@@ -306,6 +306,20 @@ $unread_count = countUnreadNotificationsAdmin();
                         ?>
                     </tbody>
                 </table>
+                <button class="btn btn-info" id="registrationOverview" data-bs-toggle="tooltip" data-bs-html="true"
+                    title="
+    <div style='text-align: left; max-width: 270px; font-size: 14px; line-height: 1.5;'>
+        <strong>🩺 Patient Registration Table Overview:</strong><br>
+        <span style='color: #007bff;'>🔹</span> Displays <strong>Unique ID</strong>, <strong>Patient Name</strong>, <strong>Gender</strong>, <strong>Age</strong>, <strong>Date of Birth</strong>, and <strong>Contact Information</strong>.<br>
+        <span style='color: #28a745;'>📍</span> Includes <strong>Present Address</strong> for easy reference.<br>
+        <span style='color: #ffc107;'>⚡</span> Enables quick actions: <strong>View</strong>, <strong>Edit</strong>, and <strong>Delete</strong> records.<br>
+        <span style='color: #17a2b8;'>🔍</span> Supports <em>searching, sorting, and pagination</em>.<br>
+        <span style='color: #dc3545;'>❗</span> Ensures accurate patient record management.<br>
+    </div>
+">
+                    Table Overview 🛈
+                </button>
+
 
             </div>
 
@@ -517,6 +531,13 @@ $unread_count = countUnreadNotificationsAdmin();
                     "info": true,         // Display info like "Showing 1 to 10 of 50 entries"
                     "pageLength": 10,     // Set the default page length
                     "order": [[0, 'asc']] // Set default sorting by the first column (Unique ID) in ascending order
+                });
+
+                // Enable Bootstrap Tooltip with Custom Styling
+                $('[data-bs-toggle="tooltip"]').tooltip({
+                    html: true,
+                    placement: "right",
+                    trigger: "hover",
                 });
             });
         </script>

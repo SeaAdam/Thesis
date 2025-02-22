@@ -205,6 +205,18 @@ $unread_count = countUnreadNotificationsAdmin();
                         ?>
                     </tbody>
                 </table>
+                <button class="btn btn-info" id="holidaysOverview" data-bs-toggle="tooltip" data-bs-html="true" title="
+    <div style='text-align: left; max-width: 260px; font-size: 14px; line-height: 1.5;'>
+        <strong>📆 Holidays Table Overview:</strong><br>
+        <span style='color: #007bff;'>🔹</span> Lists <strong>official holidays</strong> and non-working days.<br>
+        <span style='color: #28a745;'>⚡</span> Helps in <strong>scheduling and availability management</strong>.<br>
+        <span style='color: #17a2b8;'>📝</span> Supports <strong>adding, editing, and removing</strong> holidays.<br>
+        <span style='color: #dc3545;'>❗</span> Prevents scheduling conflicts on non-working days.<br>
+    </div>
+">
+    Table Overview 🛈
+</button>
+
 
             </div>
 
@@ -348,6 +360,13 @@ $unread_count = countUnreadNotificationsAdmin();
                     "info": true,         // Display info like "Showing 1 to 10 of 50 entries"
                     "pageLength": 10,     // Set the default page length
                     "order": [[0, 'asc']] // Set default sorting by the first column (ID) in ascending order
+                });
+
+                // Enable Bootstrap Tooltip with Custom Styling
+                $('[data-bs-toggle="tooltip"]').tooltip({
+                    html: true,
+                    placement: "right",
+                    trigger: "hover",
                 });
             });
 

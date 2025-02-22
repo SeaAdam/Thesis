@@ -391,7 +391,7 @@ $unread_count = countUnreadNotificationsAdmin();
                 ?>
 
 
-                <!-- Your table structure starts here -->
+                
                 <table id="clientsTable" class="table table-striped table-bordered">
                     <thead class="table-dark">
                         <tr>
@@ -450,6 +450,19 @@ $unread_count = countUnreadNotificationsAdmin();
                         ?>
                     </tbody>
                 </table>
+                <button class="btn btn-info" id="clientsTableOverview" data-bs-toggle="tooltip" data-bs-html="true" title="
+    <div style='text-align: left; max-width: 260px; font-size: 14px; line-height: 1.5;'>
+        <strong>👥 Clients Table Overview:</strong><br>
+        <span style='color: #007bff;'>🔹</span> Stores <strong>client details</strong>.<br>
+        <span style='color: #28a745;'>🏢</span> Includes <strong>name, company, position, contact info</strong>.<br>
+        <span style='color: #17a2b8;'>✅</span> Displays <strong>approval status</strong>.<br>
+        <span style='color: #ffc107;'>⚖️</span> Admins can <strong>approve or reject</strong> pending clients.<br>
+        <span style='color: #dc3545;'>⚠️</span> Status updates are <strong>final once approved/rejected</strong>.<br>
+    </div>
+">
+    Table Overview 🛈
+</button>
+
 
 
 
@@ -658,6 +671,12 @@ $unread_count = countUnreadNotificationsAdmin();
                     "info": true,
                     "pageLength": 10,
                     "order": [[0, "asc"]] // Default sort by "ID" column ascending
+                });
+                // Enable Bootstrap Tooltip with Custom Styling
+                $('[data-bs-toggle="tooltip"]').tooltip({
+                    html: true,
+                    placement: "right",
+                    trigger: "hover",
                 });
             });
 

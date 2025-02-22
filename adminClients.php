@@ -454,6 +454,19 @@ $unread_count = countUnreadNotificationsAdmin();
                         ?>
                     </tbody>
                 </table>
+                <button class="btn btn-info" id="clientsOverview" data-bs-toggle="tooltip" data-bs-html="true" title="
+    <div style='text-align: left; max-width: 270px; font-size: 14px; line-height: 1.5;'>
+        <strong>📋 Clients Table Overview:</strong><br>
+        <span style='color: #28a745;'>✔</span> Displays all registered clients with key details.<br>
+        <span style='color: #007bff;'>🏢</span> Includes <strong>ID</strong>, <strong>Name</strong>, <strong>Company</strong>, <strong>Position</strong>, <strong>Contact</strong>, <strong>Email</strong>, and <strong>Status</strong>.<br>
+        <span style='color: #17a2b8;'>🔍</span> Supports <em>searching, sorting, and pagination</em>.<br>
+        <span style='color: #ffc107;'>⚠</span> Admin can <strong>Approve</strong>, <strong>Reject</strong>, <strong>Edit</strong>, <strong>Delete</strong>, or <strong>View</strong> client details.<br>
+        <span style='color: #dc3545;'>❌</span> Rejected clients cannot be approved again.<br>
+    </div>
+">
+                    Table Overview 🛈
+                </button>
+
 
 
 
@@ -662,6 +675,13 @@ $unread_count = countUnreadNotificationsAdmin();
                     "info": true,
                     "pageLength": 10,
                     "order": [[0, "asc"]] // Default sort by "ID" column ascending
+                });
+
+                // Enable Bootstrap Tooltip with Custom Styling
+                $('[data-bs-toggle="tooltip"]').tooltip({
+                    html: true,
+                    placement: "right",
+                    trigger: "hover",
                 });
             });
 

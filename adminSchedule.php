@@ -208,6 +208,18 @@ $unread_count = countUnreadNotificationsAdmin();
                         <!-- More rows as needed -->
                     </tbody>
                 </table>
+                <button class="btn btn-info" id="scheduleOverview" data-bs-toggle="tooltip" data-bs-html="true" title="
+    <div style='text-align: left; max-width: 260px; font-size: 14px; line-height: 1.5;'>
+        <strong>📅 Schedule Table Overview:</strong><br>
+        <span style='color: #007bff;'>🔹</span> Displays <strong>available and booked slots</strong>.<br>
+        <span style='color: #28a745;'>⚡</span> Manage and update <strong>appointment schedules</strong>.<br>
+        <span style='color: #17a2b8;'>🔍</span> Supports <strong>editing and deleting</strong> slots.<br>
+        <span style='color: #dc3545;'>❗</span> Ensures smooth scheduling for clients.<br>
+    </div>
+">
+                    Table Overview 🛈
+                </button>
+
 
             </div>
 
@@ -386,6 +398,12 @@ $unread_count = countUnreadNotificationsAdmin();
                     "info": true,         // Display info like "Showing 1 to 10 of 50 entries"
                     "pageLength": 10,     // Set the default page length
                     "order": [[0, 'asc']] // Set default sorting by the first column (ID) in ascending order
+                });
+                // Enable Bootstrap Tooltip with Custom Styling
+                $('[data-bs-toggle="tooltip"]').tooltip({
+                    html: true,
+                    placement: "right",
+                    trigger: "hover",
                 });
             });
 

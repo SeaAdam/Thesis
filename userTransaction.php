@@ -317,7 +317,6 @@ if ($user_id !== null) {
                         </tbody>
                     </table>
 
-
                 </div>
 
             </div>

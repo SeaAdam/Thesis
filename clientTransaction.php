@@ -302,6 +302,19 @@ $unread_count = countUnreadNotificationsClient($id);
                             ?>
                         </tbody>
                     </table>
+                    <button class="btn btn-info" id="transactionTableOverview" data-bs-toggle="tooltip" data-bs-html="true" title="
+    <div style='text-align: left; max-width: 260px; font-size: 14px; line-height: 1.5;'>
+        <strong>📋 Transaction Table Overview:</strong><br>
+        <span style='color: #007bff;'>🔹</span> Displays <strong>client booking details</strong>.<br>
+        <span style='color: #28a745;'>📌</span> Tracks <strong>status, booking number, and services</strong>.<br>
+        <span style='color: #17a2b8;'>📅</span> Includes <strong>appointment & seen dates</strong>.<br>
+        <span style='color: #dc3545;'>⚠️</span> Clients can <strong>cancel pending transactions</strong>.<br>
+        <span style='color: #ffc107;'>🧾</span> View <strong>receipts</strong> for approved/completed bookings.<br>
+    </div>
+">
+    Table Overview 🛈
+</button>
+
 
                 </div>
 
@@ -414,6 +427,12 @@ $unread_count = countUnreadNotificationsClient($id);
                     "columnDefs": [
                         { "orderable": false, "targets": [6] } // Disable sorting for the Action column
                     ]
+                });
+                // Enable Bootstrap Tooltip with Custom Styling
+                $('[data-bs-toggle="tooltip"]').tooltip({
+                    html: true,
+                    placement: "right",
+                    trigger: "hover",
                 });
             });
 

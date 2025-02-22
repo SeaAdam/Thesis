@@ -122,6 +122,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all'])) {
                         <?php endif; ?>
                     </tbody>
                 </table>
+                <button class="btn btn-info" id="logTableOverview" data-bs-toggle="tooltip" data-bs-html="true" title="
+    <div style='text-align: left; max-width: 260px; font-size: 14px; line-height: 1.5;'>
+        <strong>📜 Log Table Overview:</strong><br>
+        <span style='color: #007bff;'>🔹</span> Records <strong>user activities</strong> in the system.<br>
+        <span style='color: #28a745;'>📌</span> Includes <strong>User ID, Action, Details, Timestamp</strong>.<br>
+        <span style='color: #17a2b8;'>🔍</span> Helps track <strong>security & system usage</strong>.<br>
+        <span style='color: #dc3545;'>⚠️</span> Logs cannot be <strong>modified</strong> once recorded.<br>
+    </div>
+">
+    Table Overview 🛈
+</button>
+
 
             </div>
         </div>
@@ -186,6 +198,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all'])) {
                 "pageLength": 10,     // Set the default page length
                 "order": [[3, 'desc']] // Sort by the "Timestamp" column in descending order
             });
+            // Enable Bootstrap Tooltip with Custom Styling
+            $('[data-bs-toggle="tooltip"]').tooltip({
+                    html: true,
+                    placement: "right",
+                    trigger: "hover",
+                });
         });
 
     </script>
