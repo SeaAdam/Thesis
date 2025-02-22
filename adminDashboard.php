@@ -215,6 +215,98 @@ $percentReviews = ($countReviews / $maxValue) * 100;
             text-align: center;
             line-height: 20px;
         }
+
+        /* Scoped Styles for Booking Overview */
+        .booking-overview {
+            position: relative;
+        }
+
+        .booking-overview .report-btn {
+            margin-left: 15px;
+            cursor: pointer;
+        }
+
+        .booking-overview .report-card {
+            display: none;
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 350px;
+            background: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 1000;
+            border: 1px solid #ddd;
+        }
+
+        .booking-overview .report-card h4 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .booking-overview .report-card table {
+            width: 100%;
+            text-align: left;
+        }
+
+        .booking-overview .report-card p {
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* Show Report Card on Hover */
+        .booking-overview .report-btn:hover+.report-card,
+        .booking-overview .report-card:hover {
+            display: block;
+        }
+
+        /* Scoped Styles for Client Booking Overview */
+        .client-booking-overview {
+            position: relative;
+        }
+
+        .client-booking-overview .report-btn {
+            margin-left: 15px;
+            cursor: pointer;
+        }
+
+        .client-booking-overview .report-card {
+            display: none;
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 350px;
+            background: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 1000;
+            border: 1px solid #ddd;
+        }
+
+        .client-booking-overview .report-card h4 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .client-booking-overview .report-card table {
+            width: 100%;
+            text-align: left;
+        }
+
+        .client-booking-overview .report-card p {
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* Show Report Card on Hover */
+        .client-booking-overview .report-btn:hover+.report-card,
+        .client-booking-overview .report-card:hover {
+            display: block;
+        }
     </style>
 </head>
 
@@ -340,7 +432,7 @@ $percentReviews = ($countReviews / $maxValue) * 100;
                     });
             }
 
-            
+
 
         </script>
 

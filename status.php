@@ -24,16 +24,35 @@ if ($result->num_rows > 0) {
 $conn->close();
 ?>
 
-<div class="col-md-6 col-sm-6">
+<div class="col-md-6 col-sm-6 booking-overview">
     <div class="x_panel">
         <div class="x_title">
             <h2>Patient Booking Overview <small>Transaction Summary</small></h2>
+
+            <!-- Report Button -->
+            <button class="btn btn-info report-btn">View Report</button>
+
             <ul class="nav navbar-right panel_toolbox">
                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
                 <li><a class="close-link"><i class="fa fa-close"></i></a></li>
             </ul>
             <div class="clearfix"></div>
         </div>
+        
+        <!-- Report Summary (Hidden Initially) -->
+        <div class="report-card">
+            <h4>📊 Booking Summary</h4>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr><th>Pending</th><td><?= $statusCounts['Pending'] ?></td></tr>
+                    <tr><th>Approved</th><td><?= $statusCounts['Approved'] ?></td></tr>
+                    <tr><th>Completed</th><td><?= $statusCounts['Completed'] ?></td></tr>
+                    <tr><th>Rejected</th><td><?= $statusCounts['Rejected'] ?></td></tr>
+                </tbody>
+            </table>
+            <p><b>Summary:</b> Out of all transactions, <b><?= $statusCounts['Completed'] ?></b> were completed, <b><?= $statusCounts['Pending'] ?></b> are still pending, while <b><?= $statusCounts['Rejected'] ?></b> were rejected.</p>
+        </div>
+
         <div class="x_content">
             <div class="chart-container" style="position: relative; width: 100%; height: 300px;">
                 <canvas id="statusDoughnutChart1"></canvas>
@@ -86,5 +105,26 @@ $conn->close();
                 }
             }
         });
+
+        // Report Button Hover Effect
+        let reportBtn = document.querySelector(".report-btn");
+        let reportCard = document.querySelector(".report-card");
+
+        reportBtn.addEventListener("mouseenter", function () {
+            reportCard.style.display = "block";
+        });
+
+        reportBtn.addEventListener("mouseleave", function () {
+            setTimeout(() => {
+                if (!reportCard.matches(":hover")) {
+                    reportCard.style.display = "none";
+                }
+            }, 200);
+        });
+
+        reportCard.addEventListener("mouseleave", function () {
+            reportCard.style.display = "none";
+        });
+
     });
 </script>
