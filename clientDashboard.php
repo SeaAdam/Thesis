@@ -217,6 +217,20 @@ $unread_count = countUnreadNotificationsClient($id);
             background-color: #ffffff;
             font-weight: normal;
         }
+
+        .chart-container {
+            width: 400px;
+            height: 250px;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        #dataSummary {
+            min-width: 250px;
+        }
     </style>
 
 
@@ -352,11 +366,41 @@ $unread_count = countUnreadNotificationsClient($id);
             <!-- /top navigation -->
 
             <div class="right_col" role="main">
+
                 <div class="head-title">
                     <div>
                         <h1>Dashboard</h1>
                     </div>
                 </div>
+
+                <button id="toggleCharts" class="btn btn-info">Client Data Visualization ⓘ</button>
+
+                <div class="card mt-3" id="chartContainer" style="display: none;">
+                    <div class="card-header">
+                        Client Accommodations Overview
+                    </div>
+                    <div class="card-body d-flex">
+                        <!-- Summary Section (Left Side) -->
+                        <div id="dataSummary" class="p-3 bg-light rounded text-center me-3"
+                            style="width: 30%; display: none;">
+                            <h5>Summary</h5>
+                            <p id="dailySummary"></p>
+                            <p id="monthlySummary"></p>
+                        </div>
+
+                        <!-- Charts Section (Right Side) -->
+                        <div class="d-flex flex-column align-items-center w-100">
+                            <div class="chart-container">
+                                <canvas id="dailyChart"></canvas>
+                            </div>
+                            <div class="chart-container mt-4">
+                                <canvas id="monthlyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
 
                 <div class="container mt-2">
                     <div class="card">
@@ -530,6 +574,7 @@ $unread_count = countUnreadNotificationsClient($id);
 
         <!-- Custom Theme Scripts -->
         <script src="build/js/custom.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
         <script>
@@ -697,6 +742,129 @@ $unread_count = countUnreadNotificationsClient($id);
                         }
                     });
             }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const chartContainer = document.getElementById("chartContainer");
+                const toggleButton = document.getElementById("toggleCharts");
+                const summaryContainer = document.getElementById("dataSummary");
+                const dailySummary = document.getElementById("dailySummary");
+                const monthlySummary = document.getElementById("monthlySummary");
+
+                // Show charts and summary on hover
+                toggleButton.addEventListener("mouseenter", function () {
+                    chartContainer.style.display = "flex";
+                });
+
+                // Hide charts when not hovering
+                toggleButton.addEventListener("mouseleave", function () {
+                    chartContainer.style.display = "none";
+                });
+
+                // Fetch and render charts
+                fetch("fetch_appointment_stats.php")
+                    .then(response => response.json())
+                    .then(data => {
+                        // Render Charts with Different Colors
+                        renderChart(
+                            "dailyChart",
+                            "Daily Accommodations",
+                            data.daily.map(d => d.date),
+                            data.daily.map(d => d.count),
+                            "rgba(255, 99, 132, 0.5)",  // Redish
+                            "rgba(255, 99, 132, 1)"
+                        );
+
+                        renderChart(
+                            "monthlyChart",
+                            "Monthly Accommodations",
+                            data.monthly.map(m => m.month),
+                            data.monthly.map(m => m.count),
+                            "rgba(54, 162, 235, 0.5)",  // Blue
+                            "rgba(54, 162, 235, 1)"
+                        );
+
+                        // Generate Summary
+                        if (data.daily.length > 0) {
+                            const maxDaily = data.daily.reduce((max, item) => item.count > max.count ? item : max, data.daily[0]);
+                            const minDaily = data.daily.reduce((min, item) => item.count < min.count ? item : min, data.daily[0]);
+                            dailySummary.innerHTML = `Highest bookings: <strong>${maxDaily.count}</strong> on <strong>${maxDaily.date}</strong>.<br>
+                                          Lowest bookings: <strong>${minDaily.count}</strong> on <strong>${minDaily.date}</strong>.`;
+                        } else {
+                            dailySummary.innerHTML = "No daily booking data available.";
+                        }
+
+                        if (data.monthly.length > 0) {
+                            const maxMonthly = data.monthly.reduce((max, item) => item.count > max.count ? item : max, data.monthly[0]);
+                            monthlySummary.innerHTML = `Most bookings in: <strong>${maxMonthly.month}</strong> with <strong>${maxMonthly.count}</strong> appointments.`;
+                        } else {
+                            monthlySummary.innerHTML = "No monthly booking data available.";
+                        }
+
+                        // Show summary section
+                        summaryContainer.style.display = "block";
+                    })
+                    .catch(error => console.error("Error fetching data:", error));
+            });
+
+            // Function to render charts with different colors
+            function renderChart(canvasId, label, labels, data, bgColor, borderColor) {
+                new Chart(document.getElementById(canvasId), {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: label,
+                            backgroundColor: bgColor,
+                            borderColor: borderColor,
+                            borderWidth: 1,
+                            data: data,
+                            barThickness: 10,
+                            categoryPercentage: 0.5,
+                            barPercentage: 0.7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',  // Keep it horizontal
+                        plugins: {
+                            tooltip: {
+                                enabled: true,
+                                mode: 'index',
+                                intersect: false,
+                                callbacks: {
+                                    label: function (tooltipItem) {
+                                        return `${tooltipItem.dataset.label}: ${tooltipItem.raw} bookings`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: "Number of Bookings",
+                                    font: {
+                                        weight: "bold"
+                                    }
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: "Date",
+                                    font: {
+                                        weight: "bold"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+
         </script>
 
 
