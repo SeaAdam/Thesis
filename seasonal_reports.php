@@ -1,4 +1,17 @@
 <?php
+include 'login.php';
+
+if (!isset($_SESSION['username']) || $_SESSION['loginType'] !== 'admin') {
+    header('Location: index.php');
+    exit();
+}
+
+$adminUsername = $_SESSION['username'];
+
+include 'notification_functions.php';
+$notificationsAdmin = fetchNotificationsAdmin();
+$unread_count = countUnreadNotificationsAdmin();
+
 include 'includes/dbconn.php';
 
 // Fetch available years from the database
@@ -14,12 +27,13 @@ while ($row = $yearResult->fetch_assoc()) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seasonal Report Client</title>
+    <title>Seasonal Reports</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.71/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.71/vfs_fonts.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="build/css/custom.min.css" rel="stylesheet">
     <style>
         #chartContainer {
             display: none;
@@ -40,43 +54,79 @@ while ($row = $yearResult->fetch_assoc()) {
         }
     </style>
 </head>
-<body>
-    <div class="container mt-4">
-        <h3 class="mb-3">📊 Seasonal Booking Report</h3>
-
-        <!-- Year Selection -->
-        <label for="yearSelect">Select Year:</label>
-        <select id="yearSelect" class="form-select w-25">
-            <?php foreach ($years as $year) : ?>
-                <option value="<?= $year; ?>"><?= $year; ?></option>
-            <?php endforeach; ?>
-        </select>
-
-        <button id="toggleCharts" class="btn btn-primary mt-2">View Report</button>
-
-        <div id="chartContainer" class="mt-4">
-            <!-- Chart -->
-            <canvas id="seasonalChart"></canvas>
+<body class="nav-md">
+    <div class="container body">
+        <div class="main_container">
             
-            <!-- Summary Table -->
-            <div class="summary-table">
-                <h5>📋 Summary</h5>
-                <table class="table table-borderless">
-                    <tbody>
-                        <tr><th>Q1 (Jan - Mar):</th> <td id="q1Count">-</td></tr>
-                        <tr><th>Q2 (Apr - Jun):</th> <td id="q2Count">-</td></tr>
-                        <tr><th>Q3 (Jul - Sep):</th> <td id="q3Count">-</td></tr>
-                        <tr><th>Q4 (Oct - Dec):</th> <td id="q4Count">-</td></tr>
-                    </tbody>
-                </table>
+            <!-- Sidebar -->
+            <div class="col-md-3 left_col">
+                <div class="left_col scroll-view">
+                    <div class="navbar nav_title" style="border: 0;">
+                        <a href="adminDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain Master DC</span></a>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <div class="profile clearfix">
+                        <div class="profile_pic">
+                            <img src="images/admin-icon.jpg" alt="..." class="img-circle profile_img">
+                        </div>
+                        <div class="profile_info">
+                            <span>Welcome,</span>
+                            <h2><?php echo htmlspecialchars($adminUsername); ?></h2>
+                        </div>
+                    </div>
+
+                    <br />
+                    <?php include('sidebar.php'); ?>
+                </div>
+            </div>
+
+            <!-- Top Navigation -->
+            <?php include 'top_nav_admin.php'; ?>
+
+            <div class="right_col" role="main">
+                <div class="container mt-4">
+                    <h3 class="mb-3">📊 Seasonal Booking Report</h3>
+
+                    <!-- Year Selection -->
+                    <label for="yearSelect">Select Year:</label>
+                    <select id="yearSelect" class="form-select w-25">
+                        <?php foreach ($years as $year) : ?>
+                            <option value="<?= $year; ?>"><?= $year; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+
+                    <button id="toggleCharts" class="btn btn-primary mt-2">View Report</button>
+
+                    <div id="chartContainer" class="mt-4">
+                        <!-- Chart -->
+                        <canvas id="seasonalChart"></canvas>
+                        
+                        <!-- Summary Table -->
+                        <div class="summary-table">
+                            <h5>📋 Summary</h5>
+                            <table class="table table-borderless">
+                                <tbody>
+                                    <tr><th>Q1 (Jan - Mar):</th> <td id="q1Count">-</td></tr>
+                                    <tr><th>Q2 (Apr - Jun):</th> <td id="q2Count">-</td></tr>
+                                    <tr><th>Q3 (Jul - Sep):</th> <td id="q3Count">-</td></tr>
+                                    <tr><th>Q4 (Oct - Dec):</th> <td id="q4Count">-</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Export Buttons -->
+                    <button id="exportCSV" class="btn btn-success mt-2">Export CSV</button>
+                    <button id="exportPDF" class="btn btn-danger mt-2">Export PDF</button>
+                </div>
             </div>
         </div>
-
-        <!-- Export Buttons -->
-        <button id="exportCSV" class="btn btn-success mt-2">Export CSV</button>
-        <button id="exportPDF" class="btn btn-danger mt-2">Export PDF</button>
     </div>
 
+    <script src="vendors/jquery/dist/jquery.min.js"></script>
+    <script src="vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const chartContainer = document.getElementById("chartContainer");
