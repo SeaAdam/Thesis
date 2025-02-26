@@ -25,6 +25,7 @@ while ($row = $yearResult->fetch_assoc()) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Seasonal Reports</title>
@@ -41,6 +42,7 @@ while ($row = $yearResult->fetch_assoc()) {
             align-items: center;
             gap: 20px;
         }
+
         .summary-table {
             width: 300px;
             border: 1px solid #ddd;
@@ -48,21 +50,24 @@ while ($row = $yearResult->fetch_assoc()) {
             border-radius: 10px;
             background: #f8f9fa;
         }
+
         canvas {
             max-width: 400px;
             max-height: 300px;
         }
     </style>
 </head>
+
 <body class="nav-md">
     <div class="container body">
         <div class="main_container">
-            
+
             <!-- Sidebar -->
             <div class="col-md-3 left_col">
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
-                        <a href="adminDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain Master DC</span></a>
+                        <a href="adminDashboard.php" class="site_title"><i class="fa fa-plus-square"></i> <span>Brain
+                                Master DC</span></a>
                     </div>
 
                     <div class="clearfix"></div>
@@ -92,7 +97,7 @@ while ($row = $yearResult->fetch_assoc()) {
                     <!-- Year Selection -->
                     <label for="yearSelect">Select Year:</label>
                     <select id="yearSelect" class="form-select w-25">
-                        <?php foreach ($years as $year) : ?>
+                        <?php foreach ($years as $year): ?>
                             <option value="<?= $year; ?>"><?= $year; ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -102,16 +107,28 @@ while ($row = $yearResult->fetch_assoc()) {
                     <div id="chartContainer" class="mt-4">
                         <!-- Chart -->
                         <canvas id="seasonalChart"></canvas>
-                        
+
                         <!-- Summary Table -->
                         <div class="summary-table">
                             <h5>📋 Summary</h5>
                             <table class="table table-borderless">
                                 <tbody>
-                                    <tr><th>Q1 (Jan - Mar):</th> <td id="q1Count">-</td></tr>
-                                    <tr><th>Q2 (Apr - Jun):</th> <td id="q2Count">-</td></tr>
-                                    <tr><th>Q3 (Jul - Sep):</th> <td id="q3Count">-</td></tr>
-                                    <tr><th>Q4 (Oct - Dec):</th> <td id="q4Count">-</td></tr>
+                                    <tr>
+                                        <th>Q1 (Jan - Mar):</th>
+                                        <td id="q1Count">-</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Q2 (Apr - Jun):</th>
+                                        <td id="q2Count">-</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Q3 (Jul - Sep):</th>
+                                        <td id="q3Count">-</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Q4 (Oct - Dec):</th>
+                                        <td id="q4Count">-</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -137,7 +154,7 @@ while ($row = $yearResult->fetch_assoc()) {
                 chartContainer.style.display = "flex";
 
                 const selectedYear = document.getElementById("yearSelect").value;
-                
+
                 fetch(`fetch_seasonal_reports.php?year=${selectedYear}`)
                     .then(response => response.json())
                     .then(data => {
@@ -153,8 +170,8 @@ while ($row = $yearResult->fetch_assoc()) {
                                 datasets: [{
                                     label: "Bookings",
                                     data: [data.Q1, data.Q2, data.Q3, data.Q4],
-                                    backgroundColor: ["rgba(255, 99, 132, 0.5)", "rgba(54, 162, 235, 0.5)", 
-                                                      "rgba(255, 206, 86, 0.5)", "rgba(75, 192, 192, 0.5)"],
+                                    backgroundColor: ["rgba(255, 99, 132, 0.5)", "rgba(54, 162, 235, 0.5)",
+                                        "rgba(255, 206, 86, 0.5)", "rgba(75, 192, 192, 0.5)"],
                                     borderWidth: 1
                                 }]
                             }
@@ -179,17 +196,39 @@ while ($row = $yearResult->fetch_assoc()) {
                 link.click();
             });
 
-            // Export to PDF
             document.getElementById("exportPDF").addEventListener("click", function () {
+                const canvas = document.getElementById("seasonalChart");
+                const chartImage = canvas.toDataURL("image/png"); // Convert chart to Base64 image
+
                 const docDefinition = {
                     content: [
-                        { text: "Seasonal Booking Report", style: "header" },
-                        { text: `Q1: ${q1Count.textContent} Bookings\nQ2: ${q2Count.textContent} Bookings\nQ3: ${q3Count.textContent} Bookings\nQ4: ${q4Count.textContent} Bookings` }
-                    ]
+                        { text: "📊 Seasonal Booking Report", style: "header", alignment: "center" },
+                        { image: chartImage, width: 500 }, // Add chart image
+                        { text: "📋 Summary", style: "subheader", margin: [0, 10, 0, 5] },
+                        {
+                            table: {
+                                widths: ["50%", "50%"],
+                                body: [
+                                    ["Q1 (Jan - Mar):", document.getElementById("q1Count").textContent],
+                                    ["Q2 (Apr - Jun):", document.getElementById("q2Count").textContent],
+                                    ["Q3 (Jul - Sep):", document.getElementById("q3Count").textContent],
+                                    ["Q4 (Oct - Dec):", document.getElementById("q4Count").textContent],
+                                ]
+                            },
+                            layout: "lightHorizontalLines" // Adds light lines for better readability
+                        }
+                    ],
+                    styles: {
+                        header: { fontSize: 18, bold: true },
+                        subheader: { fontSize: 14, bold: true }
+                    }
                 };
+
                 pdfMake.createPdf(docDefinition).download("seasonal_report.pdf");
             });
+
         });
     </script>
 </body>
+
 </html>
