@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_all'])) {
             <div class="right_col" role="main">
 
                 <div class="button-container">
-                    <button class="btn btn-primary" id="printData">Print All Data</button>
+                    <a href="print_reviews.php" target="_blank" class="btn btn-primary">Print All Data</a>
                     <button class="btn btn-danger" id="deleteData">Delete All Data</button>
                 </div>
 
